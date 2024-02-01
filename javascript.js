@@ -245,11 +245,13 @@ const observeReplayInput = () => {
 
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if (mutation.target.textContent.includes("$ssrfinstance")) {
+      const originalTextContent = mutation.target.textContent;
+
+      if (originalTextContent.includes("$ssrfinstance")) {
         // replace the $interactsh with example.com
-        const text = mutation.target.textContent.replace(
+        const text = originalTextContent.replace(
           "$ssrfinstance",
-          "creating_instance"
+          "$creating_instance"
         );
 
         mutation.target.textContent = text;
@@ -258,12 +260,14 @@ const observeReplayInput = () => {
           method: "POST",
         }).then((response) => response.json()).then((data) => {
           console.log(data)
-          
-          const text = mutation.target.textContent.replace(
+
+          const text = originalTextContent.replace(
             "$ssrfinstance",
             "https://" + data + ".c5.rs"
           );
           mutation.target.textContent = text;
+
+          window.open("https://ssrf.cvssadvisor.com/instance/" + data, "_blank")
         });
       }
     });
