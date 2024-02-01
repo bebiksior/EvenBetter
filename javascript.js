@@ -1,9 +1,11 @@
 const addMoveButtonsToSidebar = () => {
-  const sidebarTitles = document.querySelectorAll(".c-sidebar-group__title");
-  sidebarTitles.forEach((title) => {
+  const sidebarGroupTitles = document.querySelectorAll(
+    ".c-sidebar-group__title"
+  );
+  sidebarGroupTitles.forEach((title) => {
     const groupName = title.textContent;
     if (groupName !== "...") {
-      addMoveButtonsToGroup(title, groupName);
+      attachMoveButtonsToGroup(title, groupName);
     }
   });
 
@@ -26,8 +28,10 @@ const addMoveButtonsToSidebar = () => {
 };
 
 const addGroupHideFunctionality = () => {
-  const sidebarTitles = document.querySelectorAll(".c-sidebar-group__title");
-  sidebarTitles.forEach((title) => {
+  const sidebarGroupTitles = document.querySelectorAll(
+    ".c-sidebar-group__title"
+  );
+  sidebarGroupTitles.forEach((title) => {
     const groupName = title.textContent;
     if (groupName !== "...") {
       title.addEventListener("click", () => {
@@ -46,36 +50,7 @@ const addGroupHideFunctionality = () => {
   });
 };
 
-const sidebarLoaded = () => {
-  addMoveButtonsToSidebar();
-  addGroupHideFunctionality();
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.target.getAttribute("data-is-collapsed") === "false") {
-        addMoveButtonsToSidebar();
-        addGroupHideFunctionality();
-      }
-    });
-  });
-
-  const config = {
-    attributes: true,
-    subtree: true,
-  };
-  observer.observe(document.querySelector(".c-sidebar__toggle"), config);
-};
-
-// Wait for sidebar to load, then add move buttons
-const interval = setInterval(() => {
-  const sidebar = document.querySelector(".c-sidebar__body");
-  if (sidebar) {
-    clearInterval(interval);
-    sidebarLoaded();
-  }
-}, 100);
-
-const addMoveButtonsToGroup = (element, groupName) => {
+const attachMoveButtonsToGroup = (element, groupName) => {
   element.innerHTML = `
 	<div style="display:flex;justify-content:space-between;align-items:center;">${groupName}
 	  <div>
@@ -104,3 +79,119 @@ function moveGroup(group, direction) {
     parent.insertBefore(group, referenceNode);
   }
 }
+
+const colorizeHttpHistory = () => {
+  const queryCells = document.querySelectorAll(
+    '.c-item-cell[data-column-id="query"]'
+  );
+
+  queryCells.forEach((cell) => colorizeCell(cell));
+};
+
+const colorizeCell = (cell) => {
+  const query = cell.textContent;
+
+  const url = new URL("http://x.com?" + query);
+  const color = url.searchParams.get("_color");
+  if (color) {
+    const row = cell.parentElement;
+    row.style.backgroundColor = color;
+  } else {
+    cell.parentElement.style.backgroundColor = "";
+  }
+};
+
+let httpHistoryObserver;
+const observeHTTPRequests = () => {
+  const requests = document.querySelector(".c-table__wrapper");
+  if (!requests) return;
+
+  if (httpHistoryObserver) {
+    httpHistoryObserver.disconnect();
+    httpHistoryObserver = null;
+  }
+
+  httpHistoryObserver = new MutationObserver((mutations) => {
+    colorizeHttpHistory();
+  });
+
+  const config = {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  };
+
+  httpHistoryObserver.observe(requests, config);
+};
+
+// This is a hacky way to detect when a new tab is opened
+const detectOpenedTab = () => {
+  const requestTable = document.querySelector(".c-content");
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.removedNodes.length > 0) return;
+
+      const { target } = mutation;
+      if (target.classList.contains("c-content")) {
+        const firstChild = target.children[0];
+        if (firstChild.classList.length === 1) {
+          onTabOpen(firstChild.classList[0]);
+        }
+      }
+    });
+  });
+
+  const config = {
+    subtree: true,
+    childList: true,
+  };
+  observer.observe(requestTable, config);
+};
+
+const onTabOpen = (tabName) => {
+  switch (tabName) {
+    case "c-intercept":
+      setTimeout(() => {
+        colorizeHttpHistory();
+        observeHTTPRequests();
+      }, 100);
+      break;
+    default:
+      break;
+  }
+};
+
+const onSidebarLoad = () => {
+  addMoveButtonsToSidebar();
+  addGroupHideFunctionality();
+  detectOpenedTab();
+
+  const currentTab =
+    document.querySelector(".c-content").children[0].classList[0];
+
+  if (currentTab) onTabOpen(currentTab);
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.getAttribute("data-is-collapsed") === "false") {
+        addMoveButtonsToSidebar();
+        addGroupHideFunctionality();
+      }
+    });
+  });
+
+  const config = {
+    attributes: true,
+    subtree: true,
+  };
+  observer.observe(document.querySelector(".c-sidebar__toggle"), config);
+};
+
+// Wait for sidebar to load, then run onSidebarLoad
+const interval = setInterval(() => {
+  const sidebar = document.querySelector(".c-sidebar__body");
+  if (sidebar) {
+    clearInterval(interval);
+    onSidebarLoad();
+  }
+}, 100);

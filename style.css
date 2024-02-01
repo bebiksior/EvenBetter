@@ -52,3 +52,6 @@
   color: rgb(99, 99, 99);
   cursor: pointer;
 }
+.c-drawer__body {
+  max-height: 95%;
+}
