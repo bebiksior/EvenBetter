@@ -1,0 +1,54 @@
+.c-header-cell {
+  border: 1px solid #101010 !important;
+}
+
+* {
+  --c-bg-default: #050607 !important;
+  --c-bg-subtle: #090a0c !important;
+}
+
+.c-table__header-row {
+  background-color: #090a0c !important;
+}
+
+.c-table__item-row[data-is-even="false"] {
+  background-color: #08090a !important;
+}
+
+.c-table__item-row:hover {
+  background-color: #0f1012 !important;
+}
+
+.c-active-rule-list__rules,
+.c-file-navigation__well-body {
+  overflow: auto !important;
+}
+
+.c-sidebar-group__move-up,
+.c-sidebar-group__move-down {
+  cursor: pointer;
+}
+
+.c-sidebar-group__move-up path,
+.c-sidebar-group__move-down path {
+  transition: 0.2s ease stroke;
+}
+
+.c-sidebar-group__move-up:hover path,
+.c-sidebar-group__move-down:hover path {
+  stroke: #f5f5f5;
+}
+
+.c-sidebar__toggle-wrapper {
+  top: -0.75rem !important;
+  right: 0.5rem !important;
+}
+
+.c-sidebar-group__title {
+  transition: 0.2s ease color;
+}
+
+.c-sidebar-group__title:hover {
+  color: rgb(99, 99, 99);
+  cursor: pointer;
+}
