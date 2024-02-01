@@ -249,16 +249,21 @@ const observeReplayInput = () => {
         // replace the $interactsh with example.com
         const text = mutation.target.textContent.replace(
           "$ssrfinstance",
-          "example.com"
+          "creating_instance"
         );
 
         mutation.target.textContent = text;
 
-        console.log("Sending request to ssrf api");
         fetch("https://api.cvssadvisor.com/ssrf/api/instance", {
           method: "POST",
         }).then((response) => response.json()).then((data) => {
-          console.log(data);
+          console.log(data)
+          
+          const text = mutation.target.textContent.replace(
+            "$ssrfinstance",
+            "https://" + data + ".c5.rs"
+          );
+          mutation.target.textContent = text;
         });
       }
     });
