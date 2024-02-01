@@ -1,7 +1,7 @@
 const COLORIZE_PARAMETER_NAME = "_color",
-  COLORIZE_HTTP_ROWS = false, // Set to false if you don't want to colorize HTTP rows
-  SIDEBAR_HIDE_GROUPS = false, // Set to false if you don't want the hide groups functionality in the sidebar
-  SIDEBAR_REARRANGE_GROUPS = false; // Set to false if you don't want the rearrange groups functionality in the sidebar
+  COLORIZE_HTTP_ROWS = true, // Set to false if you don't want to colorize HTTP rows
+  SIDEBAR_HIDE_GROUPS = true, // Set to false if you don't want the hide groups functionality in the sidebar
+  SIDEBAR_REARRANGE_GROUPS = true; // Set to false if you don't want the rearrange groups functionality in the sidebar
 
 const addMoveButtonsToSidebar = () => {
   if (!SIDEBAR_REARRANGE_GROUPS) return;
@@ -44,7 +44,6 @@ const addGroupHideFunctionality = () => {
     const groupName = title.textContent;
     if (groupName !== "...") {
       title.addEventListener("click", () => {
-        console.log("hiding")
         const group = title.parentElement;
         const groupItems = group.querySelector(".c-sidebar-group__items");
         const isCollapsed = group.getAttribute("data-is-group-collapsed");
