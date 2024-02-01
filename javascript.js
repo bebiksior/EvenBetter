@@ -22,6 +22,10 @@ const addMoveButtonsToSidebar = () => {
     const moveUpButton = group.querySelector(".c-sidebar-group__move-up");
     const moveDownButton = group.querySelector(".c-sidebar-group__move-down");
 
+    if (!moveUpButton || !moveDownButton) {
+      return;
+    }
+
     moveUpButton.addEventListener("click", (event) => {
       moveGroup(group, "up");
       event.stopPropagation();
@@ -225,10 +229,7 @@ const onTabOpened = (tabName) => {
 const observeSidebarCollapse = () => {
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if (mutation.target.getAttribute("data-is-collapsed") === "false") {
-        addMoveButtonsToSidebar();
-        addGroupHideFunctionality();
-      }
+      onSidebarCollapsed(mutation.target.getAttribute("data-is-collapsed") === "true");
     });
   });
 
@@ -238,6 +239,16 @@ const observeSidebarCollapse = () => {
   };
   observer.observe(document.querySelector(".c-sidebar__toggle"), config);
 };
+
+const onSidebarCollapsed = (isCollapsed) => {
+  if (!isCollapsed) {
+    addMoveButtonsToSidebar();
+    addGroupHideFunctionality();
+    
+    restoreSidebarGroupPositions();
+    restoreSidebarGroupCollapsedStates();
+  }
+}
 
 const onSidebarContentLoaded = () => {
   addMoveButtonsToSidebar();
