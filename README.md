@@ -1,4 +1,4 @@
-# EvenBetter v1.11
+# EvenBetter v1.12
 Even Better is a simple "plugin" that enhances your Caido UI experience by adding the ability to rearrange and hide groups on the sidebar. Additionally, it tweaks the UI colors to make it a bit darker ;)
 
 ## Installation
@@ -8,6 +8,7 @@ Even Better is a simple "plugin" that enhances your Caido UI experience by addin
 4. Done! 🎉
 
 ## Changelog
+- v1.12: http://ssrf.cvssadvisor.com/ integration! Type `$ssrfinstance` in Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up.
 - v1.11: Sidebar state is now saved in the localStorage!
 - v1.1: Implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
 - v1.1: Resolved the Caido UI issue preventing scrolling in the Filters tab.
@@ -23,9 +24,12 @@ Even Better is a simple "plugin" that enhances your Caido UI experience by addin
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/1af01fdb-e789-49b3-b35a-96ea7d5c7585)
 
 ## HTTP History rows colorized
-In v1.1 I've implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
+If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
 
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/c5b0f5dc-ba08-4e68-aeff-c288ef8ddad7)
+
+## ssrf.cvssadvisor.com integration
+Type `$ssrfinstance` in Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up.
 
 ## Sidebar Group Rearranging & Hide functionality
 
