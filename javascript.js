@@ -214,8 +214,6 @@ const detectOpenedTab = () => {
 };
 
 const onTabOpened = (tabName) => {
-  console.log("Tab opened: ", tabName);
-
   switch (tabName) {
     case "c-intercept":
       setTimeout(() => {
@@ -223,37 +221,10 @@ const onTabOpened = (tabName) => {
         observeHTTPRequests();
       }, 100);
       break;
-    case "c-replay":
-      setTimeout(() => {
-        observeReplayInput();
-      }, 100);
-      break;
     default:
       break;
   }
 };
-
-const observeReplayInput = () => {
-  const replayInput = document.querySelector(".c-replay-entry .cm-content");
-  if (!replayInput) return;
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.target.textContent.includes("$interactsh")) {
-          // replace the $interactsh with example.com
-          const text = mutation.target.textContent.replace("$interactsh", "example.com");
-          mutation.target.textContent = text;
-      }
-    });
-  });
-
-  const config = {
-    characterData: true,
-    subtree: true,
-  };
-
-  observer.observe(replayInput, config);
-}
 
 const observeSidebarCollapse = () => {
   const observer = new MutationObserver((mutations) => {
