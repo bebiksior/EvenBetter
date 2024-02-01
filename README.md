@@ -1,5 +1,5 @@
 # EvenBetter v1.12
-Even Better is a simple "plugin" that enhances your Caido UI experience by adding the ability to rearrange and hide groups on the sidebar. Additionally, it tweaks the UI colors to make it a bit darker ;)
+Even Better is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
 1. Visit **Settings** and navigate to the **Developer** section
