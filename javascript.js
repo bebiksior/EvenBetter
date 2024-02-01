@@ -90,12 +90,13 @@ const moveGroup = (group, direction) => {
       return;
     }
 
-    const referenceNode = group.parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
+    const referenceNode =
+      group.parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
     group.parentElement.insertBefore(group, referenceNode);
 
     storeSidebarGroupPositions();
   }
-}
+};
 
 const storeSidebarGroupPositions = () => {
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
@@ -104,7 +105,7 @@ const storeSidebarGroupPositions = () => {
     const position = Array.from(group.parentElement.children).indexOf(group);
     localStorage.setItem(`evenbetter_${groupName}_position`, position);
   });
-}
+};
 
 const restoreSidebarGroupPositions = () => {
   if (!SIDEBAR_REARRANGE_GROUPS) return;
@@ -114,10 +115,13 @@ const restoreSidebarGroupPositions = () => {
     const groupName = group.children[0].textContent.trim();
     const position = localStorage.getItem(`evenbetter_${groupName}_position`);
     if (position) {
-      group.parentElement.insertBefore(group, group.parentElement.children[position]);
+      group.parentElement.insertBefore(
+        group,
+        group.parentElement.children[position]
+      );
     }
   });
-}
+};
 
 const storeSidebarGroupCollapsedStates = () => {
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
@@ -126,22 +130,24 @@ const storeSidebarGroupCollapsedStates = () => {
     const isCollapsed = group.getAttribute("data-is-group-collapsed");
     localStorage.setItem(`evenbetter_${groupName}_isCollapsed`, isCollapsed);
   });
-}
+};
 
 const restoreSidebarGroupCollapsedStates = () => {
   if (!SIDEBAR_HIDE_GROUPS) return;
-  
+
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
     const groupName = group.children[0].textContent.trim();
-    const isCollapsed = localStorage.getItem(`evenbetter_${groupName}_isCollapsed`);
+    const isCollapsed = localStorage.getItem(
+      `evenbetter_${groupName}_isCollapsed`
+    );
     if (isCollapsed) {
       group.setAttribute("data-is-group-collapsed", isCollapsed);
       const groupItems = group.querySelector(".c-sidebar-group__items");
       groupItems.style.display = isCollapsed === "true" ? "none" : "block";
     }
   });
-}
+};
 
 const colorizeHttpHistory = () => {
   if (!COLORIZE_HTTP_ROWS) return;
@@ -214,6 +220,8 @@ const detectOpenedTab = () => {
 };
 
 const onTabOpened = (tabName) => {
+  console.log("Tab opened: ", tabName);
+
   switch (tabName) {
     case "c-intercept":
       setTimeout(() => {
@@ -221,15 +229,55 @@ const onTabOpened = (tabName) => {
         observeHTTPRequests();
       }, 100);
       break;
+    case "c-replay":
+      setTimeout(() => {
+        observeReplayInput();
+      }, 100);
+      break;
     default:
       break;
   }
 };
 
+const observeReplayInput = () => {
+  const replayInput = document.querySelector(".c-replay-entry .cm-content");
+  if (!replayInput) return;
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.textContent.includes("$ssrfinstance")) {
+        // replace the $interactsh with example.com
+        const text = mutation.target.textContent.replace(
+          "$ssrfinstance",
+          "example.com"
+        );
+
+        mutation.target.textContent = text;
+
+        console.log("Sending request to ssrf api");
+        fetch("https://api.cvssadvisor.com/ssrf/api/instance", {
+          method: "POST",
+        }).then((response) => response.json()).then((data) => {
+          console.log(data);
+        });
+      }
+    });
+  });
+
+  const config = {
+    characterData: true,
+    subtree: true,
+  };
+
+  observer.observe(replayInput, config);
+};
+
 const observeSidebarCollapse = () => {
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      onSidebarCollapsed(mutation.target.getAttribute("data-is-collapsed") === "true");
+      onSidebarCollapsed(
+        mutation.target.getAttribute("data-is-collapsed") === "true"
+      );
     });
   });
 
@@ -244,11 +292,11 @@ const onSidebarCollapsed = (isCollapsed) => {
   if (!isCollapsed) {
     addMoveButtonsToSidebar();
     addGroupHideFunctionality();
-    
+
     restoreSidebarGroupPositions();
     restoreSidebarGroupCollapsedStates();
   }
-}
+};
 
 const onSidebarContentLoaded = () => {
   addMoveButtonsToSidebar();
