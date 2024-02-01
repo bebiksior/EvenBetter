@@ -52,6 +52,8 @@
   color: rgb(99, 99, 99);
   cursor: pointer;
 }
+
+/* Fixes scrollbar issue in the Filter tab */
 .c-drawer__body {
   max-height: 95%;
 }
