@@ -32,8 +32,5 @@ Even Better is a simple "plugin" that enhances your Caido UI experience by addin
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/a1859822-53be-4975-acb3-189132609188)
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/bd48fad3-4b29-4a86-99d1-bb11655141cc)
 
-## Note
-Please be aware that the current version doesn't save the sidebar state after restarting Caido. If you rearrange groups, it will reset upon restarting the Caido app.
-
 ## Contribution
 Feel free to contribute! Open to pull requests that make the Caido UI even better :D
