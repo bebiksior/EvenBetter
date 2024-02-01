@@ -15,12 +15,12 @@ const addMoveButtonsToSidebar = () => {
 
     moveUpButton.addEventListener("click", (event) => {
       moveGroup(group, "up");
-	  event.stopPropagation();
+      event.stopPropagation();
     });
 
     moveDownButton.addEventListener("click", (event) => {
       moveGroup(group, "down");
-	  event.stopPropagation();
+      event.stopPropagation();
     });
   });
 };
@@ -31,16 +31,15 @@ const addGroupHideFunctionality = () => {
     const groupName = title.textContent;
     if (groupName !== "...") {
       title.addEventListener("click", () => {
-		console.log("clicked")
         const group = title.parentElement;
         const groupItems = group.querySelector(".c-sidebar-group__items");
         const isCollapsed = group.getAttribute("data-is-group-collapsed");
         if (isCollapsed === "true") {
           groupItems.style.display = "block";
-		  group.setAttribute("data-is-group-collapsed", "false");
+          group.setAttribute("data-is-group-collapsed", "false");
         } else {
           groupItems.style.display = "none";
-		  group.setAttribute("data-is-group-collapsed", "true");
+          group.setAttribute("data-is-group-collapsed", "true");
         }
       });
     }
@@ -55,7 +54,7 @@ const sidebarLoaded = () => {
     mutations.forEach((mutation) => {
       if (mutation.target.getAttribute("data-is-collapsed") === "false") {
         addMoveButtonsToSidebar();
-		addGroupHideFunctionality();
+        addGroupHideFunctionality();
       }
     });
   });
