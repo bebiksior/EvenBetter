@@ -54,6 +54,7 @@ const addGroupHideFunctionality = () => {
           groupItems.style.display = "none";
           group.setAttribute("data-is-group-collapsed", "true");
         }
+        storeSidebarGroupCollapsedStates();
       });
     }
   });
@@ -73,20 +74,69 @@ const attachMoveButtonsToGroup = (element, groupName) => {
 	`;
 };
 
-function moveGroup(group, direction) {
-  const parent = group.parentElement;
-  const siblings = Array.from(parent.children);
-  const index = siblings.indexOf(group);
+const moveGroup = (group, direction) => {
+  const index = Array.from(group.parentElement.children).indexOf(group);
 
   if (
     (direction === "up" && index > 0) ||
-    (direction === "down" && index < siblings.length - 1)
+    (direction === "down" && index < group.parentElement.children.length - 1)
   ) {
     const newIndex = direction === "up" ? index - 1 : index + 1;
-    const referenceNode =
-      direction === "up" ? siblings[newIndex] : siblings[newIndex + 1];
-    parent.insertBefore(group, referenceNode);
+    if (newIndex == 0) {
+      return;
+    }
+
+    const referenceNode = group.parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
+    group.parentElement.insertBefore(group, referenceNode);
+
+    storeSidebarGroupPositions();
   }
+}
+
+const storeSidebarGroupPositions = () => {
+  const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
+  sidebarGroups.forEach((group) => {
+    const groupName = group.children[0].textContent.trim();
+    const position = Array.from(group.parentElement.children).indexOf(group);
+    localStorage.setItem(`evenbetter_${groupName}_position`, position);
+  });
+}
+
+const restoreSidebarGroupPositions = () => {
+  if (!SIDEBAR_REARRANGE_GROUPS) return;
+
+  const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
+  sidebarGroups.forEach((group) => {
+    const groupName = group.children[0].textContent.trim();
+    const position = localStorage.getItem(`evenbetter_${groupName}_position`);
+    if (position) {
+      group.parentElement.insertBefore(group, group.parentElement.children[position]);
+    }
+  });
+}
+
+const storeSidebarGroupCollapsedStates = () => {
+  const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
+  sidebarGroups.forEach((group) => {
+    const groupName = group.children[0].textContent.trim();
+    const isCollapsed = group.getAttribute("data-is-group-collapsed");
+    localStorage.setItem(`evenbetter_${groupName}_isCollapsed`, isCollapsed);
+  });
+}
+
+const restoreSidebarGroupCollapsedStates = () => {
+  if (!SIDEBAR_HIDE_GROUPS) return;
+  
+  const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
+  sidebarGroups.forEach((group) => {
+    const groupName = group.children[0].textContent.trim();
+    const isCollapsed = localStorage.getItem(`evenbetter_${groupName}_isCollapsed`);
+    if (isCollapsed) {
+      group.setAttribute("data-is-group-collapsed", isCollapsed);
+      const groupItems = group.querySelector(".c-sidebar-group__items");
+      groupItems.style.display = isCollapsed === "true" ? "none" : "block";
+    }
+  });
 }
 
 const colorizeHttpHistory = () => {
@@ -194,6 +244,9 @@ const onSidebarContentLoaded = () => {
   addGroupHideFunctionality();
   detectOpenedTab();
   observeSidebarCollapse();
+
+  restoreSidebarGroupPositions();
+  restoreSidebarGroupCollapsedStates();
 
   const currentTab =
     document.querySelector(".c-content")?.children[0]?.classList[0];
