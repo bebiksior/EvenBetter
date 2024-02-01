@@ -1,4 +1,4 @@
-# EvenBetter v1.1
+# EvenBetter v1.11
 Even Better is a simple "plugin" that enhances your Caido UI experience by adding the ability to rearrange and hide groups on the sidebar. Additionally, it tweaks the UI colors to make it a bit darker ;)
 
 ## Installation
@@ -7,14 +7,10 @@ Even Better is a simple "plugin" that enhances your Caido UI experience by addin
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/style.css and paste it into the "Custom CSS"
 4. Done! 🎉
 
-## Changelog - v1.1
-- Implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
-
-![image](https://github.com/bebiksior/EvenBetter/assets/71410238/c5b0f5dc-ba08-4e68-aeff-c288ef8ddad7)
-- Resolved the Caido UI issue preventing scrolling in the Filters tab. Here's Before & After:
-
-![image](https://github.com/bebiksior/EvenBetter/assets/71410238/fd02915b-b0ff-4a4d-aad9-6403e3192560)
-![image](https://github.com/bebiksior/EvenBetter/assets/71410238/d5aed9da-2918-489f-b0e4-7a9b7f0c39f2)
+## Changelog
+- v1.11: Sidebar state is now saved in the localStorage!
+- v1.1: Implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
+- v1.1: Resolved the Caido UI issue preventing scrolling in the Filters tab.
 
 ## Dark Theme
 
@@ -25,6 +21,11 @@ Even Better is a simple "plugin" that enhances your Caido UI experience by addin
 ### After
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/405d095e-338b-4796-b722-555d8eb73e92)
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/1af01fdb-e789-49b3-b35a-96ea7d5c7585)
+
+## HTTP History rows colorized
+In v1.1 I've implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
+
+![image](https://github.com/bebiksior/EvenBetter/assets/71410238/c5b0f5dc-ba08-4e68-aeff-c288ef8ddad7)
 
 ## Sidebar Group Rearranging & Hide functionality
 
