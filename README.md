@@ -29,7 +29,10 @@ If your HTTP request includes the parameter `_color=red`, its background will no
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/c5b0f5dc-ba08-4e68-aeff-c288ef8ddad7)
 
 ## ssrf.cvssadvisor.com integration
-Type `$ssrfinstance` in Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up.
+Type `$ssrfinstance` in the Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up.
+
+## PwnFox compatibility
+EvenBetter is compatible with this modified version of PwnFox https://github.com/bebiksior/PwnFox-CaidoCompatible
 
 ## Sidebar Group Rearranging & Hide functionality
 
