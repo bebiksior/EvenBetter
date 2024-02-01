@@ -44,6 +44,7 @@ const addGroupHideFunctionality = () => {
     const groupName = title.textContent;
     if (groupName !== "...") {
       title.addEventListener("click", () => {
+        console.log("hiding")
         const group = title.parentElement;
         const groupItems = group.querySelector(".c-sidebar-group__items");
         const isCollapsed = group.getAttribute("data-is-group-collapsed");
@@ -172,16 +173,7 @@ const onTabOpened = (tabName) => {
   }
 };
 
-const onSidebarContentLoaded = () => {
-  addMoveButtonsToSidebar();
-  addGroupHideFunctionality();
-  detectOpenedTab();
-
-  const currentTab =
-    document.querySelector(".c-content").children[0].classList[0];
-
-  if (currentTab) onTabOpened(currentTab);
-
+const observeSidebarCollapse = () => {
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.target.getAttribute("data-is-collapsed") === "false") {
@@ -196,6 +188,18 @@ const onSidebarContentLoaded = () => {
     subtree: true,
   };
   observer.observe(document.querySelector(".c-sidebar__toggle"), config);
+};
+
+const onSidebarContentLoaded = () => {
+  addMoveButtonsToSidebar();
+  addGroupHideFunctionality();
+  detectOpenedTab();
+  observeSidebarCollapse();
+
+  const currentTab =
+    document.querySelector(".c-content")?.children[0]?.classList[0];
+
+  if (currentTab) onTabOpened(currentTab);
 };
 
 // Wait for sidebar to load, then run onSidebarContentLoaded
