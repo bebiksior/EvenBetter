@@ -1,4 +1,11 @@
+const COLORIZE_PARAMETER_NAME = "_color",
+  COLORIZE_HTTP_ROWS = false, // Set to false if you don't want to colorize HTTP rows
+  SIDEBAR_HIDE_GROUPS = false, // Set to false if you don't want the hide groups functionality in the sidebar
+  SIDEBAR_REARRANGE_GROUPS = false; // Set to false if you don't want the rearrange groups functionality in the sidebar
+
 const addMoveButtonsToSidebar = () => {
+  if (!SIDEBAR_REARRANGE_GROUPS) return;
+
   const sidebarGroupTitles = document.querySelectorAll(
     ".c-sidebar-group__title"
   );
@@ -28,6 +35,8 @@ const addMoveButtonsToSidebar = () => {
 };
 
 const addGroupHideFunctionality = () => {
+  if (!SIDEBAR_HIDE_GROUPS) return;
+
   const sidebarGroupTitles = document.querySelectorAll(
     ".c-sidebar-group__title"
   );
@@ -81,6 +90,8 @@ function moveGroup(group, direction) {
 }
 
 const colorizeHttpHistory = () => {
+  if (!COLORIZE_HTTP_ROWS) return;
+
   const queryCells = document.querySelectorAll(
     '.c-item-cell[data-column-id="query"]'
   );
@@ -92,7 +103,7 @@ const colorizeCell = (cell) => {
   const query = cell.textContent;
 
   const url = new URL("http://x.com?" + query);
-  const color = url.searchParams.get("_color");
+  const color = url.searchParams.get(COLORIZE_PARAMETER_NAME);
   if (color) {
     const row = cell.parentElement;
     row.style.backgroundColor = color;
@@ -135,7 +146,7 @@ const detectOpenedTab = () => {
       if (target.classList.contains("c-content")) {
         const firstChild = target.children[0];
         if (firstChild.classList.length === 1) {
-          onTabOpen(firstChild.classList[0]);
+          onTabOpened(firstChild.classList[0]);
         }
       }
     });
@@ -148,7 +159,7 @@ const detectOpenedTab = () => {
   observer.observe(requestTable, config);
 };
 
-const onTabOpen = (tabName) => {
+const onTabOpened = (tabName) => {
   switch (tabName) {
     case "c-intercept":
       setTimeout(() => {
@@ -161,7 +172,7 @@ const onTabOpen = (tabName) => {
   }
 };
 
-const onSidebarLoad = () => {
+const onSidebarContentLoaded = () => {
   addMoveButtonsToSidebar();
   addGroupHideFunctionality();
   detectOpenedTab();
@@ -169,7 +180,7 @@ const onSidebarLoad = () => {
   const currentTab =
     document.querySelector(".c-content").children[0].classList[0];
 
-  if (currentTab) onTabOpen(currentTab);
+  if (currentTab) onTabOpened(currentTab);
 
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
@@ -187,11 +198,11 @@ const onSidebarLoad = () => {
   observer.observe(document.querySelector(".c-sidebar__toggle"), config);
 };
 
-// Wait for sidebar to load, then run onSidebarLoad
+// Wait for sidebar to load, then run onSidebarContentLoaded
 const interval = setInterval(() => {
   const sidebar = document.querySelector(".c-sidebar__body");
   if (sidebar) {
     clearInterval(interval);
-    onSidebarLoad();
+    onSidebarContentLoaded();
   }
 }, 100);
