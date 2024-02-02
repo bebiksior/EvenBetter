@@ -36,6 +36,10 @@ Type `$ssrfinstance` in the Replay tab within the request body and it will autom
 ## PwnFox compatibility
 EvenBetter is compatible with this modified version of PwnFox https://github.com/bebiksior/PwnFox-CaidoCompatible
 
+## EvenBetter settings tab
+Choose your Caido theme and enable/disable EvenBetter features.
+![image](https://github.com/bebiksior/EvenBetter/assets/71410238/6cdecfcf-7b62-4b1b-a011-45f462e79f8b)
+
 ## Sidebar Group Rearranging & Hide functionality
 
 ### Sidebar Before & After
