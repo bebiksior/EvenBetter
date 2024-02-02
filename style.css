@@ -1,22 +1,42 @@
 .c-header-cell {
-  border: 1px solid #101010 !important;
+  border: (--header-cell-width) solid var(--c-header-cell-border) !important;
 }
 
-* {
+:root {
+  --c-header-cell-border: #101010 !important;
   --c-bg-default: #050607 !important;
   --c-bg-subtle: #090a0c !important;
+  --c-table-item-row: #08090a !important;
+  --c-table-item-row-hover: #0f1012 !important;
+  --c-table-even-item-row: #08090a !important;
+  --replay-text-color: #fff !important;
+  --selection-background: rgba(255, 255, 255, 0.15) !important;
+  --header-cell-width: 1px !important;
+  --selected-row-background: var(--c-bg-default) !important;
+}
+
+.cm-selectionBackground {
+  background: var(--selection-background) !important;
+}
+
+.c-item-row[data-is-selected=true] {
+  background: var(--selected-row-background) !important;
+}
+
+.ͼf {
+  color: var(--replay-text-color) !important;
 }
 
 .c-table__header-row {
-  background-color: #090a0c !important;
-}
-
-.c-table__item-row[data-is-even="false"] {
-  background-color: #08090a !important;
+  background-color: var(--c-bg-subtle) !important;
 }
 
 .c-table__item-row:hover {
-  background-color: #0f1012 !important;
+  background-color: var(--c-table-item-row-hover) !important;
+}
+
+.c-table__item-row[data-is-even="false"]:not([colorized="true"]) {
+  background-color: var(--c-table-even-item-row);
 }
 
 .c-active-rule-list__rules,
@@ -24,14 +44,30 @@
   overflow: auto !important;
 }
 
+.c-sidebar-group__move-up:hover,
+.c-sidebar-group__move-down:hover {
+  cursor: pointer;
+}
+
 .c-sidebar-group__move-up,
 .c-sidebar-group__move-down {
-  cursor: pointer;
+  opacity: 0.5;
+  z-index: 5;
+}
+
+.c-sidebar-group__rearrange-arrows {
+  display: flex;
+  align-items: center;
 }
 
 .c-sidebar-group__move-up path,
 .c-sidebar-group__move-down path {
   transition: 0.2s ease stroke;
+  stroke: var(--c-fg-subtle);
+}
+
+.c-scope__export .c-link {
+  color: #e7c712 !important;
 }
 
 .c-sidebar-group__move-up:hover path,
@@ -39,9 +75,18 @@
   stroke: #f5f5f5;
 }
 
+.c-button__paste-from-clipboard {
+  width: 7em !important;
+}
+
+.c-preset-list__well-entry-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .c-sidebar__toggle-wrapper {
-  top: -0.75rem !important;
-  right: 0.5rem !important;
+  top: -1rem !important;
+  right: 1.2rem !important;
 }
 
 .c-sidebar-group__title {
@@ -51,6 +96,95 @@
 .c-sidebar-group__title:hover {
   color: rgb(99, 99, 99);
   cursor: pointer;
+}
+
+.even-better__header-title {
+  font-size: var(--c-font-size-300);
+}
+
+.even-better__header-description {
+  color: var(--c-fg-subtle);
+}
+
+.evenbetter__updates-button {
+  background-color: var(--c-bg-default);
+  color: var(--c-fg-default);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--c-header-cell-border);
+  border-radius: 5px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: 0.2s ease background-color;
+}
+
+.evenbetter__update-status {
+  height: 15px;
+  margin-top: 1rem;
+  color: var(--c-fg-default);
+}
+
+.evenbetter__updates-button:hover {
+  background-color: var(--c-bg-subtle);
+}
+
+.even-better__container {
+  padding: 1rem;
+}
+
+.even-better__main {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+}
+
+.even-better__settings {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.even-better__general-settings {
+  background-color: var(--c-bg-default);
+  padding: 15px;
+  width: 50%;
+}
+
+.even-better__general-settings input[type="text"] {
+  background-color: var(--c-bg-subtle);
+  border: 1px solid var(--c-header-cell-border);
+  color: #fff;
+  padding: 0.5rem;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+
+.even-better__main input[type="checkbox"] {
+  accent-color: var(--c-fg-default);
+}
+
+
+.even-better__theme-select {
+  background-color: var(--c-bg-default);
+  padding: 15px;
+  width: 50%;
+}
+
+.even-better__select {
+  margin-top: 8px;
+  background-color: var(--c-bg-subtle);
+  border: 1px solid var(--c-header-cell-border);
+  color: #fff;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.even-better__label {
+  color: var(--c-fg-default);
+  font-size: var(--c-font-size-300);
+  font-weight: 600;
 }
 
 /* Fixes scrollbar issue in the Filter tab */
