@@ -66,17 +66,9 @@
   stroke: var(--c-fg-subtle);
 }
 
-.c-scope__export .c-link {
-  color: #e7c712 !important;
-}
-
 .c-sidebar-group__move-up:hover path,
 .c-sidebar-group__move-down:hover path {
   stroke: #f5f5f5;
-}
-
-.c-button__paste-from-clipboard {
-  width: 7em !important;
 }
 
 .c-preset-list__well-entry-actions {
