@@ -19,7 +19,7 @@
   background: var(--selection-background) !important;
 }
 
-.c-item-row[data-is-selected=true] {
+.c-item-row[data-is-selected="true"] {
   background: var(--selected-row-background) !important;
 }
 
@@ -98,73 +98,58 @@
   color: var(--c-fg-subtle);
 }
 
-.evenbetter__updates-button {
-  background-color: var(--c-bg-default);
-  color: var(--c-fg-default);
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--c-header-cell-border);
-  border-radius: 5px;
-  margin-top: 1rem;
-  cursor: pointer;
-  transition: 0.2s ease background-color;
+.even-better__header {
+  margin-bottom: 1rem;
 }
 
-.evenbetter__update-status {
-  height: 15px;
-  margin-top: 1rem;
-  color: var(--c-fg-default);
-}
-
-.evenbetter__updates-button:hover {
-  background-color: var(--c-bg-subtle);
-}
-
-.even-better__container {
-  padding: 1rem;
-}
-
-.even-better__main {
-  margin-top: 8px;
-  display: flex;
-  gap: 10px;
+.even-better__settings-content .activate--box {
+  gap: 0.5rem;
 }
 
 .even-better__settings {
-  margin-top: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  padding: 1rem;
 }
 
-.even-better__general-settings {
-  background-color: var(--c-bg-default);
-  padding: 15px;
-  width: 50%;
-}
-
-.even-better__general-settings input[type="text"] {
+.even-better__settings-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
   background-color: var(--c-bg-subtle);
-  border: 1px solid var(--c-header-cell-border);
-  color: #fff;
-  padding: 0.5rem;
-  width: 100%;
-  margin-bottom: 5px;
 }
 
-
-.even-better__main input[type="checkbox"] {
-  accent-color: var(--c-fg-default);
+.even-better__theme-section,
+.even-better__colorize-http,
+.even-better__sidebar-tweaks,
+.even-better__quick-ssrf {
+  padding: 1rem;
+  border-radius: 5px;
+  background-color: var(--c-bg-default);
 }
 
+.even-better__settings-content h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.even-better__settings-content h3 {
+  font-size: 0.9rem;
+  margin: 0;
+  margin-top: 0.5rem;
+}
+
+.even-better__settings-content p {
+  font-size: 0.9rem;
+
+  color: gray;
+  margin: 0;
+  margin-bottom: 0.7rem;
+}
+
+.even-better__settings-content label {
+  font-size: 0.9rem;
+}
 
 .even-better__theme-select {
-  background-color: var(--c-bg-default);
-  padding: 15px;
-  width: 50%;
-}
-
-.even-better__select {
   margin-top: 8px;
   background-color: var(--c-bg-subtle);
   border: 1px solid var(--c-header-cell-border);
@@ -173,10 +158,27 @@
   width: 100%;
 }
 
-.even-better__label {
-  color: var(--c-fg-default);
-  font-size: var(--c-font-size-300);
-  font-weight: 600;
+.even-better__settings-content input[type="text"] {
+  background-color: var(--c-bg-subtle);
+  border: 1px solid var(--c-header-cell-border);
+  color: #fff;
+  padding: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.even-better__settings-content input[type="checkbox"] {
+  accent-color: var(--c-fg-default);
+}
+
+.even-better__settings-content hr {
+  border: 1px solid var(--c-header-cell-border);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+#scope-presents-export:hover {
+  cursor: pointer;
 }
 
 /* Fixes scrollbar issue in the Filter tab */
