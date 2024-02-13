@@ -1,4 +1,4 @@
-const { getSetting } = require("../settings/settings");
+const { getSetting } = require("../../settings/settings");
 
 let lastExecutionTime = 0;
 let httpHistoryObserver;

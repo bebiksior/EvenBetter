@@ -5,9 +5,10 @@ const defaultSettings = {
   sidebarHideGroups: "true",
   sidebarRearrangeGroups: "true",
   ssrfInstanceFunctionality: "true",
+  showOutdatedVersionWarning: "true",
   evenBetterVersionCheckUrl:
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
-  currentVersion: "v1.3",
+  currentVersion: "v1.4",
 };
 
 const getSetting = (settingName) => {

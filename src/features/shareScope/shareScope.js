@@ -2,7 +2,7 @@ let scopePresentsObserver;
 
 export const onScopeTabOpened = () => {
   observeScopePresents();
-  addImportbutton();
+  addImportButton();
 };
 
 const observeScopePresents = () => {
@@ -47,7 +47,7 @@ const observeScopePresents = () => {
   console.log("Scope presents observer started");
 };
 
-const addImportbutton = () => {
+const addImportButton = () => {
   const actions = document.querySelector(".c-scope-presets__body-actions");
   if (!actions) return;
 

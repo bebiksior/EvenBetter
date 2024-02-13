@@ -1,4 +1,4 @@
-const { getSetting } = require("../settings/settings");
+const { getSetting } = require("../../settings/settings");
 
 const SSRF_INSTANCE_API_URL = "https://api.cvssadvisor.com/ssrf/api/instance",
   SSRF_INSTANCE_URL = "https://ssrf.cvssadvisor.com/instance/";
@@ -21,7 +21,8 @@ export const replaceSSRFInstanceText = (mutation, originalTextContent) => {
       );
       mutation.target.textContent = updatedText;
 
-      window.open(SSRF_INSTANCE_URL + data, "_blank");
+      // This doesn't work on MacOS :/
+      window.open(SSRF_INSTANCE_URL + data)
     })
     .catch(() => {
       const updatedText = newTextContent.replace(

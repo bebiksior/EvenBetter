@@ -1,20 +1,22 @@
-const { themes, loadTheme } = require("./themes/themes");
+const { loadTheme } = require("./themes/themes");
 const {
   addMoveButtonsToSidebar,
   restoreSidebarGroupPositions,
-} = require("./sidebar/rearrange");
+} = require("./features/sidebarTweaks/rearrange");
 const { getSetting, checkForUpdates } = require("./settings/settings");
 const {
   addGroupHideFunctionality,
   restoreSidebarGroupCollapsedStates,
-} = require("./sidebar/hide");
-const { evenBetterTab } = require("./settings/tabs/evenBetter");
-const { replaceSSRFInstanceText } = require("./ssrftool/ssrfinstance");
+} = require("./features/sidebarTweaks/hide");
+const { evenBetterTab } = require("./features/evenBetterSettingsTab/evenBetter");
+const { replaceSSRFInstanceText } = require("./features/quickSSRFInstance/ssrfInstance");
 const {
   observeHTTPRequests,
   colorizeHttpHistory,
-} = require("./colorizehttp/colorizehttp");
-const { onScopeTabOpened } = require("./scope/scope");
+} = require("./features/colorizeHTTP/colorizeHTTP");
+const { onScopeTabOpened } = require("./features/shareScope/shareScope");
+const { openModal } = require("./modal/modal");
+const { onWorkflowsTabOpened } = require("./features/shareWorkflows/shareWorkflows");
 
 // This is a hacky way to detect when a new tab is opened
 let sidebarTabObserver;
@@ -61,11 +63,11 @@ const onTabOpened = (tabName) => {
       setTimeout(() => {
         colorizeHttpHistory();
         observeHTTPRequests();
-      }, 50);
+      }, 25);
       break;
 
     case "c-replay":
-      setTimeout(() => observeReplayInput(), 50);
+      setTimeout(() => observeReplayInput(), 25);
       break;
 
     case "c-settings":
@@ -77,8 +79,14 @@ const onTabOpened = (tabName) => {
 
     case "c-scope":
       setTimeout(() => {
-        onScopeTabOpened()
+        onScopeTabOpened();
       }, 10);
+      break;
+
+    case "c-convert":
+      setTimeout(() => {
+        onWorkflowsTabOpened();
+      }, 25);
       break;
     default:
       break;
@@ -270,15 +278,16 @@ const onSidebarContentLoaded = () => {
   restoreSidebarGroupCollapsedStates();
 
   // Check for updates
-  checkForUpdates().then((message) => {
-    if (message.includes("New EvenBetter version available")) {
-      const updateStatus = document.createElement("div");
-      updateStatus.id = "evenbetter-update-status";
-      updateStatus.textContent = "[EvenBetter] Update available!";
-      updateStatus.style.color = "gray";
-      document.querySelector(".c-global-actions").prepend(updateStatus);
-    }
-  });
+  if (getSetting("showOutdatedVersionWarning") === "true") {
+    checkForUpdates().then((message) => {
+      if (message.includes("New EvenBetter version available")) {
+        openModal(
+          "Update available!",
+          "You are using an outdated version of EvenBetter. Please update to the latest version at https://github.com/bebiksior/EvenBetter. This popup can be disabled in the EvenBetter settings."
+        );
+      }
+    });
+  }
 
   // Run onTabOpened on current tab
   const currentTab =
@@ -290,7 +299,40 @@ const onSidebarContentLoaded = () => {
   if (currentTab === "c-settings") {
     fixSettingsTab();
   }
+  observePopoverPanel();
 };
+
+let popoverPanelObserver;
+const observePopoverPanel = () => {
+  const popoverPanel = document.querySelector(".c-popover__floating");
+  if (!popoverPanel) return;
+
+  if (popoverPanelObserver) {
+    popoverPanelObserver.disconnect();
+    popoverPanelObserver = null;
+  }
+
+  popoverPanelObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.addedNodes.length > 0) {
+        const addedNode = mutation.addedNodes[0];
+        if (addedNode.nodeType === 8) return;
+
+        addedNode.querySelectorAll(".c-item")[1].addEventListener("click", () => {
+          setTimeout(() => {
+            fixSettingsTab();
+          }, 10);
+        });
+      }
+    });
+  });
+
+  const config = {
+    childList: true,
+  };
+
+  popoverPanelObserver.observe(popoverPanel, config);
+}
 
 // Fix UI issue where after refresh, caido shows wrong selected settings tab
 const fixSettingsTab = () => {
