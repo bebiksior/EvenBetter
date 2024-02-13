@@ -3,14 +3,14 @@ Even Better is a simple "plugin" that enhances your Caido experience with a few 
 
 ## Installation
 1. Visit **Settings** and navigate to the **Developer** section
-2. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/bundle.js and paste it into the "Custom JS"
-3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the "Custom CSS"
+2. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/bundle.js and paste it into the `Custom JS`
+3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
 ## Changelog
-- v1.4: Added a popup if you are using outdated EvenBetter version.
-- v1.4: EvenBetter settings UI has been reworked once again.
-- v1.4: Exporting/Importing Workflows: You can now share your workflows with your team! 
+- **v1.4: Added a popup if you are using outdated EvenBetter version.**
+- **v1.4: EvenBetter settings UI has been reworked once again.**
+- **v1.4: Exporting/Importing Workflows: You can now share your workflows with your team!**
 - v1.3: Exporting/Importing Scope Presets: You can now share your scope presets with your team by exporting and importing them. Note that while this feature is in BETA, it should work well, though there might be some UI issues.
 - v1.3: Migrated to webpack. Previously, it was a single JS file with almost 1000 lines. Now, it's separated into multiple files and then bundled into one file.
 - v1.3: EvenBetter settings UI has been reworked.
@@ -24,7 +24,7 @@ Even Better is a simple "plugin" that enhances your Caido experience with a few 
 ## Known issues
 - Creating quick SSRF instance doesn't open new window with the requests history on MacOS
 
-## Dark Theme
+## Even Darker Theme
 
 ### Before
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/efd7a8b7-797b-4093-b794-acb162a72a64)
@@ -40,8 +40,12 @@ If your HTTP request includes the parameter `_color=red`, its background will no
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/c5b0f5dc-ba08-4e68-aeff-c288ef8ddad7)
 
 ## Share scope with your team
-You can now share your scope presets with your team by exporting and importing them. Note that while this feature is in BETA, it should work well, though there might be some UI issues.
+You can now share your scope presets with your team by exporting and importing them.
 
+## Share workflows with your team.
+You can now share your workflows with your team by exporting and importing them.
+
+![workflow_share](https://github.com/bebiksior/EvenBetter/assets/71410238/d4a7aa92-8f1f-43b0-a0c6-aede0670adae)
 
 ## ssrf.cvssadvisor.com integration
 Type `$ssrfinstance` in the Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up.
@@ -51,7 +55,8 @@ EvenBetter is compatible with this modified version of PwnFox https://github.com
 
 ## EvenBetter settings tab
 Choose your Caido theme and enable/disable EvenBetter features.
-![image](https://github.com/bebiksior/EvenBetter/assets/71410238/6cdecfcf-7b62-4b1b-a011-45f462e79f8b)
+
+![image](https://github.com/bebiksior/EvenBetter/assets/71410238/231d15aa-a50d-4507-b30f-c060fbb24adc)
 
 ## Sidebar Group Rearranging & Hide functionality 
 
