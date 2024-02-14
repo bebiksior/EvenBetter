@@ -36,7 +36,7 @@ const colorizeHttpHistory = () => {
   lastExecutionTime = currentTime;
 
   const queryCells = document.querySelectorAll(
-    '.c-item-cell[data-column-id="query"]'
+    '.c-item-cell[data-column-id="REQ_QUERY"]'
   );
 
   queryCells.forEach((cell) => colorizeCell(cell));
