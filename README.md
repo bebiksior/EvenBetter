@@ -1,4 +1,4 @@
-# EvenBetter v1.4
+# EvenBetter v1.41
 Even Better is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -8,6 +8,7 @@ Even Better is a simple "plugin" that enhances your Caido experience with a few 
 4. Done! 🎉
 
 ## Changelog
+- **v1.41: Fixed issue with Colorize HTTP in latest caido release.**
 - **v1.4: Added a popup if you are using outdated EvenBetter version.**
 - **v1.4: EvenBetter settings UI has been reworked once again.**
 - **v1.4: Exporting/Importing Workflows: You can now share your workflows with your team!**

@@ -8,7 +8,7 @@ const defaultSettings = {
   showOutdatedVersionWarning: "true",
   evenBetterVersionCheckUrl:
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
-  currentVersion: "v1.4",
+  currentVersion: "v1.41",
 };
 
 const getSetting = (settingName) => {
