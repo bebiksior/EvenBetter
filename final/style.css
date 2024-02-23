@@ -145,7 +145,6 @@
   border-radius: 5px;
   width: 50%;
   max-width: 500px;
-
 }
 
 .evenbetter-modal__content-header {
@@ -195,7 +194,6 @@
   max-height: 95%;
 }
 
-
 /* EvenBetter settings tab */
 .even-better__settings .header-description {
   color: var(--c-fg-subtle);
@@ -208,7 +206,7 @@
 
 .even-better__settings {
   padding: 1rem;
-  height: 100%
+  height: 100%;
 }
 
 .even-better__settings button {
@@ -521,4 +519,58 @@
 
 .c-workflow-table-item__actions .formkit-input.c-button__input {
   padding: 0 !important;
+}
+
+#scope-presents-import button,
+#workflow-import button {
+  border: 2px solid #646464;
+  background-color: #252525;
+  border-radius: 5px;
+}
+
+#scope-presents-import .c-button__label,
+#workflow-import .c-button__label {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#scope-presents-import .c-button__label p,
+#workflow-import .c-button__label p {
+  margin: 0 !important;
+}
+
+.evenbetter__c-menu {
+  background-color: var(--c-bg-default);
+  box-shadow: var(--c-box-shadow-large);
+  padding: var(--c-space-3) 0;
+  border-radius: var(--c-border-radius-2);
+  border: var(--c-border-width-1) solid var(--c-border-default);
+  min-width: 10em;
+}
+
+.evenbetter__c-item__menu {
+  position: var(--16ce9623);
+  top: var(--5281e0a5);
+  left: var(--04932a92);
+}
+
+.evenbetter__c-item:hover {
+  background-color: var(--c-bg-subtle);
+}
+
+.evenbetter__c-item {
+  display: flex;
+  color: var(--c-fg-default);
+  padding: var(--c-space-1) var(--c-space-2);
+  border-radius: var(--c-border-radius-1);
+  margin: 0 var(--c-space-2);
+  cursor: pointer;
+}
+
+.evenbetter__c-item__content {
+  white-space: nowrap;
+  flex: 1;
+  display: flex;
+  align-items: center;
 }

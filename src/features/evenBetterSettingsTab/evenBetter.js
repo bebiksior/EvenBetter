@@ -2,6 +2,7 @@ const {
   getSetting,
   setSetting,
   defaultSettings,
+  checkForUpdates,
 } = require("../../settings/settings");
 const { themes, loadTheme } = require("../../themes/themes");
 
@@ -14,7 +15,7 @@ export const evenBetterTab = () => {
     <header>
       <div class="header-title">
         <h1>EvenBetter ${defaultSettings.currentVersion} - Settings</h1>
-        <div class="header-outdated">You are using outdated version!</div>
+        <div class="header-outdated" style="display:none;">You are using outdated version!</div>
       </div>
       <div class="header-description">
         Customize EvenBetter plugin here and make your Caido even better :D
@@ -26,7 +27,7 @@ export const evenBetterTab = () => {
         <div class="settings-box">
           <!-- Settings header -->
           <div class="settings-box__header">
-            <div class="settings-box__header-title">Custom Themes</div>
+            <div class="settings-box__header-title">Themes</div>
             <div class="settings-box__header-description">
               Change the appearance of your Caido
             </div>
@@ -46,38 +47,6 @@ export const evenBetterTab = () => {
             </select>
           </div>
         </div>
-
-        ${
-          getSetting("colorizeHttpRows") == "true"
-            ? `
-        <div class="settings-box colorizeHttpRows">
-          <!-- Settings header -->
-          <div class="settings-box__header">
-            <div class="settings-box__header-title">Colorize HTTP rows parameter</div>
-            <div class="settings-box__header-description">
-              Set the parameter that will be used to colorize HTTP rows
-            </div>
-          </div>
-
-          <!-- Settings content -->
-          <div class="settings-box__content">
-            <div class="c-text-input">
-              <div class="c-text-input__outer">
-                <div class="c-text-input__inner">
-                  <input
-                    placeholder="_color"
-                    spellcheck="false"
-                    class="c-text-input__input"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button disabled>Save</button>
-          </div>
-        </div>`
-            : ""
-        }
 
         ${
           getSetting("ssrfInstanceFunctionality") == "true"
@@ -158,25 +127,6 @@ export const evenBetterTab = () => {
 
             <div class="toggle-features__content-item">
               <div class="toggle-features__content-item-title">
-                Colorize HTTP
-              </div>
-
-              <div class="toggle-features__content-item-toggle">
-                <div class="toggle-features__content-item-description">
-                  Colorize rows in HTTP history that have coloring parameter.
-                </div>
-                <div>
-                  <input type="checkbox" name="colorizeHttpRows" id="colorizehttp" ${
-                    getSetting("colorizeHttpRows") === "true" ? "checked" : ""
-                  } />
-                </div>
-              </div>
-            </div>
-
-            <hr />
-
-            <div class="toggle-features__content-item">
-              <div class="toggle-features__content-item-title">
                 Quick SSRF Instance
               </div>
 
@@ -187,6 +137,27 @@ export const evenBetterTab = () => {
                 <div>
                   <input type="checkbox" name="ssrfInstanceFunctionality" id="ssrfinstance" ${
                     getSetting("ssrfInstanceFunctionality") === "true"
+                      ? "checked"
+                      : ""
+                  } />
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="toggle-features__content-item">
+              <div class="toggle-features__content-item-title">
+                Highlight Rows
+              </div>
+
+              <div class="toggle-features__content-item-toggle">
+                <div class="toggle-features__content-item-description">
+                  Right click to highlight rows on the HTTP History page.
+                </div>
+                <div>
+                  <input type="checkbox" name="highlightRowsFunctionality" id="highlightrows" ${
+                    getSetting("highlightRowsFunctionality") === "true"
                       ? "checked"
                       : ""
                   } />
@@ -276,33 +247,6 @@ export const evenBetterTab = () => {
     location.reload();
   });
 
-  // Colorize HTTP rows
-  const colorizeHttpRows = evenBetterTab.querySelector(".colorizeHttpRows");
-  if (colorizeHttpRows) {
-    const colorizeHttpRowsChanges = [];
-    colorizeHttpRows.querySelector("input").value = getSetting(
-      "colorizeParameterName"
-    );
-
-    colorizeHttpRows
-      .querySelector("input")
-      .addEventListener("input", (event) => {
-        const value = event.target.value;
-        colorizeHttpRowsChanges.push({ name: "colorizeParameterName", value });
-
-        const saveButton = colorizeHttpRows.querySelector("button");
-        saveButton.removeAttribute("disabled");
-      });
-
-    colorizeHttpRows.querySelector("button").addEventListener("click", () => {
-      colorizeHttpRowsChanges.forEach((change) => {
-        setSetting(change.name, change.value);
-
-        location.reload();
-      });
-    });
-  }
-
   // Quick SSRF Instance
   const ssrfInstanceFunctionality = evenBetterTab.querySelector(
     ".ssrfInstanceFunctionality"
@@ -336,6 +280,13 @@ export const evenBetterTab = () => {
         });
       });
   }
+
+  // check updates
+  checkForUpdates().then((data) => {
+    if (data.includes("New EvenBetter version available")) {
+      evenBetterTab.querySelector(".header-outdated").style.display = "block";
+    }
+  });
 
   return evenBetterTab;
 };

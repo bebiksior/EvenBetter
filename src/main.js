@@ -8,15 +8,24 @@ const {
   addGroupHideFunctionality,
   restoreSidebarGroupCollapsedStates,
 } = require("./features/sidebarTweaks/hide");
-const { evenBetterTab } = require("./features/evenBetterSettingsTab/evenBetter");
-const { replaceSSRFInstanceText } = require("./features/quickSSRFInstance/ssrfInstance");
+const {
+  evenBetterTab,
+} = require("./features/evenBetterSettingsTab/evenBetter");
+const {
+  replaceSSRFInstanceText,
+} = require("./features/quickSSRFInstance/ssrfInstance");
 const {
   observeHTTPRequests,
   colorizeHttpHistory,
 } = require("./features/colorizeHTTP/colorizeHTTP");
 const { onScopeTabOpened } = require("./features/shareScope/shareScope");
 const { openModal } = require("./modal/modal");
-const { onWorkflowsTabOpened } = require("./features/shareWorkflows/shareWorkflows");
+const {
+  onWorkflowsTabOpened,
+} = require("./features/shareWorkflows/shareWorkflows");
+const {
+  listenForRightClick,
+} = require("./features/colorizeHTTP/colorizeHTTPManual");
 
 // This is a hacky way to detect when a new tab is opened
 let sidebarTabObserver;
@@ -60,10 +69,13 @@ const onTabOpened = (tabName) => {
 
   switch (tabName) {
     case "c-intercept":
-      setTimeout(() => {
-        colorizeHttpHistory();
-        observeHTTPRequests();
-      }, 25);
+      if (getSetting("highlightRowsFunctionality") === "true") {
+        setTimeout(() => {
+          colorizeHttpHistory();
+          observeHTTPRequests();
+          listenForRightClick();
+        }, 200);
+      }
       break;
 
     case "c-replay":
@@ -293,7 +305,7 @@ const onSidebarContentLoaded = () => {
   const currentTab =
     document.querySelector(".c-content")?.children[0]?.classList[0];
 
-  if (currentTab) onTabOpened(currentTab);
+  if (currentTab) setTimeout(() => onTabOpened(currentTab), 100);
 
   // Fix UI issues in settings tab
   if (currentTab === "c-settings") {
@@ -304,7 +316,8 @@ const onSidebarContentLoaded = () => {
 
 let popoverPanelObserver;
 const observePopoverPanel = () => {
-  const popoverPanel = document.querySelector(".c-popover__floating");
+  const popovers = document.querySelectorAll(".c-popover__floating")
+  const popoverPanel = popovers[popovers.length-1]
   if (!popoverPanel) return;
 
   if (popoverPanelObserver) {
@@ -317,12 +330,16 @@ const observePopoverPanel = () => {
       if (mutation.addedNodes.length > 0) {
         const addedNode = mutation.addedNodes[0];
         if (addedNode.nodeType === 8) return;
+        console.log("Popover panel added");
 
-        addedNode.querySelectorAll(".c-item")[1].addEventListener("click", () => {
-          setTimeout(() => {
-            fixSettingsTab();
-          }, 10);
-        });
+        addedNode
+          .querySelectorAll(".c-item")[1]
+          .addEventListener("click", () => {
+            setTimeout(() => {
+              console.log("Settings tab clicked");
+              fixSettingsTab();
+            }, 10);
+          });
       }
     });
   });
@@ -332,7 +349,7 @@ const observePopoverPanel = () => {
   };
 
   popoverPanelObserver.observe(popoverPanel, config);
-}
+};
 
 // Fix UI issue where after refresh, caido shows wrong selected settings tab
 const fixSettingsTab = () => {

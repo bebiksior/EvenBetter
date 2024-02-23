@@ -1,4 +1,5 @@
 const { getSetting } = require("../../settings/settings");
+const { modifyItemRow, isHighlighted, getRowIDColor } = require("./colorizeHTTPManual");
 
 let lastExecutionTime = 0;
 let httpHistoryObserver;
@@ -11,13 +12,40 @@ const observeHTTPRequests = () => {
     httpHistoryObserver = null;
   }
 
-  httpHistoryObserver = new MutationObserver(() => {
+  httpHistoryObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === "highlighted") {
+        const cell = mutation.target;
+        colorizeCell(cell);
+        return;
+      }
+
+      if (mutation.addedNodes.length === 0) return;
+
+      const addedNode = mutation.addedNodes[0];
+      if (addedNode.classList?.contains("c-table__item-row")) {
+        if (addedNode.textContent.trim() == "Loading...") {
+          setTimeout(() => {
+            if (addedNode == null || addedNode.textContent.trim() == "Loading...") {
+              return;
+            }
+
+            modifyItemRow(addedNode);
+          }, 500);
+          return;
+        }
+
+        modifyItemRow(addedNode);
+      }
+    });
+
     colorizeHttpHistory();
   });
 
   const config = {
     childList: true,
     characterData: true,
+    attributes: true,
     subtree: true,
   };
 
@@ -25,8 +53,6 @@ const observeHTTPRequests = () => {
 };
 
 const colorizeHttpHistory = () => {
-  if (getSetting('colorizeHttpRows') !== "true") return;
-
   const currentTime = Date.now();
 
   if (currentTime - lastExecutionTime < 50) {
@@ -43,15 +69,16 @@ const colorizeHttpHistory = () => {
 };
 
 const colorizeCell = (cell) => {
-  const query = cell.textContent;
+  const row = cell.parentElement;
 
-  const url = new URL("http://x.com?" + query);
-  const color = url.searchParams.get(getSetting("colorizeParameterName"));
-  const row = cell.parentElement.parentElement;
-  if (color) {
-    row.style.backgroundColor = color;
+  const rowID = row.querySelector(
+    ".c-item-cell[data-column-id='ID']"
+  ).textContent;
+
+  if (isHighlighted(rowID)) {
+    row.style.backgroundColor = getRowIDColor(rowID);
     row.setAttribute("colorized", "true");
-  } else {
+  }else {
     row.style.backgroundColor = "";
     row.setAttribute("colorized", "false");
   }

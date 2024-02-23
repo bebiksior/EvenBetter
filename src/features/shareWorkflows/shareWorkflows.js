@@ -1,42 +1,47 @@
 export const onWorkflowsTabOpened = () => {
-  addExportActionButtons();
   addImportButton();
+  //addExportActionButtons();
 };
 
 const addImportButton = () => {
-  const header = document.querySelector(".c-table-header__new");
-  if (!header) return;
+  const tableHeaders = document.querySelectorAll(".c-table-header__new");
+  if (!tableHeaders) return;
 
-  const importButton = header.querySelector(".c-button").cloneNode(true);
-  importButton.querySelector(".c-button__label").innerText = "Import";
-  importButton.id = "workflow-import";
+  tableHeaders.forEach((header) => {
+    const importButton = header
+      .querySelector(".c-button")
+      .cloneNode(true);
+    importButton.querySelector(".c-button__label").innerHTML = `
+    <div class="c-button__leading-icon"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 13V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V13" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M12 3L12 15M12 15L8.5 11.5M12 15L15.5 11.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div><p style="
+        margin: 0;
+    ">Import</p></div>`;
+    importButton.id = "workflow-import";
 
-  importButton.addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.style.display = "none";
-    input.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = JSON.parse(e.target.result);
-        createWorkflow(data.data.workflow.definition)
+    importButton.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.style.display = "none";
+      input.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const data = JSON.parse(e.target.result);
+          createWorkflow(data.data.workflow.definition);
+        };
+        reader.readAsText(file);
+      });
 
-        // we need to re-add the buttons after the new workflow is created
-        setTimeout(() => {
-          addExportActionButtons();
-        }, 10);
-      };
-      reader.readAsText(file);
+      document.body.prepend(input);
+      input.click();
+      input.remove();
     });
 
-    document.body.prepend(input);
-    input.click();
-    input.remove();
+    header.appendChild(importButton);
   });
-
-  header.appendChild(importButton);
 };
 
 const addExportActionButtons = () => {
@@ -106,7 +111,7 @@ const createWorkflow = (data) => {
     variables: {
       input: {
         definition: {
-          ...data
+          ...data,
         },
       },
     },
@@ -116,8 +121,9 @@ const createWorkflow = (data) => {
     body: JSON.stringify(payload),
     method: "POST",
     headers: {
-      "Authorization": "Bearer " + JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken,
+      Authorization:
+        "Bearer " +
+        JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken,
     },
   });
 };
-

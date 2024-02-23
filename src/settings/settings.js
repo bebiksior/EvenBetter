@@ -1,14 +1,13 @@
 const defaultSettings = {
-  colorizeParameterName: "_color",
   ssrfInstancePlaceholder: "$ssrfinstance",
-  colorizeHttpRows: "true",
   sidebarHideGroups: "true",
   sidebarRearrangeGroups: "true",
   ssrfInstanceFunctionality: "true",
   showOutdatedVersionWarning: "true",
+  highlightRowsFunctionality: "true",
   evenBetterVersionCheckUrl:
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
-  currentVersion: "v1.41",
+  currentVersion: "v1.5",
 };
 
 const getSetting = (settingName) => {
