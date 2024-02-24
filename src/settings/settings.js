@@ -7,7 +7,7 @@ const defaultSettings = {
   highlightRowsFunctionality: "true",
   evenBetterVersionCheckUrl:
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
-  currentVersion: "v1.5",
+  currentVersion: "v1.51",
 };
 
 const getSetting = (settingName) => {
