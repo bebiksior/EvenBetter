@@ -24,7 +24,12 @@ const setSetting = (settingName, value) => {
 
 const checkForUpdates = async () => {
   try {
-    const response = await fetch(defaultSettings.evenBetterVersionCheckUrl);
+    const response = await fetch(defaultSettings.evenBetterVersionCheckUrl, {
+      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
     const latestVersion = await response.text();
 
     if (latestVersion.trim() === defaultSettings.currentVersion) {
