@@ -1,4 +1,4 @@
-export const onWorkflowsTabOpened = () => {
+export const onWorkflowsTabOpen = () => {
   addImportButton();
   //addExportActionButtons();
 };

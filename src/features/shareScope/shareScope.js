@@ -1,6 +1,6 @@
 let scopePresentsObserver;
 
-export const onScopeTabOpened = () => {
+export const onScopeTabOpen = () => {
   observeScopePresents();
   addImportButton();
 };
