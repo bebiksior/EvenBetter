@@ -93,7 +93,7 @@ export const getWorkflowByID = async (id) => {
     },
   };
 
-  return fetch("http://127.0.0.1:8080/graphql", {
+  return fetch(document.location.origin + "/graphql", {
     body: JSON.stringify(payload),
     method: "POST",
     headers: {
@@ -117,7 +117,7 @@ const createWorkflow = (data) => {
     },
   };
 
-  fetch("http://127.0.0.1:8080/graphql", {
+  fetch(document.location.origin + "/graphql", {
     body: JSON.stringify(payload),
     method: "POST",
     headers: {

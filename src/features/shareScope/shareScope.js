@@ -161,7 +161,7 @@ const createNewScopePreset = (data) => {
     },
   };
 
-  fetch("http://127.0.0.1:8080/graphql", {
+  fetch(document.location.origin + "/graphql", {
     body: JSON.stringify(payload),
     method: "POST",
     headers: {

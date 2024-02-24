@@ -1,4 +1,4 @@
-# EvenBetter v1.5
+# EvenBetter v1.51
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -8,6 +8,7 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 4. Done! 🎉
 
 ## Changelog
+- **v.1.51**: Fixed issue with importing workflows.
 - **v1.5**: You can now highlight any row on HTTP History page! Simply right-click on any request and select `Highlight row` :D
 - **v1.5**: Fixed some EvenBetter-specific bugs and improved overall stability.
 - **v1.5**: Fixed the Import button on the Workflows page. Exporting is temporarily disabled due to limitations in the new Caido release, their team is working on a fix.
