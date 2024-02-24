@@ -26,9 +26,6 @@ const checkForUpdates = async () => {
   try {
     const response = await fetch(defaultSettings.evenBetterVersionCheckUrl, {
       cache: "no-store",
-      headers: {
-        "Cache-Control": "no-cache",
-      },
     });
     const latestVersion = await response.text();
 
