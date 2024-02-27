@@ -1,31 +1,24 @@
-const { loadTheme } = require("./themes/themes");
+const { loadTheme } = require("./themes");
 const {
   addMoveButtonsToSidebar,
   restoreSidebarGroupPositions,
 } = require("./features/sidebarTweaks/rearrange");
-const { getSetting, checkForUpdates } = require("./settings/settings");
+const { getSetting, checkForUpdates } = require("./settings");
 const {
   addGroupHideFunctionality,
   restoreSidebarGroupCollapsedStates,
 } = require("./features/sidebarTweaks/hide");
-const {
-  evenBetterTab,
-} = require("./features/evenBetterSettingsTab/evenBetter");
-const {
-  replaceSSRFInstanceText,
-} = require("./features/quickSSRFInstance/ssrfInstance");
+const { evenBetterTab } = require("./features/customSettingsTab/evenBetterSettings");
+const { replaceSSRFInstanceText } = require("./features/quickSSRFInstance");
 const {
   observeHTTPRequests,
   colorizeHttpHistory,
-} = require("./features/colorizeHTTP/colorizeHTTP");
-const { onScopeTabOpen } = require("./features/shareScope/shareScope");
-const { openModal } = require("./modal/modal");
-const {
-  onWorkflowsTabOpen,
-} = require("./features/shareWorkflows/shareWorkflows");
-const {
-  listenForRightClick,
-} = require("./features/colorizeHTTP/colorizeHTTPManual");
+} = require("./features/colorizeHTTP");
+const { onScopeTabOpen } = require("./features/shareScope");
+const { openModal } = require("./modal");
+const { onWorkflowsTabOpen } = require("./features/shareWorkflows");
+const { listenForRightClick } = require("./features/colorizeHTTP/manual");
+const { debug, info } = require("./logging");
 
 const detectOpenedTab = () => {
   navigation.addEventListener("navigate", (event) => {
@@ -37,7 +30,7 @@ const detectOpenedTab = () => {
 };
 
 const onTabOpen = (path) => {
-  console.log("Tab opened:", path);
+  debug("Tab opened:", path);
 
   switch (true) {
     case path.startsWith("#/settings/"):
@@ -46,7 +39,7 @@ const onTabOpen = (path) => {
         onSettingsTabOpen(tabOpened);
 
         newSettingsTab("EvenBetter");
-      }, 10);
+      }, 10); 
       break;
 
     case path === "#/intercept" &&
@@ -59,7 +52,9 @@ const onTabOpen = (path) => {
       break;
 
     case path === "#/replay":
-      setTimeout(() => observeReplayInput(), 25);
+      setTimeout(() => {
+        observeReplayInput();
+      }, 25);
       break;
 
     case path === "#/scope":
@@ -85,7 +80,7 @@ const getSettingsTabElement = (tabName) => {
 };
 
 const onSettingsTabOpen = (tabName) => {
-  console.log("Settings tab opened: ", tabName);
+  debug("Settings tab opened: ", tabName);
 
   const settingsTab = getSettingsTabElement(tabName);
   setTabActive(settingsTab);
@@ -244,6 +239,8 @@ const onSidebarCollapsed = (isCollapsed) => {
 
 // This function is called when Caido is fully loaded
 const onSidebarContentLoaded = () => {
+  info(`EvenBetter v${getSetting("currentVersion")} is loading, thanks for using it! 🎉`);
+
   cleanUp();
   loadTheme(getSetting("theme"));
 
@@ -261,8 +258,8 @@ const onSidebarContentLoaded = () => {
 
   // Check for updates
   if (getSetting("showOutdatedVersionWarning") === "true") {
-    checkForUpdates().then((message) => {
-      if (message.includes("New EvenBetter version available")) {
+    checkForUpdates().then(({ isLatest, message }) => {
+      if (!isLatest) {
         openModal(
           "Update available!",
           "You are using an outdated version of EvenBetter. Please update to the latest version at https://github.com/bebiksior/EvenBetter. This popup can be disabled in the EvenBetter settings."
@@ -288,7 +285,7 @@ const cleanUp = () => {
   const updateStatus = document.querySelector("#evenbetter-update-status");
   if (updateStatus) {
     updateStatus.remove();
-    console.log("Update status removed");
+    debug("Update status removed");
   }
 
   const settingsContent = document.querySelector(
@@ -296,12 +293,12 @@ const cleanUp = () => {
   );
   if (settingsContent) {
     settingsContent.remove();
-    console.log("Settings content removed");
+    debug("Settings content removed");
   }
 
   const settingsTab = document.querySelector("#evenbetter-settings-tab");
   if (settingsTab) {
     settingsTab.remove();
-    console.log("Settings tab removed");
+    debug("Settings tab removed");
   }
 };

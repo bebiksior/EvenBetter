@@ -19,14 +19,14 @@ const observeScopePresents = () => {
       if (mutation.attributeName === "data-is-active") {
         const isActive = mutation.target.getAttribute("data-is-active");
         if (isActive === "true") {
-          setTimeout(() => onScopePresentsTabOpened(), 50);
+          setTimeout(() => onScopePresentsTabOpen(), 50);
         }
       }
 
       if (mutation.addedNodes.length > 0) {
         const addedNode = mutation.addedNodes[0];
         if (addedNode.classList.contains("c-preset-list__well-body")) {
-          onScopePresentsTabOpened();
+          onScopePresentsTabOpen();
         }
       }
     });
@@ -35,7 +35,7 @@ const observeScopePresents = () => {
   if (
     document.querySelector(".c-preset-body__scope-form-value-input") !== null
   ) {
-    onScopePresentsTabOpened();
+    onScopePresentsTabOpen();
   }
 
   scopePresentsObserver.observe(entries, {
@@ -43,8 +43,6 @@ const observeScopePresents = () => {
     childList: true,
     subtree: true,
   });
-
-  console.log("Scope presents observer started");
 };
 
 const addImportButton = () => {
@@ -84,7 +82,7 @@ const addImportButton = () => {
   actions.appendChild(importButton);
 };
 
-const onScopePresentsTabOpened = () => {
+const onScopePresentsTabOpen = () => {
   const header = document.querySelector(".c-header__read-only");
   if (!header) return;
 

@@ -1,4 +1,4 @@
-const { getSetting } = require("../../settings/settings");
+const { getSetting } = require("../../settings");
 
 const SSRF_INSTANCE_API_URL = "https://api.cvssadvisor.com/ssrf/api/instance",
   SSRF_INSTANCE_URL = "https://ssrf.cvssadvisor.com/instance/";

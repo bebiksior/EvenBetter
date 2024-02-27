@@ -1,4 +1,4 @@
-const { getSetting } = require("../../settings/settings");
+const { getSetting } = require("../../settings");
 
 const addMoveButtonsToSidebar = () => {
   if (getSetting('sidebarRearrangeGroups') !== "true") return;

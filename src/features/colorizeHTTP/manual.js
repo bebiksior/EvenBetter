@@ -1,5 +1,5 @@
 const listenForRightClick = () => {
-  let items = document.querySelectorAll(".c-table__item-row");
+  const items = document.querySelectorAll(".c-table__item-row");
 
   items.forEach(modifyItemRow);
 };
