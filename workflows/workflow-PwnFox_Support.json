@@ -1,966 +1,959 @@
 {
-  "data": {
-    "workflow": {
-      "__typename": "Workflow",
-	  "definition": {
-		"description": ":D ",
-		"edition": 2,
-		"graph": {
-		  "edges": [
+	"description": ":D ",
+	"edition": 2,
+	"graph": {
+	  "edges": [
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 0
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 2
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 2
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 3
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 3
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 4
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 4
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 5
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 5
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 6
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 7
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 8
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 8
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 9
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 6
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 7
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 9
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 10
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 10
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 11
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 15
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 13
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 13
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 14
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 10
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 18
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 11
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 15
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 15
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 20
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 13
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 21
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 14
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 22
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 16
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 23
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 14
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 16
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 16
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 17
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 11
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 19
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 17
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 24
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 18
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 19
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 20
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 21
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 22
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 23
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 24
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "exec",
+			"node_id": 25
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 17
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 26
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "false",
+			"node_id": 26
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 1
+		  }
+		},
+		{
+		  "source": {
+			"exec_alias": "true",
+			"node_id": 26
+		  },
+		  "target": {
+			"exec_alias": "exec",
+			"node_id": 25
+		  }
+		}
+	  ],
+	  "nodes": [
+		{
+		  "alias": "on_intercept_request",
+		  "definition_id": "caido/on-intercept-request",
+		  "display": {
+			"x": -20,
+			"y": -100
+		  },
+		  "id": 0,
+		  "inputs": [],
+		  "name": "On intercept request",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "passive_end",
+		  "definition_id": "caido/passive-end",
+		  "display": {
+			"x": -30,
+			"y": 1830
+		  },
+		  "id": 1,
+		  "inputs": [],
+		  "name": "Passive End",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_blue",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 20
+		  },
+		  "id": 2,
+		  "inputs": [
 			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 0
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 2
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: blue\"",
+				"kind": "string"
 			  }
 			},
 			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 2
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 3
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 3
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 4
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 4
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 5
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 5
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 6
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 7
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 8
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 8
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 9
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 6
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 7
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 9
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 10
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 10
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 11
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 15
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 13
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 13
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 14
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 10
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 18
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 11
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 15
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 15
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 20
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 13
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 21
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 14
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 22
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 16
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 23
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 14
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 16
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 16
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 17
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 11
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 19
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 17
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 24
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 18
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 19
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 20
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 21
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 22
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 23
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 24
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "exec",
-				"node_id": 25
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 17
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 26
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "false",
-				"node_id": 26
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 1
-			  }
-			},
-			{
-			  "source": {
-				"exec_alias": "true",
-				"node_id": 26
-			  },
-			  "target": {
-				"exec_alias": "exec",
-				"node_id": 25
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
 			  }
 			}
 		  ],
-		  "nodes": [
-			{
-			  "alias": "on_intercept_request",
-			  "definition_id": "caido/on-intercept-request",
-			  "display": {
-				"x": -20,
-				"y": -100
-			  },
-			  "id": 0,
-			  "inputs": [],
-			  "name": "On intercept request",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "passive_end",
-			  "definition_id": "caido/passive-end",
-			  "display": {
-				"x": -30,
-				"y": 1830
-			  },
-			  "id": 1,
-			  "inputs": [],
-			  "name": "Passive End",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_blue",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 20
-			  },
-			  "id": 2,
-			  "inputs": [
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: blue\"",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: blue",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_cyan",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 120
-			  },
-			  "id": 3,
-			  "inputs": [
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				},
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: cyan\"",
-					"kind": "string"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: cyan",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_green",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 220
-			  },
-			  "id": 4,
-			  "inputs": [
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: green\"",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: green",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_yellow",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 320
-			  },
-			  "id": 5,
-			  "inputs": [
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: yellow\"",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: yellow",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_orange",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 420
-			  },
-			  "id": 6,
-			  "inputs": [
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: orange\"",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: orange",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_red",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 520
-			  },
-			  "id": 7,
-			  "inputs": [
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: red\"",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: red",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_pink",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 620
-			  },
-			  "id": 8,
-			  "inputs": [
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: pink\"",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: pink",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "pwnfox_magenta",
-			  "definition_id": "caido/httpql-matches",
-			  "display": {
-				"x": -20,
-				"y": 720
-			  },
-			  "id": 9,
-			  "inputs": [
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				},
-				{
-				  "alias": "query",
-				  "value": {
-					"data": "req.raw.cont:\"X-PwnFox-Color: magenta\"",
-					"kind": "string"
-				  }
-				}
-			  ],
-			  "name": "PwnFox: magenta",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": -20,
-				"y": 830
-			  },
-			  "id": 10,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_blue.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is blue?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_1",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 120,
-				"y": 920
-			  },
-			  "id": 11,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_cyan.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is cyan?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_2",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 400,
-				"y": 1080
-			  },
-			  "id": 13,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_yellow.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is yellow?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_3",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 540,
-				"y": 1170
-			  },
-			  "id": 14,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_orange.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is orange?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_4",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 260,
-				"y": 1000
-			  },
-			  "id": 15,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_green.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is green?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_5",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 680,
-				"y": 1260
-			  },
-			  "id": 16,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_red.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is red?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_6",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 820,
-				"y": 1340
-			  },
-			  "id": 17,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_pink.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is pink?",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": -30,
-				"y": 1060
-			  },
-			  "id": 18,
-			  "inputs": [
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "blue",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "Set Color",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_1",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 110,
-				"y": 1120
-			  },
-			  "id": 19,
-			  "inputs": [
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				},
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "#159f64",
-					"kind": "string"
-				  }
-				}
-			  ],
-			  "name": "Set Color 1",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_2",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 250,
-				"y": 1180
-			  },
-			  "id": 20,
-			  "inputs": [
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				},
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "green",
-					"kind": "string"
-				  }
-				}
-			  ],
-			  "name": "Set Color 2",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_3",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 390,
-				"y": 1250
-			  },
-			  "id": 21,
-			  "inputs": [
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				},
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "#9c9d0d",
-					"kind": "string"
-				  }
-				}
-			  ],
-			  "name": "Set Color 3",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_4",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 530,
-				"y": 1330
-			  },
-			  "id": 22,
-			  "inputs": [
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "orange",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "Set Color 4",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_5",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 670,
-				"y": 1390
-			  },
-			  "id": 23,
-			  "inputs": [
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "red",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "Set Color 5",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_6",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 810,
-				"y": 1470
-			  },
-			  "id": 24,
-			  "inputs": [
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "pink",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "Set Color 6",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "set_color_7",
-			  "definition_id": "caido/color-set",
-			  "display": {
-				"x": 1060,
-				"y": 1510
-			  },
-			  "id": 25,
-			  "inputs": [
-				{
-				  "alias": "color",
-				  "value": {
-					"data": "purple",
-					"kind": "string"
-				  }
-				},
-				{
-				  "alias": "request",
-				  "value": {
-					"data": "$on_intercept_request.request",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "Set Color 7",
-			  "version": "0.1.0"
-			},
-			{
-			  "alias": "if_else_7",
-			  "definition_id": "caido/if-else",
-			  "display": {
-				"x": 970,
-				"y": 1430
-			  },
-			  "id": 26,
-			  "inputs": [
-				{
-				  "alias": "condition",
-				  "value": {
-					"data": "$pwnfox_magenta.matches",
-					"kind": "ref"
-				  }
-				}
-			  ],
-			  "name": "is magenta?",
-			  "version": "0.1.0"
-			}
-		  ]
+		  "name": "PwnFox: blue",
+		  "version": "0.1.0"
 		},
-		"id": "a67ef37b-306e-47fd-bdc5-8971c55def8c",
-		"kind": "passive",
-		"name": "PwnFox Support"
-	  }
-    }
+		{
+		  "alias": "pwnfox_cyan",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 120
+		  },
+		  "id": 3,
+		  "inputs": [
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			},
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: cyan\"",
+				"kind": "string"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: cyan",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_green",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 220
+		  },
+		  "id": 4,
+		  "inputs": [
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: green\"",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: green",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_yellow",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 320
+		  },
+		  "id": 5,
+		  "inputs": [
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: yellow\"",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: yellow",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_orange",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 420
+		  },
+		  "id": 6,
+		  "inputs": [
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: orange\"",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: orange",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_red",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 520
+		  },
+		  "id": 7,
+		  "inputs": [
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: red\"",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: red",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_pink",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 620
+		  },
+		  "id": 8,
+		  "inputs": [
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: pink\"",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: pink",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "pwnfox_magenta",
+		  "definition_id": "caido/httpql-matches",
+		  "display": {
+			"x": -20,
+			"y": 720
+		  },
+		  "id": 9,
+		  "inputs": [
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			},
+			{
+			  "alias": "query",
+			  "value": {
+				"data": "req.raw.cont:\"X-PwnFox-Color: magenta\"",
+				"kind": "string"
+			  }
+			}
+		  ],
+		  "name": "PwnFox: magenta",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": -20,
+			"y": 830
+		  },
+		  "id": 10,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_blue.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is blue?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_1",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 120,
+			"y": 920
+		  },
+		  "id": 11,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_cyan.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is cyan?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_2",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 400,
+			"y": 1080
+		  },
+		  "id": 13,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_yellow.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is yellow?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_3",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 540,
+			"y": 1170
+		  },
+		  "id": 14,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_orange.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is orange?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_4",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 260,
+			"y": 1000
+		  },
+		  "id": 15,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_green.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is green?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_5",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 680,
+			"y": 1260
+		  },
+		  "id": 16,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_red.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is red?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_6",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 820,
+			"y": 1340
+		  },
+		  "id": 17,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_pink.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is pink?",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": -30,
+			"y": 1060
+		  },
+		  "id": 18,
+		  "inputs": [
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "blue",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "Set Color",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_1",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 110,
+			"y": 1120
+		  },
+		  "id": 19,
+		  "inputs": [
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			},
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "#159f64",
+				"kind": "string"
+			  }
+			}
+		  ],
+		  "name": "Set Color 1",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_2",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 250,
+			"y": 1180
+		  },
+		  "id": 20,
+		  "inputs": [
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			},
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "green",
+				"kind": "string"
+			  }
+			}
+		  ],
+		  "name": "Set Color 2",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_3",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 390,
+			"y": 1250
+		  },
+		  "id": 21,
+		  "inputs": [
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			},
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "#9c9d0d",
+				"kind": "string"
+			  }
+			}
+		  ],
+		  "name": "Set Color 3",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_4",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 530,
+			"y": 1330
+		  },
+		  "id": 22,
+		  "inputs": [
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "orange",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "Set Color 4",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_5",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 670,
+			"y": 1390
+		  },
+		  "id": 23,
+		  "inputs": [
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "red",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "Set Color 5",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_6",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 810,
+			"y": 1470
+		  },
+		  "id": 24,
+		  "inputs": [
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "pink",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "Set Color 6",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "set_color_7",
+		  "definition_id": "caido/color-set",
+		  "display": {
+			"x": 1060,
+			"y": 1510
+		  },
+		  "id": 25,
+		  "inputs": [
+			{
+			  "alias": "color",
+			  "value": {
+				"data": "purple",
+				"kind": "string"
+			  }
+			},
+			{
+			  "alias": "request",
+			  "value": {
+				"data": "$on_intercept_request.request",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "Set Color 7",
+		  "version": "0.1.0"
+		},
+		{
+		  "alias": "if_else_7",
+		  "definition_id": "caido/if-else",
+		  "display": {
+			"x": 970,
+			"y": 1430
+		  },
+		  "id": 26,
+		  "inputs": [
+			{
+			  "alias": "condition",
+			  "value": {
+				"data": "$pwnfox_magenta.matches",
+				"kind": "ref"
+			  }
+			}
+		  ],
+		  "name": "is magenta?",
+		  "version": "0.1.0"
+		}
+	  ]
+	},
+	"id": "a67ef37b-306e-47fd-bdc5-8971c55def8c",
+	"kind": "passive",
+	"name": "PwnFox Support"
   }
-}
