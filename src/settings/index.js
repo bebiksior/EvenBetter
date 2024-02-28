@@ -5,9 +5,10 @@ const defaultSettings = {
   ssrfInstanceFunctionality: "true",
   showOutdatedVersionWarning: "true",
   highlightRowsFunctionality: "true",
+  debugMode: "false",
   evenBetterVersionCheckUrl:
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
-  currentVersion: "v1.51",
+  currentVersion: "v1.6",
 };
 
 const getSetting = (settingName) => {
@@ -29,13 +30,34 @@ const checkForUpdates = async () => {
     });
     const latestVersion = await response.text();
 
+    const latestVersionNumber = parseFloat(latestVersion.replace("v", "")),
+      currentVersionNumber = parseFloat(
+        defaultSettings.currentVersion.replace("v", "")
+      );
+
+    if (currentVersionNumber > latestVersionNumber) {
+      return {
+        isLatest: true,
+        message: `You are using a development version: ${defaultSettings.currentVersion}.`,
+      };
+    }
+
     if (latestVersion.trim() === defaultSettings.currentVersion) {
-      return "You are using the latest version! 🎉";
+      return {
+        isLatest: true,
+        message: "You are using the latest version! 🎉",
+      };
     } else {
-      return `New EvenBetter version available: ${latestVersion}.`;
+      return {
+        isLatest: false,
+        message: `New EvenBetter version available: ${latestVersion}.`,
+      };
     }
   } catch (error) {
-    return "Failed to check for updates";
+    return {
+      isLatest: false,
+      message: "Failed to check for updates",
+    };
   }
 };
 

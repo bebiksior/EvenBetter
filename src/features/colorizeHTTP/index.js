@@ -1,7 +1,6 @@
-const { getSetting } = require("../../settings/settings");
-const { modifyItemRow, isHighlighted, getRowIDColor } = require("./colorizeHTTPManual");
+const { getSetting } = require("../../settings");
+const { modifyItemRow, isHighlighted, getRowIDColor } = require("./manual");
 
-let lastExecutionTime = 0;
 let httpHistoryObserver;
 const observeHTTPRequests = () => {
   const requests = document.querySelector(".c-table__wrapper");
@@ -26,18 +25,24 @@ const observeHTTPRequests = () => {
       if (addedNode.classList?.contains("c-table__item-row")) {
         if (addedNode.textContent.trim() == "Loading...") {
           setTimeout(() => {
-            if (addedNode == null || addedNode.textContent.trim() == "Loading...") {
+            if (
+              addedNode == null ||
+              addedNode.textContent.trim() == "Loading..."
+            ) {
               return;
             }
 
             modifyItemRow(addedNode);
-          }, 500);
+          }, 1000);
           return;
         }
 
         modifyItemRow(addedNode);
       }
     });
+
+    if (mutations.some((mutation) => mutation.target.getAttribute("colorized")))
+      return;
 
     colorizeHttpHistory();
   });
@@ -53,14 +58,6 @@ const observeHTTPRequests = () => {
 };
 
 const colorizeHttpHistory = () => {
-  const currentTime = Date.now();
-
-  if (currentTime - lastExecutionTime < 50) {
-    return;
-  }
-
-  lastExecutionTime = currentTime;
-
   const queryCells = document.querySelectorAll(
     '.c-item-cell[data-column-id="REQ_QUERY"]'
   );
@@ -78,11 +75,10 @@ const colorizeCell = (cell) => {
   if (isHighlighted(rowID)) {
     row.style.backgroundColor = getRowIDColor(rowID);
     row.setAttribute("colorized", "true");
-  }else {
+  } else {
     row.style.backgroundColor = "";
     row.setAttribute("colorized", "false");
   }
 };
-
 
 export { observeHTTPRequests, colorizeHttpHistory };

@@ -1,7 +1,7 @@
-const { getSetting } = require("../../settings/settings");
+const { getSetting } = require("../../settings");
 
 const addMoveButtonsToSidebar = () => {
-  if (getSetting('sidebarRearrangeGroups') !== "true") return;
+  if (getSetting("sidebarRearrangeGroups") !== "true") return;
 
   const sidebarGroupTitles = document.querySelectorAll(
     ".c-sidebar-group__title"
@@ -79,7 +79,7 @@ const storeSidebarGroupPositions = () => {
 };
 
 const restoreSidebarGroupPositions = () => {
-  if (getSetting('sidebarRearrangeGroups') !== "true") return;
+  if (getSetting("sidebarRearrangeGroups") !== "true") return;
 
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
@@ -94,4 +94,8 @@ const restoreSidebarGroupPositions = () => {
   });
 };
 
-module.exports = { addMoveButtonsToSidebar, restoreSidebarGroupPositions, storeSidebarGroupPositions };
+module.exports = {
+  addMoveButtonsToSidebar,
+  restoreSidebarGroupPositions,
+  storeSidebarGroupPositions,
+};

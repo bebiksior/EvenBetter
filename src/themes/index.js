@@ -83,7 +83,7 @@ const themes = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
-  },
+  }
 };
 
 const loadTheme = (name) => {

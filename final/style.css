@@ -50,9 +50,17 @@
   z-index: 5;
 }
 
+/* Hide arrows by default */
 .c-sidebar-group__rearrange-arrows {
   display: flex;
   align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Show arrows on hover over the sidebar group title */
+.c-sidebar-group__title:hover .c-sidebar-group__rearrange-arrows {
+  opacity: 1;
 }
 
 .c-sidebar-group__move-up path,
@@ -155,7 +163,7 @@
 }
 
 .evenbetter-modal__content-header-title {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   margin: 0;
 }
 

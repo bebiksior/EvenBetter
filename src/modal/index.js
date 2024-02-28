@@ -5,18 +5,21 @@ const generateModal = (title, content) => {
   modal.innerHTML = `
     <div class="evenbetter-modal__content">
         <div class="evenbetter-modal__content-header">
-            <h2 class="evenbetter-modal__content-header-title">${title}</h2>
+            <h2 class="evenbetter-modal__content-header-title"></h2>
         </div>
         <div class="evenbetter-modal__content-body">
-            <p class="evenbetter-modal__content-body-text">${htmlEncode(
-              content
-            )}</p>
+            <p class="evenbetter-modal__content-body-text"></p>
             <button class="evenbetter-modal__content-body-close">
                 Close
             </button>
         </div>
     </div>
   `;
+
+  modal.querySelector(".evenbetter-modal__content-header-title").textContent =
+    title;
+  modal.querySelector(".evenbetter-modal__content-body-text").innerHTML =
+    content;
 
   modal
     .querySelector(".evenbetter-modal__content-body-close")
