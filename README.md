@@ -12,24 +12,6 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 - **v1.6**: Fixed Scope Share functionality; it is now compatible with the latest Caido release.
 - **v1.6**: Fixed some EvenBetter-specific bugs and refactored some parts of the EvenBetter code.
 - **v1.6**: Removed Workflows Share functionality, as it has been implemented by the Caido team in the latest release.
-- v1.51: Fixed issue with importing workflows.
-- v1.5: You can now highlight any row on HTTP History page! Simply right-click on any request and select `Highlight row` :D
-- v1.5: Fixed some EvenBetter-specific bugs and improved overall stability.
-- v1.5: Fixed the Import button on the Workflows page. Exporting is temporarily disabled due to limitations in the new Caido release, their team is working on a fix.
-- v1.5: Removed the Colorize HTTP feature, as the latest Caido release made this possible with passive workflows.
-- v1.41: Fixed issue with Colorize HTTP in latest caido release.
-- v1.4: Added a popup if you are using outdated EvenBetter version.
-- v1.4: EvenBetter settings UI has been reworked once again.
-- v1.4: Exporting/Importing Workflows: You can now share your workflows with your team!
-- v1.3: Exporting/Importing Scope Presets: You can now share your scope presets with your team by exporting and importing them. Note that while this feature is in BETA, it should work well, though there might be some UI issues.
-- v1.3: Migrated to webpack. Previously, it was a single JS file with almost 1000 lines. Now, it's separated into multiple files and then bundled into one file.
-- v1.3: EvenBetter settings UI has been reworked.
-- v1.2: Fixed some bugs
-- v1.2: Added a new tab in Settings for EvenBetter plugin customization. Choose your Caido theme and enable/disable EvenBetter features.
-- v1.12: http://ssrf.cvssadvisor.com/ integration! Type `$ssrfinstance` in Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up.
-- v1.11: Sidebar state is now saved in the localStorage!
-- v1.1: Implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
-- v1.1: Resolved the Caido UI issue preventing scrolling in the Filters tab.
 
 ## Known issues
 - Creating quick SSRF instance doesn't open new window with the requests history on MacOS
