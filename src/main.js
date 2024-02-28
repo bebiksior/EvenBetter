@@ -8,7 +8,9 @@ const {
   addGroupHideFunctionality,
   restoreSidebarGroupCollapsedStates,
 } = require("./features/sidebarTweaks/hide");
-const { evenBetterTab } = require("./features/customSettingsTab/evenBetterSettings");
+const {
+  evenBetterTab,
+} = require("./features/customSettingsTab/evenBetterSettings");
 const { replaceSSRFInstanceText } = require("./features/quickSSRFInstance");
 const {
   observeHTTPRequests,
@@ -16,7 +18,6 @@ const {
 } = require("./features/colorizeHTTP");
 const { onScopeTabOpen } = require("./features/shareScope");
 const { openModal } = require("./modal");
-const { onWorkflowsTabOpen } = require("./features/shareWorkflows");
 const { listenForRightClick } = require("./features/colorizeHTTP/manual");
 const { debug, info } = require("./logging");
 
@@ -39,7 +40,7 @@ const onTabOpen = (path) => {
         onSettingsTabOpen(tabOpened);
 
         newSettingsTab("EvenBetter");
-      }, 10); 
+      }, 10);
       break;
 
     case path === "#/intercept" &&
@@ -59,10 +60,6 @@ const onTabOpen = (path) => {
 
     case path === "#/scope":
       setTimeout(onScopeTabOpen, 10);
-      break;
-
-    case path === "#/workflows":
-      setTimeout(onWorkflowsTabOpen, 25);
       break;
 
     default:
@@ -239,7 +236,11 @@ const onSidebarCollapsed = (isCollapsed) => {
 
 // This function is called when Caido is fully loaded
 const onSidebarContentLoaded = () => {
-  info(`EvenBetter v${getSetting("currentVersion")} is loading, thanks for using it! 🎉`);
+  info(
+    `EvenBetter v${getSetting(
+      "currentVersion"
+    )} is loading, thanks for using it! 🎉`
+  );
 
   cleanUp();
   loadTheme(getSetting("theme"));

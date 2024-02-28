@@ -63,7 +63,7 @@ const handleContextMenu = (event) => {
 const getRowElementByID = (rowID) => {
   const items = document.querySelectorAll(
     `.c-item-row .c-item-cell[data-column-id='ID']`
-  )
+  );
 
   for (let i = 0; i < items.length; i++) {
     if (items[i].textContent === rowID) {
@@ -71,7 +71,6 @@ const getRowElementByID = (rowID) => {
     }
   }
 };
-
 
 const modifyContextMenu = (rowID, row) => {
   const contextMenu = document.querySelector(".c-menu");
@@ -89,7 +88,9 @@ const modifyContextMenu = (rowID, row) => {
   const clonedDivider = contextDividers[0].cloneNode(true);
   contextMenu.insertBefore(clonedDivider, contextItems[contextItems.length]);
 
-  const highlightRowMenu = contextMenu.querySelector(".fa-caret-right").parentElement.parentElement.cloneNode(true);
+  const highlightRowMenu = contextMenu
+    .querySelector(".fa-caret-right")
+    .parentElement.parentElement.cloneNode(true);
   highlightRowMenu.querySelector(".c-item__content").textContent =
     "Highlight row";
 

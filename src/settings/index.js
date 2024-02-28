@@ -5,7 +5,7 @@ const defaultSettings = {
   ssrfInstanceFunctionality: "true",
   showOutdatedVersionWarning: "true",
   highlightRowsFunctionality: "true",
-  debug: "false",
+  debugMode: "false",
   evenBetterVersionCheckUrl:
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
   currentVersion: "v1.6",

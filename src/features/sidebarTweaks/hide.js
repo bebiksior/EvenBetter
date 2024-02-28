@@ -1,7 +1,7 @@
 const { getSetting } = require("../../settings");
 
 const addGroupHideFunctionality = () => {
-  if (getSetting('sidebarHideGroups') !== "true") return;
+  if (getSetting("sidebarHideGroups") !== "true") return;
 
   const sidebarGroupTitles = document.querySelectorAll(
     ".c-sidebar-group__title"
@@ -13,13 +13,13 @@ const addGroupHideFunctionality = () => {
         const group = title.parentElement;
         const groupItems = group.querySelector(".c-sidebar-group__items");
         const isCollapsed = group.getAttribute("data-is-group-collapsed");
-        if (isCollapsed === "true") {
-          groupItems.style.display = "block";
-          group.setAttribute("data-is-group-collapsed", "false");
-        } else {
-          groupItems.style.display = "none";
-          group.setAttribute("data-is-group-collapsed", "true");
-        }
+
+        groupItems.style.display = isCollapsed === "true" ? "block" : "none";
+        group.setAttribute(
+          "data-is-group-collapsed",
+          isCollapsed === "true" ? "false" : "true"
+        );
+
         storeSidebarGroupCollapsedStates();
       });
     }
@@ -36,7 +36,7 @@ const storeSidebarGroupCollapsedStates = () => {
 };
 
 const restoreSidebarGroupCollapsedStates = () => {
-  if (getSetting('sidebarHideGroups') !== "true") return;
+  if (getSetting("sidebarHideGroups") !== "true") return;
 
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
@@ -44,6 +44,7 @@ const restoreSidebarGroupCollapsedStates = () => {
     const isCollapsed = localStorage.getItem(
       `evenbetter_${groupName}_isCollapsed`
     );
+
     if (isCollapsed) {
       group.setAttribute("data-is-group-collapsed", isCollapsed);
       const groupItems = group.querySelector(".c-sidebar-group__items");
@@ -52,4 +53,8 @@ const restoreSidebarGroupCollapsedStates = () => {
   });
 };
 
-module.exports = { addGroupHideFunctionality, restoreSidebarGroupCollapsedStates, storeSidebarGroupCollapsedStates };
+module.exports = {
+  addGroupHideFunctionality,
+  restoreSidebarGroupCollapsedStates,
+  storeSidebarGroupCollapsedStates,
+};
