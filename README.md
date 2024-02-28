@@ -1,4 +1,4 @@
-# EvenBetter v1.51
+# EvenBetter v1.6
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -7,12 +7,16 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
-## Changelog
-- **v.1.51**: Fixed issue with importing workflows.
-- **v1.5**: You can now highlight any row on HTTP History page! Simply right-click on any request and select `Highlight row` :D
-- **v1.5**: Fixed some EvenBetter-specific bugs and improved overall stability.
-- **v1.5**: Fixed the Import button on the Workflows page. Exporting is temporarily disabled due to limitations in the new Caido release, their team is working on a fix.
-- **v1.5**: Removed the Colorize HTTP feature, as the latest Caido release made this possible with passive workflows.
+## Changelog v1.6
+- **v1.6**: Rearrange arrows now only appear on hover. Thanks to (familiardisaster)[https://github.com/familiardisaster] for contributing this improvement :D
+- **v1.6**: Fixed Scope Share functionality; it is now compatible with the latest Caido release.
+- **v1.6**: Fixed some EvenBetter-specific bugs and refactored some parts of the EvenBetter code.
+- **v1.6**: Removed Workflows Share functionality, as it has been implemented by the Caido team in the latest release.
+- v1.51: Fixed issue with importing workflows.
+- v1.5: You can now highlight any row on HTTP History page! Simply right-click on any request and select `Highlight row` :D
+- v1.5: Fixed some EvenBetter-specific bugs and improved overall stability.
+- v1.5: Fixed the Import button on the Workflows page. Exporting is temporarily disabled due to limitations in the new Caido release, their team is working on a fix.
+- v1.5: Removed the Colorize HTTP feature, as the latest Caido release made this possible with passive workflows.
 - v1.41: Fixed issue with Colorize HTTP in latest caido release.
 - v1.4: Added a popup if you are using outdated EvenBetter version.
 - v1.4: EvenBetter settings UI has been reworked once again.
@@ -46,11 +50,6 @@ With Caido version `0.32.0`, passive workflows were introduced, allowing us to i
 ## Share scope with your team
 You can now share your scope presets with your team by exporting and importing them.
 
-## Share workflows with your team.
-You can now share your workflows with your team by exporting and importing them.
-
-
-![workflow_share](https://github.com/bebiksior/EvenBetter/assets/71410238/d4a7aa92-8f1f-43b0-a0c6-aede0670adae)
 
 ## ssrf.cvssadvisor.com integration
 Type `$ssrfinstance` in the Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up (this doesn't work properly on MacOS yet).
