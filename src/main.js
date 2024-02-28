@@ -22,16 +22,23 @@ const { listenForRightClick } = require("./features/colorizeHTTP/manual");
 const { debug, info } = require("./logging");
 
 const detectOpenedTab = () => {
-  navigation.addEventListener("navigate", (event) => {
-    if (event.navigationType == "push") {
-      const path = new URL(event.destination.url).hash;
+  let previousUrl = "";
+
+  const observer = new MutationObserver(() => {
+    if (window.location.href !== previousUrl) {
+      previousUrl = window.location.href;
+
+      const path = new URL(window.location.href).hash;
       onTabOpen(path);
     }
   });
+  const config = { subtree: true, childList: true };
+
+  observer.observe(document, config);
 };
 
 const onTabOpen = (path) => {
-  debug("Tab opened:", path);
+  debug("Tab opened: " + path);
 
   switch (true) {
     case path.startsWith("#/settings/"):
@@ -237,7 +244,7 @@ const onSidebarCollapsed = (isCollapsed) => {
 // This function is called when Caido is fully loaded
 const onSidebarContentLoaded = () => {
   info(
-    `EvenBetter v${getSetting(
+    `EvenBetter ${getSetting(
       "currentVersion"
     )} is loading, thanks for using it! 🎉`
   );

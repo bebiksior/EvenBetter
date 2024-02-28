@@ -8,10 +8,10 @@ const error = (message) => {
   console.error(`${new Date().toString()} [EvenBetter] [ERROR] ${message}`);
 };
 
-const debug = (message) => {
+const debug = (...message) => {
   if (getSetting("debugMode") !== "true") return;
 
-  console.log(`${new Date().toString()} [EvenBetter] [DEBUG] ${message}`);
+  console.log(`${new Date().toString()} [EvenBetter] [DEBUG] ${message.join(" ")}`);
 };
 
 export { info, error, debug };
