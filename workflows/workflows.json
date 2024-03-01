@@ -4,6 +4,7 @@
             "name": "PwnFox Support",
             "description": ":D",
             "version": "1.0",
+            "author": "bebiks",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
         }
     ]
