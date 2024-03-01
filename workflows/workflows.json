@@ -15,6 +15,13 @@
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Query-to-JSON.json"
         },
         {
+            "name": "JSON to Query",
+            "description": "Converts a JSON to query",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/JSON-to-Query.json"
+        },
+        {
             "name": "AI Hacking Suggestions",
             "description": "PoC for a call to openai's api. (doesn't work on Windows)",
             "version": "1.0",
@@ -30,7 +37,7 @@
         },
         {
             "name": "Clean HTTP Request",
-            "description": "Cleans unnecessary headers and replaces authorization headers with placeholders.",
+            "description": "Cleans unnecessary headers and replaces authorization headers with placeholders",
             "version": "1.0",
             "author": "bebiks",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
