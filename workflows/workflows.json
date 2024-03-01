@@ -2,10 +2,17 @@
     "workflows": [
         {
             "name": "PwnFox Support",
-            "description": ":D",
+            "description": "X-PwnFox-Color header support",
             "version": "1.0",
             "author": "bebiks",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
+        },
+        {
+            "name": "Query to JSON",
+            "description": "Converts a query to JSON",
+            "version": "1.0",
+            "author": "Hashem_Mo",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Query-to-JSON.json"
         }
     ]
 }

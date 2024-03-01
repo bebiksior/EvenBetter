@@ -1,0 +1,92 @@
+{
+  "description": "Converts a query string to a JSON object",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "convert_start",
+        "definition_id": "caido/convert-start",
+        "display": {
+          "x": -50,
+          "y": -130
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "Convert Start",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "convert_end",
+        "definition_id": "caido/convert-end",
+        "display": {
+          "x": -70,
+          "y": 140
+        },
+        "id": 1,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$javascript.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Convert End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "javascript",
+        "definition_id": "caido/code-js",
+        "display": {
+          "x": -120,
+          "y": 0
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$convert_start.data",
+              "kind": "ref"
+            }
+          },
+          {
+            "alias": "code",
+            "value": {
+              "data": "export function run(input, sdk) {\n  let queryString = sdk.asString(input);\n  var pairs = queryString.split('&');\n  var result = {};\n  pairs.forEach(function(pair) {\n    pair = pair.split('=');\n    result[pair[0]] = decodeURIComponent(pair[1] || '');\n  });\n  return JSON.stringify(result);\n}\n",
+              "kind": "string"
+            }
+          }
+        ],
+        "name": "Javascript",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "8221d3a6-7856-429d-93f1-d5aecb8fa6f6",
+  "kind": "convert",
+  "name": "Query to JSON"
+}
