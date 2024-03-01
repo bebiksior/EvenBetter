@@ -13,6 +13,13 @@
             "version": "1.0",
             "author": "Hashem_Mo",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Query-to-JSON.json"
+        },
+        {
+            "name": "AI Hacking Suggestions",
+            "description": "PoC for a call to openai's api",
+            "version": "1.0",
+            "author": "rez0",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
         }
     ]
 }

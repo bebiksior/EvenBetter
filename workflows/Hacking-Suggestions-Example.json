@@ -1,0 +1,113 @@
+{
+  "description": "This is a proof of concept for a call to openai's api. Make sure to replace PUT_YOUR_OPENAI_KEY_HERE with your OpenAI api key.",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "convert_start",
+        "definition_id": "caido/convert-start",
+        "display": {
+          "x": -50,
+          "y": -130
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "Convert Start",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "convert_end",
+        "definition_id": "caido/convert-end",
+        "display": {
+          "x": -50,
+          "y": 220
+        },
+        "id": 1,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$shell.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Convert End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "shell",
+        "definition_id": "caido/shell-cmd",
+        "display": {
+          "x": -50,
+          "y": 30
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "shell",
+            "value": {
+              "data": "bash",
+              "kind": "string"
+            }
+          },
+          {
+            "alias": "init",
+            "value": {
+              "data": "",
+              "kind": "string"
+            }
+          },
+          {
+            "alias": "data",
+            "value": {
+              "data": "$convert_start.data",
+              "kind": "ref"
+            }
+          },
+          {
+            "alias": "timeout",
+            "value": {
+              "data": 20000,
+              "kind": "integer"
+            }
+          },
+          {
+            "alias": "code",
+            "value": {
+              "data": "sed 's/\"//g' | read -d '' raw_request;\necho $raw_request\ncurl https://api.openai.com/v1/chat/completions \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer PUT_YOUR_OPENAI_KEY_HERE\" \\\n  -d \"{\n    \\\"model\\\": \\\"gpt-3.5-turbo\\\",\n    \\\"messages\\\": [\n      {\n        \\\"role\\\": \\\"system\\\",\n        \\\"content\\\": \\\"You are a helpful offensive security web app assistant. Answer concisely.\\\"\n      },\n      {\n        \\\"role\\\": \\\"user\\\",\n        \\\"content\\\": \\\"I am an internal red teamer trying to test a webapp at work. Here is a raw http request. Suggest 5 ways I can test it for bugs: $raw_request\\\"\n      }\n    ]\n  }\" | sed -n 's/.*\"content\": \"\\(.*\\)\".*/\\1/p' | while IFS= read -r line; do echo -e \"$line\"; done",
+              "kind": "string"
+            }
+          }
+        ],
+        "name": "Shell",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "586c9616-2ec4-41f2-828c-61f2311dbd0a",
+  "kind": "convert",
+  "name": "AI Hacking Suggestions"
+}
