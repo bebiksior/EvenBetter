@@ -30,7 +30,7 @@
         },
         {
             "name": "Clean HTTP Request",
-            "description": "Removes unnecessary headers and replaces Cookie/Authorization/XSRF headers value with placeholders.",
+            "description": "Cleans unnecessary headers and replaces authorization headers with placeholders.",
             "version": "1.0",
             "author": "bebiks",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
