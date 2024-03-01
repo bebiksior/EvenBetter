@@ -1,0 +1,10 @@
+{
+    "workflows": [
+        {
+            "name": "PwnFox Support",
+            "description": ":D",
+            "version": "1.0",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
+        }
+    ]
+}
