@@ -20,6 +20,13 @@
             "version": "1.0",
             "author": "rez0",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
-        }
+        },
+        {
+            "name": "[SQLi test] append single quote",
+            "description": "Appends single quote to every value, making testing for SQLi easier",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/SQLi-test_append-single-quote.json"
+        }   
     ]
 }
