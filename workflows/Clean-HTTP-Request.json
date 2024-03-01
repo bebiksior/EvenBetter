@@ -1,0 +1,92 @@
+{
+  "description": "Removes unnecessary headers and replaces Cookie/Authorization/XSRF header value with placeholders.",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "convert_start",
+        "definition_id": "caido/convert-start",
+        "display": {
+          "x": 0,
+          "y": -30
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "Convert Start",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "convert_end",
+        "definition_id": "caido/convert-end",
+        "display": {
+          "x": 0,
+          "y": 150
+        },
+        "id": 1,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$javascript.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Convert End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "javascript",
+        "definition_id": "caido/code-js",
+        "display": {
+          "x": 0,
+          "y": 60
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$convert_start.data",
+              "kind": "ref"
+            }
+          },
+          {
+            "alias": "code",
+            "value": {
+              "data": "function parseAndFilterHeaders(rawRequest, headersToRemove, headersToReplace) {\n    const lines = rawRequest.split('\\r\\n');\n\n    let inHeaderSection = true;\n\n    const filteredHeaders = lines.map(line => {\n        if (inHeaderSection && line.trim() === '') {\n            inHeaderSection = false;\n        }\n\n        if (inHeaderSection) {\n            if (line.includes(':')) {\n                const [headerName, headerValue] = line.split(':');\n                if (headersToRemove.includes(headerName.trim())) {\n                    return '$REMOVE_ME$';\n                } else if (headersToReplace[headerName.trim()]) {\n                    return `${headerName}: ${headersToReplace[headerName.trim()]}`;\n                }\n            }\n        }\n\n        return line;\n    }).filter(line => line !== '$REMOVE_ME$');\n\n    const filteredRequest = filteredHeaders.join('\\r\\n');\n    return filteredRequest;\n}\n\nconst headersToRemove = [\n    \"Sec-Fetch-Mode\",\n    \"Sec-Fetch-Site\",\n    \"Sec-Fetch-Dest\",\n    \"sec-ch-ua-platform\",\n    \"sec-ch-ua\",\n    \"sec-ch-ua-mobile\",\n    \"sec-ch-ua-full-version-list\",\n    \"sec-ch-ua-arch\",\n    \"sec-ch-ua-model\",\n    \"sec-ch-ua-platform-version\",\n    \"Connection\",\n    \"Accept-Encoding\",\n    \"Accept-Language\",\n    \"Content-Length\",\n]\n\nconst headersToReplace = {\n    \"Cookie\": \"YOUR_COOKIES\",\n    \"Authorization\": \"YOUR_AUTH_TOKEN\",\n    \"X-XSRF-TOKEN\": \"YOUR_XSRF_TOKEN\"\n};\n\nexport function run(input, sdk) {\n    let parsed = sdk.asString(input);\n    return parseAndFilterHeaders(parsed, headersToRemove, headersToReplace)\n}",
+              "kind": "string"
+            }
+          }
+        ],
+        "name": "Javascript",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "5f3968a1-be9d-4bd8-9073-443f14547526",
+  "kind": "convert",
+  "name": "Clean HTTP Request"
+}

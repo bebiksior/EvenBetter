@@ -16,17 +16,24 @@
         },
         {
             "name": "AI Hacking Suggestions",
-            "description": "PoC for a call to openai's api",
+            "description": "PoC for a call to openai's api. (doesn't work on Windows)",
             "version": "1.0",
             "author": "rez0",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
         },
         {
-            "name": "[SQLi test] append single quote",
-            "description": "Appends single quote to every value, making testing for SQLi easier",
+            "name": "[SQLi] Append single quote",
+            "description": "Appends single quote to every value, supports JSON and query string",
             "version": "1.0",
             "author": "bebiks",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/SQLi-test_append-single-quote.json"
-        }   
+        },
+        {
+            "name": "Clean HTTP Request",
+            "description": "Removes unnecessary headers and replaces Cookie/Authorization/XSRF headers value with placeholders.",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
+        }
     ]
 }

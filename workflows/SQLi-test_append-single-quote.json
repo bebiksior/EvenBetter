@@ -88,5 +88,5 @@
   },
   "id": "cf610042-dc0d-4c05-a39e-7816451dfe3f",
   "kind": "convert",
-  "name": "[SQLi test] append single quote"
+  "name": "[SQLi] Append single quote"
 }
