@@ -8,18 +8,12 @@ const {
   addGroupHideFunctionality,
   restoreSidebarGroupCollapsedStates,
 } = require("./features/sidebarTweaks/hide");
-const {
-  evenBetterTab,
-} = require("./features/customSettingsTab/evenBetterSettings");
-const { replaceSSRFInstanceText } = require("./features/quickSSRFInstance");
-const {
-  observeHTTPRequests,
-  colorizeHttpHistory,
-} = require("./features/colorizeHTTP");
-const { onScopeTabOpen } = require("./features/shareScope");
 const { openModal } = require("./modal");
-const { listenForRightClick } = require("./features/colorizeHTTP/manual");
 const { debug, info } = require("./logging");
+const { onTabOpen } = require("./events/tabOpen");
+const { createCustomTab } = require("./features/customSettingsTab/customTabs");
+const { evenBetterSettingsTab } = require("./features/customSettingsTab/evenBetterSettings");
+const { evenBetterLibraryTab } = require("./features/customSettingsTab/evenBetterLibrary");
 
 const detectOpenedTab = () => {
   navigation.addEventListener("navigate", (event) => {
@@ -30,6 +24,7 @@ const detectOpenedTab = () => {
   });
 };
 
+<<<<<<< Updated upstream
 const onTabOpen = (path) => {
   debug("Tab opened:", path);
 
@@ -197,6 +192,8 @@ const observeReplayInput = () => {
   replayInputObserver.observe(replayInput, config);
 };
 
+=======
+>>>>>>> Stashed changes
 // Init sidebar collapse observer
 let sidebarCollapseObserver;
 const observeSidebarCollapse = () => {
@@ -245,6 +242,10 @@ const onSidebarContentLoaded = () => {
   cleanUp();
   loadTheme(getSetting("theme"));
 
+  // create custom tabs
+  createCustomTab("EvenBetter", "evenbetter-settings", evenBetterSettingsTab(), `<div class="c-button__leading-icon"><i class="c-icon fas fa-bug"></i></div>`);
+  createCustomTab("Library", "evenbetter-library", evenBetterLibraryTab(), `<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>`);
+
   // Sidebar functionalities
   addMoveButtonsToSidebar();
   addGroupHideFunctionality();
@@ -289,17 +290,10 @@ const cleanUp = () => {
     debug("Update status removed");
   }
 
-  const settingsContent = document.querySelector(
-    "#evenbetter-settings-content"
-  );
-  if (settingsContent) {
-    settingsContent.remove();
-    debug("Settings content removed");
-  }
+  const customTabs = document.querySelectorAll(".evenbetter-custom-navigation-tab");
+  customTabs.forEach((tab) => {
+    tab.remove();
+  });
 
-  const settingsTab = document.querySelector("#evenbetter-settings-tab");
-  if (settingsTab) {
-    settingsTab.remove();
-    debug("Settings tab removed");
-  }
+  debug("Custom tabs removed");
 };

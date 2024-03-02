@@ -6,11 +6,12 @@ const {
 } = require("../../../settings");
 const { themes, loadTheme } = require("../../../themes");
 
-export const evenBetterTab = () => {
+export const evenBetterSettingsTab = () => {
   const currentTheme = getSetting("theme");
 
   const evenBetterTab = document.createElement("div");
   evenBetterTab.innerHTML = createEvenBetterTabHTML(themes, currentTheme);
+  evenBetterTab.classList.add("evenbetter-custom-tab");
 
   // Theme selection
   const select = evenBetterTab.querySelector("select");
@@ -106,7 +107,7 @@ export const evenBetterTab = () => {
   return evenBetterTab;
 };
 
-function createEvenBetterTabHTML(themes, currentTheme) {
+const createEvenBetterTabHTML = (themes, currentTheme) => {
   const toggleFeatures = [
     {
       name: "sidebarTweaks",

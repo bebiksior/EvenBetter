@@ -1,5 +1,3 @@
-let scopePresentsObserver;
-
 export const onScopeTabOpen = () => {
   addImportButton();
   observeScopeTab();

@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 # EvenBetter v1.51
+=======
+# EvenBetter v1.7
+>>>>>>> Stashed changes
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -7,6 +11,7 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
+<<<<<<< Updated upstream
 ## Changelog
 - **v.1.51**: Fixed issue with importing workflows.
 - **v1.5**: You can now highlight any row on HTTP History page! Simply right-click on any request and select `Highlight row` :D
@@ -26,6 +31,10 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 - v1.11: Sidebar state is now saved in the localStorage!
 - v1.1: Implemented colors for HTTP History rows! If your HTTP request includes the parameter `_color=red`, its background will now be set to red. (it also supports other colors :D)
 - v1.1: Resolved the Caido UI issue preventing scrolling in the Filters tab.
+=======
+## Changelog v1.7
+- **v1.7**: New EvenBetter Library tab! Install workflows into your Caido project with a single click.
+>>>>>>> Stashed changes
 
 ## Known issues
 - Creating quick SSRF instance doesn't open new window with the requests history on MacOS
