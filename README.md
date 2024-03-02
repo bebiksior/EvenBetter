@@ -1,4 +1,4 @@
-# EvenBetter v1.61
+# EvenBetter v1.7
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -7,12 +7,8 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
-## Changelog v1.61
-- **v1.61**: Fixed EvenBetter v1.6 compatibility issues on Safari and Firefox browers
-- **v1.6**: Rearrange arrows now only appear on hover. Thanks to [familiardisaster](https://github.com/familiardisaster) for contributing this improvement :D
-- **v1.6**: Fixed Scope Share functionality; it is now compatible with the latest Caido release.
-- **v1.6**: Fixed some EvenBetter-specific bugs and refactored some parts of the EvenBetter code.
-- **v1.6**: Removed Workflows Share functionality, as it has been implemented by the Caido team in the latest release.
+## Changelog v1.7
+- **v1.7**: New EvenBetter Library tab! Install workflows into your Caido project with a single click.
 
 ## Known issues
 - Creating quick SSRF instance doesn't open new window with the requests history on MacOS

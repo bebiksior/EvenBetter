@@ -8,18 +8,12 @@ const {
   addGroupHideFunctionality,
   restoreSidebarGroupCollapsedStates,
 } = require("./features/sidebarTweaks/hide");
-const {
-  evenBetterTab,
-} = require("./features/customSettingsTab/evenBetterSettings");
-const { replaceSSRFInstanceText } = require("./features/quickSSRFInstance");
-const {
-  observeHTTPRequests,
-  colorizeHttpHistory,
-} = require("./features/colorizeHTTP");
-const { onScopeTabOpen } = require("./features/shareScope");
 const { openModal } = require("./modal");
-const { listenForRightClick } = require("./features/colorizeHTTP/manual");
 const { debug, info } = require("./logging");
+const { onTabOpen } = require("./events/tabOpen");
+const { createCustomTab } = require("./features/customSettingsTab/customTabs");
+const { evenBetterSettingsTab } = require("./features/customSettingsTab/evenBetterSettings");
+const { evenBetterLibraryTab } = require("./features/customSettingsTab/evenBetterLibrary");
 
 const detectOpenedTab = () => {
   let previousUrl = "";
@@ -36,174 +30,6 @@ const detectOpenedTab = () => {
 
   observer.observe(document, config);
 };
-
-const onTabOpen = (path) => {
-  debug("Tab opened: " + path);
-
-  switch (true) {
-    case path.startsWith("#/settings/"):
-      setTimeout(() => {
-        const tabOpened = path.split("/")[2];
-        onSettingsTabOpen(tabOpened);
-
-        newSettingsTab("EvenBetter");
-      }, 10);
-      break;
-
-    case path === "#/intercept" &&
-      getSetting("highlightRowsFunctionality") === "true":
-      setTimeout(() => {
-        colorizeHttpHistory();
-        observeHTTPRequests();
-        listenForRightClick();
-      }, 200);
-      break;
-
-    case path === "#/replay":
-      setTimeout(() => {
-        observeReplayInput();
-      }, 25);
-      break;
-
-    case path === "#/scope":
-      setTimeout(onScopeTabOpen, 10);
-      break;
-
-    default:
-      break;
-  }
-};
-
-const getSettingsTabElement = (tabName) => {
-  const settingsTabs = document.querySelectorAll(
-    ".c-settings__navigation .c-underline-nav .c-button"
-  );
-  return Array.from(settingsTabs)
-    .find((tab) => tab.textContent.toLowerCase() === tabName)
-    .closest(".c-underline-nav-item");
-};
-
-const onSettingsTabOpen = (tabName) => {
-  debug("Settings tab opened: ", tabName);
-
-  const settingsTab = getSettingsTabElement(tabName);
-  setTabActive(settingsTab);
-
-  const settingsContent = document.querySelector(".c-settings__content");
-
-  switch (tabName) {
-    case "developer":
-      setTimeout(() => {
-        const jsSaveButton = document.querySelector(".c-custom-js__footer");
-        jsSaveButton.addEventListener("click", () => {
-          setTimeout(() => {
-            location.reload();
-          }, 300);
-        });
-      }, 50);
-      break;
-
-    case "evenbetter":
-      // hide the current content, we cant remove it because it will break caido :(
-      settingsContent.children[0].style.display = "none";
-
-      // remove old even better tab
-      if (document.querySelector("#evenbetter-settings-content"))
-        document.querySelector("#evenbetter-settings-content").remove();
-
-      settingsContent.appendChild(evenBetterTab());
-      return;
-
-    default:
-      break;
-  }
-
-  document
-    .querySelector("#evenbetter-settings-tab")
-    ?.setAttribute("data-is-active", "false");
-  settingsContent.children[0].style.display = "block";
-  document.querySelector("#evenbetter-settings-content")?.remove();
-};
-
-const setTabActive = (tab) => {
-  if (tab.getAttribute("data-is-active") != "true")
-    tab.setAttribute("data-is-active", "true");
-
-  const otherTabs = Array.from(
-    document.querySelector(".c-settings__navigation .c-underline-nav").children
-  ).filter((child) => child !== tab);
-
-  otherTabs.forEach((tab) => tab.setAttribute("data-is-active", "false"));
-};
-
-const newSettingsTab = (name) => {
-  const settingsNavigation = document.querySelector(
-    ".c-settings__navigation .c-underline-nav"
-  );
-
-  const existingTab = document.querySelector(
-    `#${name.toLowerCase()}-settings-tab`
-  );
-  if (existingTab) existingTab.remove();
-
-  const firstElement = settingsNavigation.children[0];
-  const newSettingsTab = firstElement.cloneNode(true);
-
-  newSettingsTab.querySelector(".c-button__label").textContent =
-    newSettingsTab.textContent.replace("General", name);
-  newSettingsTab.setAttribute("data-is-active", "false");
-  newSettingsTab.id = name.toLowerCase() + "-settings-tab";
-
-  newSettingsTab.addEventListener("click", () => {
-    const currentPath = new URL(location.href).hash.split("/")[2];
-    const currentTab = getSettingsTabElement(currentPath);
-
-    // add on click only one time
-    currentTab.addEventListener("click", () => {
-      setTabActive(currentTab);
-      onSettingsTabOpen(currentPath);
-
-      currentTab.removeEventListener("click", () => {});
-    });
-
-    setTabActive(newSettingsTab);
-    onSettingsTabOpen(name.toLowerCase());
-  });
-
-  settingsNavigation.appendChild(newSettingsTab);
-};
-
-// This function observers input in the request body within the replay tab
-let replayInputObserver;
-const observeReplayInput = () => {
-  if (getSetting("ssrfInstanceFunctionality") !== "true") return;
-
-  const replayInput = document.querySelector(".c-replay-entry .cm-content");
-  if (!replayInput) return;
-
-  if (replayInputObserver) {
-    replayInputObserver.disconnect();
-    replayInputObserver = null;
-  }
-
-  replayInputObserver = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      const originalTextContent = mutation.target.textContent;
-
-      if (originalTextContent.includes(getSetting("ssrfInstancePlaceholder"))) {
-        replaceSSRFInstanceText(mutation, originalTextContent);
-      }
-    });
-  });
-
-  const config = {
-    characterData: true,
-    subtree: true,
-  };
-
-  replayInputObserver.observe(replayInput, config);
-};
-
 // Init sidebar collapse observer
 let sidebarCollapseObserver;
 const observeSidebarCollapse = () => {
@@ -252,6 +78,10 @@ const onSidebarContentLoaded = () => {
   cleanUp();
   loadTheme(getSetting("theme"));
 
+  // create custom tabs
+  createCustomTab("EvenBetter", "evenbetter-settings", evenBetterSettingsTab(), `<div class="c-button__leading-icon"><i class="c-icon fas fa-bug"></i></div>`);
+  createCustomTab("Library", "evenbetter-library", evenBetterLibraryTab(), `<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>`);
+
   // Sidebar functionalities
   addMoveButtonsToSidebar();
   addGroupHideFunctionality();
@@ -296,17 +126,10 @@ const cleanUp = () => {
     debug("Update status removed");
   }
 
-  const settingsContent = document.querySelector(
-    "#evenbetter-settings-content"
-  );
-  if (settingsContent) {
-    settingsContent.remove();
-    debug("Settings content removed");
-  }
+  const customTabs = document.querySelectorAll(".evenbetter-custom-navigation-tab");
+  customTabs.forEach((tab) => {
+    tab.remove();
+  });
 
-  const settingsTab = document.querySelector("#evenbetter-settings-tab");
-  if (settingsTab) {
-    settingsTab.remove();
-    debug("Settings tab removed");
-  }
+  debug("Custom tabs removed");
 };
