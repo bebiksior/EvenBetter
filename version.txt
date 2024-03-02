@@ -1,5 +1,1 @@
-<<<<<<< Updated upstream
-v1.51
-=======
 v1.7
->>>>>>> Stashed changes
