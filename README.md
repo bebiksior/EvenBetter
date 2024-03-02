@@ -29,11 +29,6 @@ With Caido version `0.32.0`, passive workflows were introduced, allowing us to i
 ## Share scope with your team
 You can now share your scope presets with your team by exporting and importing them.
 
-## Share workflows with your team.
-You can now share your workflows with your team by exporting and importing them.
-
-
-![workflow_share](https://github.com/bebiksior/EvenBetter/assets/71410238/d4a7aa92-8f1f-43b0-a0c6-aede0670adae)
 
 ## ssrf.cvssadvisor.com integration
 Type `$ssrfinstance` in the Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up (this doesn't work properly on MacOS yet).

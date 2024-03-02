@@ -1,0 +1,92 @@
+{
+  "description": "Appends single quote to every value. This workflow is compatible with JSON and query string as input.",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "convert_start",
+        "definition_id": "caido/convert-start",
+        "display": {
+          "x": -170,
+          "y": -90
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "Convert Start",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "convert_end",
+        "definition_id": "caido/convert-end",
+        "display": {
+          "x": -170,
+          "y": 110
+        },
+        "id": 1,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$javascript.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Convert End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "javascript",
+        "definition_id": "caido/code-js",
+        "display": {
+          "x": -170,
+          "y": 10
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "code",
+            "value": {
+              "data": "const TEXT_TO_APPEND = \"'\";\n\nconst determineContentType = (input) => {\n  if (isJSON(input)) {\n    return \"JSON\";\n  }\n\n  if (isQuery(input)) {\n    return \"QUERY\";\n  }\n\n  return \"UNKNOWN\";\n};\n\nconst isJSON = (input) => {\n  try {\n    JSON.parse(input);\n    return true;\n  } catch (e) {\n    return false;\n  }\n};\n\nconst convertToObject = (contentType, input) => {\n  if (contentType == \"QUERY\") {\n    const queryParts = input.split(\"&\");\n    const result = {};\n    queryParts.forEach((part) => {\n      const [key, value] = part.split(\"=\");\n      result[key] = value;\n    });\n    return result;\n  } else if (contentType == \"JSON\") {\n    return JSON.parse(input);\n  }\n};\n\nconst isQuery = (str) => {\n  const queryStringRegex = /^[^?]+\\=[^?]+(&[^?]+\\=[^?]+)*$/;\n  return queryStringRegex.test(str);\n};\n\nconst modifyObject = (object, appendText) => {\n  for (let key in object) {\n    if (typeof object[key] === \"object\") {\n      object[key] = modifyObject(object[key], appendText);\n    } else {\n      object[key] = object[key] + appendText;\n    }\n  }\n  return object;\n};\n\n// convert back to contentType\nconst result = (object, contentType) => {\n  if (contentType == \"QUERY\") {\n    return Object.entries(object)\n      .map(([key, value]) => `${key}=${value}`)\n      .join(\"&\");\n  } else if (contentType == \"JSON\") {\n    return JSON.stringify(object);\n  }\n};\n\nexport function run(input, sdk) {\n  const testInput = sdk.asString(input);\n  const contentType = determineContentType(testInput);\n  if (contentType === \"UNKNOWN\") {\n    return input;\n  }\n\n  const keyValue = convertToObject(contentType, testInput);\n  const modifiedObject = modifyObject(keyValue, TEXT_TO_APPEND);\n  const resultString = result(modifiedObject, contentType);\n  return resultString;\n}\n",
+              "kind": "string"
+            }
+          },
+          {
+            "alias": "data",
+            "value": {
+              "data": "$convert_start.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Javascript",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "cf610042-dc0d-4c05-a39e-7816451dfe3f",
+  "kind": "convert",
+  "name": "[SQLi] Append single quote"
+}

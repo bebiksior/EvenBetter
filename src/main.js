@@ -16,14 +16,20 @@ const { evenBetterSettingsTab } = require("./features/customSettingsTab/evenBett
 const { evenBetterLibraryTab } = require("./features/customSettingsTab/evenBetterLibrary");
 
 const detectOpenedTab = () => {
-  navigation.addEventListener("navigate", (event) => {
-    if (event.navigationType == "push") {
-      const path = new URL(event.destination.url).hash;
+  let previousUrl = "";
+
+  const observer = new MutationObserver(() => {
+    if (window.location.href !== previousUrl) {
+      previousUrl = window.location.href;
+
+      const path = new URL(window.location.href).hash;
       onTabOpen(path);
     }
   });
-};
+  const config = { subtree: true, childList: true };
 
+  observer.observe(document, config);
+};
 // Init sidebar collapse observer
 let sidebarCollapseObserver;
 const observeSidebarCollapse = () => {
@@ -64,7 +70,7 @@ const onSidebarCollapsed = (isCollapsed) => {
 // This function is called when Caido is fully loaded
 const onSidebarContentLoaded = () => {
   info(
-    `EvenBetter v${getSetting(
+    `EvenBetter ${getSetting(
       "currentVersion"
     )} is loading, thanks for using it! 🎉`
   );

@@ -1,0 +1,46 @@
+{
+    "workflows": [
+        {
+            "name": "PwnFox Support",
+            "description": "X-PwnFox-Color header support",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
+        },
+        {
+            "name": "Query to JSON",
+            "description": "Converts a query to JSON",
+            "version": "1.0",
+            "author": "Hashem_Mo",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Query-to-JSON.json"
+        },
+        {
+            "name": "JSON to Query",
+            "description": "Converts a JSON to query",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/JSON-to-Query.json"
+        },
+        {
+            "name": "AI Hacking Suggestions",
+            "description": "PoC for a call to openai's api. (doesn't work on Windows)",
+            "version": "1.0",
+            "author": "rez0",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
+        },
+        {
+            "name": "[SQLi] Append single quote",
+            "description": "Appends single quote to every value, supports JSON and query string",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/SQLi-test_append-single-quote.json"
+        },
+        {
+            "name": "Clean HTTP Request",
+            "description": "Cleans unnecessary headers and replaces authorization headers with placeholders",
+            "version": "1.0",
+            "author": "bebiks",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
+        }
+    ]
+}

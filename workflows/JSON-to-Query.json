@@ -1,0 +1,92 @@
+{
+  "description": "Converts JSON object to a query string",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "convert_start",
+        "definition_id": "caido/convert-start",
+        "display": {
+          "x": -150,
+          "y": -150
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "Convert Start",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "convert_end",
+        "definition_id": "caido/convert-end",
+        "display": {
+          "x": -150,
+          "y": 60
+        },
+        "id": 1,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$javascript.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Convert End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "javascript",
+        "definition_id": "caido/code-js",
+        "display": {
+          "x": -150,
+          "y": -50
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$convert_start.data",
+              "kind": "ref"
+            }
+          },
+          {
+            "alias": "code",
+            "value": {
+              "data": "export function run(input, sdk) {\n  const parseNested = (obj, prefix = '') => {\n    return Object.entries(obj).map(([key, value]) => {\n      const prefixedKey = prefix ? `${prefix}[${encodeURIComponent(key)}]` : encodeURIComponent(key);\n      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {\n        return parseNested(value, prefixedKey);\n      } else if (Array.isArray(value)) {\n        return value.map((item, index) => {\n          const arrayKey = `${prefixedKey}[${index}]`;\n          return parseNested(item, arrayKey);\n        }).join('&');\n      } else {\n        return `${prefixedKey}=${encodeURIComponent(value)}`;\n      }\n    }).join('&');\n  };\n\n  let parsed = sdk.asString(input);\n  let urlParameters = parseNested(JSON.parse(parsed));\n\n  return urlParameters;\n}\n",
+              "kind": "string"
+            }
+          }
+        ],
+        "name": "Javascript",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "85660839-5091-4272-b529-84384e5892e3",
+  "kind": "convert",
+  "name": "JSON to Query"
+}
