@@ -1,4 +1,4 @@
-# EvenBetter v1.7
+# EvenBetter v2.0
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -7,8 +7,13 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
-## Changelog v1.7
-- **v1.7**: New EvenBetter Library tab! Install workflows into your Caido project with a single click.
+## Changelog v2.0
+- **v2.0**: EvenBetter code has been rewritten in TypeScript, which makes it more maintainable and easier to contribute to :D
+- **v2.0**: Quick Decode: new feature that allows you to quickly decode text just by selecting or hovering over it on the Replay page
+- **v2.0**: Send to Match & Replace: new context menu button on the HTTP History page that allows you to quickly send selected text into the Match & Replace page
+- **v2.0**: Added two new themes: Neon and Deep Dark
+- **v2.0**: ESC keybind now closes context menu.
+- **v2.0**: EvenBetter will warn you if you are using old CSS version.
 
 ## Known issues
 - Creating quick SSRF instance doesn't open new window with the requests history on MacOS
