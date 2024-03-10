@@ -9,11 +9,16 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 
 ## Changelog v2.0
 - **v2.0**: EvenBetter code has been rewritten in TypeScript, which makes it more maintainable and easier to contribute to :D
-- **v2.0**: Quick Decode: new feature that allows you to quickly decode text just by selecting or hovering over it on the Replay page
-- **v2.0**: Send to Match & Replace: new context menu button on the HTTP History page that allows you to quickly send selected text into the Match & Replace page
-- **v2.0**: Added two new themes: Neon and Deep Dark
-- **v2.0**: ESC keybind now closes context menu.
+- **v2.0**: **Quick Decode**: new feature that allows you to quickly decode text just by selecting or hovering over it on the Replay page
+- **v2.0**: **Send to Match & Replace**: new context menu button on the HTTP History page that allows you to quickly send selected text into the Match & Replace page
+- **v2.0**: Added two new themes: **Neon** and **Deep Dark**
+- **v2.0**: ESC keybind now closes the context menu.
 - **v2.0**: EvenBetter will warn you if you are using old CSS version.
+
+![Caido_FttJPAtYFF](https://github.com/bebiksior/EvenBetter/assets/71410238/df14e464-3de7-4884-b5f9-f8128091964e)
+![Caido_Cy4c6rWgzk](https://github.com/bebiksior/EvenBetter/assets/71410238/fb983ea5-bd55-49f3-8e0d-129283f0b341)
+
+
 
 ## Known issues
 - Creating quick SSRF instance doesn't open new window with the requests history on MacOS
@@ -22,11 +27,9 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 
 ### Before
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/efd7a8b7-797b-4093-b794-acb162a72a64)
-![image](https://github.com/bebiksior/EvenBetter/assets/71410238/e98cc376-8e48-4e7a-8886-32ead2329386)
 
 ### After
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/405d095e-338b-4796-b722-555d8eb73e92)
-![image](https://github.com/bebiksior/EvenBetter/assets/71410238/1af01fdb-e789-49b3-b35a-96ea7d5c7585)
 
 ## PwnFox compatibility
 With Caido version `0.32.0`, passive workflows were introduced, allowing us to integrate PwnFox support within Caido. Dynamic coloring has not been implemented yet which makes it harder to create workflow for PwnFox. With EvenBetter you can download the [PwnFox Support Workflow](https://github.com/bebiksior/EvenBetter/workflow/workflow-PwnFox_Support.json) and simply import it on the Workflow page!
