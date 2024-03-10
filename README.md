@@ -3,7 +3,7 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 
 ## Installation
 1. Visit **Settings** and navigate to the **Developer** section
-2. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/bundle.js and paste it into the `Custom JS`
+2. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/evenbetter.js and paste it into the `Custom JS`
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
