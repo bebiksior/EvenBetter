@@ -34,13 +34,15 @@ export const quickMatchAndReplace = () => {
       const selectedText = document.getSelection().toString();
 
       window.location.hash = "#/tamper";
-      setTimeout(() => {
-        (
-          document.querySelector(
-            ".c-rule-form-create__search textarea"
-          ) as HTMLInputElement
-        ).value = selectedText;
-      }, 5);
+      let interval = setInterval(() => {
+        const searchInput = document.querySelector(
+          ".c-rule-form-create__search textarea"
+        ) as HTMLInputElement;
+        if (searchInput) {
+          searchInput.value = selectedText;
+          clearInterval(interval);
+        }
+      }, 3);
 
       menu.remove();
     });

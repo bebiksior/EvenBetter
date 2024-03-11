@@ -56,67 +56,66 @@ const modifyContextMenu = (rowID: string) => {
   highlightRowMenu.querySelector(".c-item__content").textContent =
     "Highlight row";
 
-  highlightRowMenu.querySelector(".c-item__menu").insertAdjacentHTML(
-    "beforeend",
-    `
-        <div class="c-item__menu evenbetter__c-item__menu">
-          <div class="c-menu evenbetter__c-menu">
+  highlightRowMenu.querySelector(".c-item__menu").outerHTML = `
+        <div class="evenbetter__c-item__menu">
+          <div class="evenbetter__c-menu">
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">None</div>
+              <div class="evenbetter__c-item__content">None</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Red</div>
+              <div class="evenbetter__c-item__content">Red</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Green</div>
+              <div class="evenbetter__c-item__content">Green</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Blue</div>
+              <div class="evenbetter__c-item__content">Blue</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Orange</div>
+              <div class="evenbetter__c-item__content">Orange</div>
             </div>
           </div>
         </div>
-      `
-  );
+      `;
   highlightRowMenu.id = "highlightRowMenu";
 
   const cItemMenu = highlightRowMenu.querySelector(
-    ".c-item__menu"
+    ".evenbetter__c-item__menu"
   ) as HTMLElement;
   cItemMenu.style.display = "none";
 
-  highlightRowMenu.querySelectorAll(".c-item").forEach((item: HTMLElement) => {
-    let color = item.querySelector(".c-item__content").textContent;
+  highlightRowMenu
+    .querySelectorAll(".evenbetter__c-item")
+    .forEach((item: HTMLElement) => {
+      let color = item.querySelector(
+        ".evenbetter__c-item__content"
+      ).textContent;
 
-    item.style.paddingLeft = "0.35rem";
-    item.style.borderRadius = "0";
+      item.style.paddingLeft = "0.35rem";
+      item.style.borderRadius = "0";
 
-    if (color === "None") {
-      return;
-    }
-
-    item.style.borderLeft = "3px solid";
-    item.style.borderLeftColor = color;
-  });
+      if (color !== "None") {
+        item.style.borderLeft = "3px solid";
+        item.style.borderLeftColor = color;
+      }
+    });
 
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
     cItemMenu.style.left = "13.5rem";
     cItemMenu.style.top = "220px";
 
-    if (cItemMenu.getBoundingClientRect().right+100 > window.innerWidth) {
+    if (cItemMenu.getBoundingClientRect().right + 100 > window.innerWidth) {
       cItemMenu.style.left = "-10rem";
     }
   });
@@ -125,9 +124,11 @@ const modifyContextMenu = (rowID: string) => {
     item.addEventListener("mouseenter", closeCustomContextMenu)
   );
 
-  highlightRowMenu.querySelectorAll(".c-item").forEach((color) => {
+  highlightRowMenu.querySelectorAll(".evenbetter__c-item").forEach((color) => {
     color.addEventListener("click", () => {
-      let colorText = color.querySelector(".c-item__content").textContent;
+      let colorText = color.querySelector(
+        ".evenbetter__c-item__content"
+      ).textContent;
 
       if (colorText === "None") {
         if (row) {
@@ -154,7 +155,7 @@ const closeCustomContextMenu = () => {
   const highlightRowMenu = document.getElementById("highlightRowMenu");
   if (highlightRowMenu) {
     (
-      highlightRowMenu.querySelector(".c-item__menu") as HTMLElement
+      highlightRowMenu.querySelector(".evenbetter__c-item__menu") as HTMLElement
     ).style.display = "none";
   }
 };

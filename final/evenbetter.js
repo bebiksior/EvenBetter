@@ -1254,49 +1254,48 @@ var modifyContextMenu = (rowID) => {
   contextMenu.insertBefore(clonedDivider, contextItems[contextItems.length]);
   const highlightRowMenu = contextMenu.querySelector(".fa-caret-right").parentElement.parentElement.cloneNode(true);
   highlightRowMenu.querySelector(".c-item__content").textContent = "Highlight row";
-  highlightRowMenu.querySelector(".c-item__menu").insertAdjacentHTML("beforeend", `
-        <div class="c-item__menu evenbetter__c-item__menu">
-          <div class="c-menu evenbetter__c-menu">
+  highlightRowMenu.querySelector(".c-item__menu").outerHTML = `
+        <div class="evenbetter__c-item__menu">
+          <div class="evenbetter__c-menu">
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">None</div>
+              <div class="evenbetter__c-item__content">None</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Red</div>
+              <div class="evenbetter__c-item__content">Red</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Green</div>
+              <div class="evenbetter__c-item__content">Green</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Blue</div>
+              <div class="evenbetter__c-item__content">Blue</div>
             </div>
             <div
-              class="c-item evenbetter__c-item"
+              class="evenbetter__c-item"
             >
-              <div class="c-item__content evenbetter__c-item__content">Orange</div>
+              <div class="evenbetter__c-item__content">Orange</div>
             </div>
           </div>
         </div>
-      `);
+      `;
   highlightRowMenu.id = "highlightRowMenu";
-  const cItemMenu = highlightRowMenu.querySelector(".c-item__menu");
+  const cItemMenu = highlightRowMenu.querySelector(".evenbetter__c-item__menu");
   cItemMenu.style.display = "none";
-  highlightRowMenu.querySelectorAll(".c-item").forEach((item) => {
-    let color = item.querySelector(".c-item__content").textContent;
+  highlightRowMenu.querySelectorAll(".evenbetter__c-item").forEach((item) => {
+    let color = item.querySelector(".evenbetter__c-item__content").textContent;
     item.style.paddingLeft = "0.35rem";
     item.style.borderRadius = "0";
-    if (color === "None") {
-      return;
+    if (color !== "None") {
+      item.style.borderLeft = "3px solid";
+      item.style.borderLeftColor = color;
     }
-    item.style.borderLeft = "3px solid";
-    item.style.borderLeftColor = color;
   });
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
@@ -1307,9 +1306,9 @@ var modifyContextMenu = (rowID) => {
     }
   });
   contextItems.forEach((item) => item.addEventListener("mouseenter", closeCustomContextMenu));
-  highlightRowMenu.querySelectorAll(".c-item").forEach((color) => {
+  highlightRowMenu.querySelectorAll(".evenbetter__c-item").forEach((color) => {
     color.addEventListener("click", () => {
-      let colorText = color.querySelector(".c-item__content").textContent;
+      let colorText = color.querySelector(".evenbetter__c-item__content").textContent;
       if (colorText === "None") {
         if (row) {
           row.style.backgroundColor = "";
@@ -1331,7 +1330,7 @@ var modifyContextMenu = (rowID) => {
 var closeCustomContextMenu = () => {
   const highlightRowMenu = document.getElementById("highlightRowMenu");
   if (highlightRowMenu) {
-    highlightRowMenu.querySelector(".c-item__menu").style.display = "none";
+    highlightRowMenu.querySelector(".evenbetter__c-item__menu").style.display = "none";
   }
 };
 var storeHighlightedRow = (rowID, color) => {
@@ -1515,9 +1514,13 @@ var quickMatchAndReplace = () => {
     newItem.addEventListener("click", () => {
       const selectedText = document.getSelection().toString();
       window.location.hash = "#/tamper";
-      setTimeout(() => {
-        document.querySelector(".c-rule-form-create__search textarea").value = selectedText;
-      }, 5);
+      let interval = setInterval(() => {
+        const searchInput = document.querySelector(".c-rule-form-create__search textarea");
+        if (searchInput) {
+          searchInput.value = selectedText;
+          clearInterval(interval);
+        }
+      }, 3);
       menu.remove();
     });
     menu.insertBefore(newItem, insertBefore.nextSibling);
