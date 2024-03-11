@@ -1,7 +1,7 @@
 import eventManagerInstance from "../../events/EventManager";
 
 export const quickMatchAndReplace = () => {
-  eventManagerInstance.on("onDropdownMenuOpen", (element) => {
+  eventManagerInstance.on("onContextMenuOpen", (element) => {
     if (
       !(
         window.location.hash == "#/replay" ||
@@ -16,20 +16,16 @@ export const quickMatchAndReplace = () => {
     const menu = dropdown.querySelector(".c-menu");
     const dropdownItems = dropdown.querySelectorAll(".c-item");
 
-    let item = Array.from(dropdownItems).find(
-      (item) =>
-        item.querySelector(".c-item__content").textContent.trim() ==
-        "Send to Automate"
-    );
-    if (!item) {
-      item = Array.from(dropdownItems).find(
-        (item) =>
-          item.querySelector(".c-item__content").textContent.trim() == "Copy"
-      );
-      if (!item) return;
+    const newItem = dropdownItems[0].cloneNode(true) as HTMLElement;
+    
+    let insertBefore = dropdownItems[0];
+    for (let i = 0; i < dropdownItems.length; i++) {
+      if (dropdownItems[i].querySelector(".c-item__content").textContent == "Send to Automate") {
+        insertBefore = dropdownItems[i];
+        break;
+      }
     }
 
-    const newItem = item.cloneNode(true) as HTMLElement;
     newItem.querySelector(".c-item__content").textContent =
       "Send to Match & Replace";
     newItem.querySelector(".c-item__trailing-visual")?.remove();
@@ -49,6 +45,6 @@ export const quickMatchAndReplace = () => {
       menu.remove();
     });
 
-    menu.insertBefore(newItem, item.nextSibling);
+    menu.insertBefore(newItem, insertBefore.nextSibling);
   });
 };

@@ -10,7 +10,7 @@ import { CURRENT_VERSION } from "./settings/constants";
 import log from "./utils/Logger";
 import { colorizeHTTPFunctionality } from "./extensions/httpColorize/index";
 import { openModal } from "./utils/Modal";
-import { onDropdownMenuOpen } from "./events/onDropdownMenuOpen";
+import { onContextMenuOpen } from "./events/onContextMenuOpen";
 import { quickMatchAndReplace } from "./extensions/qucikMAR";
 import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
@@ -21,7 +21,7 @@ const init = () => {
   eventManagerInstance.registerEvent("onCaidoLoad", onCaidoLoad);
   eventManagerInstance.registerEvent("onSettingsTabOpen", onSettingsTabOpen);
   eventManagerInstance.registerEvent("onPageOpen", onPageOpen);
-  eventManagerInstance.registerEvent("onDropdownMenuOpen", onDropdownMenuOpen);
+  eventManagerInstance.registerEvent("onContextMenuOpen", onContextMenuOpen);
 
   customSettingsTabs.setup();
 

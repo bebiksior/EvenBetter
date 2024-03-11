@@ -1,63 +1,27 @@
-const listenForRightClick = () => {
-  const items = document.querySelectorAll(".c-table__item-row");
+import eventManagerInstance from "../../events/EventManager";
 
-  items.forEach(modifyItemRow);
+export const highlightHTTPRow = () => {
+  eventManagerInstance.on("onContextMenuOpen", (element) => {
+    if (window.location.hash != "#/intercept") return;
+
+    const activeRequestID = getActiveRequestID();
+    if (!activeRequestID) return;
+
+    modifyContextMenu(activeRequestID);
+  });
 };
 
-const modifyItemRow = (item: Element) => {
-  item.removeEventListener("contextmenu", handleContextMenu);
-  item.addEventListener("contextmenu", handleContextMenu);
+const getActiveRequestID = () => {
+  const selectedRequest = document.querySelector(
+    ".c-item-row__overlay"
+  ).parentElement;
 
-  item.removeEventListener("click", handleClick);
-  item.addEventListener("click", handleClick);
-};
-
-let activeRequestID: string;
-const handleClick = (event: MouseEvent) => {
-  let row = (event.target as HTMLElement).closest(".c-item-row");
-
-  if (!row) {
-    return;
+  if (!selectedRequest) {
+    return null;
   }
 
-  activeRequestID = row.querySelector(
-    ".c-item-cell[data-column-id='ID']"
-  ).textContent;
-  setTimeout(() => {
-    attachHighlightButton();
-  }, 10);
-};
-
-const attachHighlightButton = () => {
-  const requestBody = document.querySelector(".c-request-skeleton__body");
-  if (!requestBody) {
-    return;
-  }
-
-  requestBody.removeEventListener("contextmenu", handleContextMenu);
-  requestBody.addEventListener("contextmenu", handleContextMenu);
-};
-
-const handleContextMenu = (event: MouseEvent) => {
-  const target = event.target as HTMLElement;
-  if (target.closest(".c-request-skeleton__body")) {
-    setTimeout(() => modifyContextMenu(activeRequestID, null), 10);
-
-    return;
-  }
-
-  const row = target.closest(".c-item-row") as HTMLElement;
-  if (!row) {
-    return;
-  }
-
-  const rowID = row.querySelector(
-    ".c-item-cell[data-column-id='ID']"
-  ).textContent;
-
-  handleClick(event);
-
-  setTimeout(() => modifyContextMenu(rowID, row), 10);
+  const requestID = selectedRequest.querySelector("div[data-column-id=ID]");
+  return requestID?.textContent;
 };
 
 const getRowElementByID = (rowID: string): HTMLElement | null => {
@@ -72,18 +36,15 @@ const getRowElementByID = (rowID: string): HTMLElement | null => {
   }
 };
 
-const modifyContextMenu = (rowID: string, row: HTMLElement | null) => {
+const modifyContextMenu = (rowID: string) => {
   const contextMenu = document.querySelector(".c-menu");
   const contextItems = contextMenu.querySelectorAll(".c-item");
   const contextDividers = contextMenu.querySelectorAll(".c-divider");
 
-  if (!contextMenu || !contextItems || !contextDividers) {
-    return;
-  }
+  if (!contextMenu || !contextItems || !contextDividers) return;
 
-  if (!row) {
-    row = getRowElementByID(rowID);
-  }
+  const row = getRowElementByID(rowID);
+  if (!row) return;
 
   const clonedDivider = contextDividers[0].cloneNode(true);
   contextMenu.insertBefore(clonedDivider, contextItems[contextItems.length]);
@@ -152,8 +113,12 @@ const modifyContextMenu = (rowID: string, row: HTMLElement | null) => {
 
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
-    cItemMenu.style.left = "0";
-    cItemMenu.style.top = "120px";
+    cItemMenu.style.left = "13.5rem";
+    cItemMenu.style.top = "220px";
+
+    if (cItemMenu.getBoundingClientRect().right+100 > window.innerWidth) {
+      cItemMenu.style.left = "-10rem";
+    }
   });
 
   contextItems.forEach((item) =>
@@ -188,7 +153,9 @@ const modifyContextMenu = (rowID: string, row: HTMLElement | null) => {
 const closeCustomContextMenu = () => {
   const highlightRowMenu = document.getElementById("highlightRowMenu");
   if (highlightRowMenu) {
-    (highlightRowMenu.querySelector(".c-item__menu") as HTMLElement).style.display = "none";
+    (
+      highlightRowMenu.querySelector(".c-item__menu") as HTMLElement
+    ).style.display = "none";
   }
 };
 
@@ -218,7 +185,7 @@ const removeHighlightedRow = (rowID: string) => {
   );
 };
 
-const isRowIDHighlighted = (rowID: string) => {
+export const isRowIDHighlighted = (rowID: string) => {
   const highlightedRows =
     JSON.parse(localStorage.getItem(getProjectName() + ".highlightedRows")) ||
     {};
@@ -226,7 +193,7 @@ const isRowIDHighlighted = (rowID: string) => {
   return highlightedRows[rowID] !== undefined;
 };
 
-const getRowIDColor = (rowID: string) => {
+export const getRowIDColor = (rowID: string) => {
   const highlightedRows =
     JSON.parse(localStorage.getItem(getProjectName() + ".highlightedRows")) ||
     {};
@@ -243,15 +210,4 @@ const getProjectName = () => {
   }
 
   return name;
-};
-
-export {
-  listenForRightClick,
-  modifyContextMenu,
-  storeHighlightedRow,
-  removeHighlightedRow,
-  isRowIDHighlighted as isHighlighted,
-  getProjectName,
-  modifyItemRow,
-  getRowIDColor,
 };

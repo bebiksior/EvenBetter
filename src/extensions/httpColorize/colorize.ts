@@ -1,4 +1,4 @@
-import { getRowIDColor, isHighlighted, modifyItemRow } from "./manual";
+import { getRowIDColor, isRowIDHighlighted } from "./manual";
 
 let httpHistoryObserver: MutationObserver | null = null;
 const observeHTTPRequests = () => {
@@ -16,27 +16,6 @@ const observeHTTPRequests = () => {
         const cell = mutation.target as Element;
         colorizeCell(cell);
         return;
-      }
-
-      if (mutation.addedNodes.length === 0) return;
-
-      const addedNode = mutation.addedNodes[0] as HTMLElement;
-      if (addedNode.classList?.contains("c-table__item-row")) {
-        if (addedNode.textContent.trim() == "Loading...") {
-          setTimeout(() => {
-            if (
-              addedNode == null ||
-              addedNode.textContent.trim() == "Loading..."
-            ) {
-              return;
-            }
-
-            modifyItemRow(addedNode);
-          }, 1000);
-          return;
-        }
-
-        modifyItemRow(addedNode);
       }
     });
 
@@ -71,7 +50,7 @@ const colorizeCell = (cell: Element) => {
     ".c-item-cell[data-column-id='ID']"
   ).textContent;
 
-  if (isHighlighted(rowID)) {
+  if (isRowIDHighlighted(rowID)) {
     row.style.backgroundColor = getRowIDColor(rowID);
     row.setAttribute("colorized", "true");
   } else {

@@ -558,7 +558,7 @@
   padding: var(--c-space-3) 0;
   border-radius: var(--c-border-radius-2);
   border: var(--c-border-width-1) solid var(--c-border-default);
-  min-width: 10em;
+  min-width: 5.5em;
 }
 
 .evenbetter__c-item__menu {

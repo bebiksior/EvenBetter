@@ -1215,48 +1215,23 @@ var sidebarTweaks = () => {
 };
 
 // src/extensions/httpColorize/manual.ts
-var listenForRightClick = () => {
-  const items = document.querySelectorAll(".c-table__item-row");
-  items.forEach(modifyItemRow);
+var highlightHTTPRow = () => {
+  EventManager_default.on("onContextMenuOpen", (element) => {
+    if (window.location.hash != "#/intercept")
+      return;
+    const activeRequestID = getActiveRequestID();
+    if (!activeRequestID)
+      return;
+    modifyContextMenu(activeRequestID);
+  });
 };
-var modifyItemRow = (item) => {
-  item.removeEventListener("contextmenu", handleContextMenu);
-  item.addEventListener("contextmenu", handleContextMenu);
-  item.removeEventListener("click", handleClick);
-  item.addEventListener("click", handleClick);
-};
-var activeRequestID;
-var handleClick = (event) => {
-  let row = event.target.closest(".c-item-row");
-  if (!row) {
-    return;
+var getActiveRequestID = () => {
+  const selectedRequest = document.querySelector(".c-item-row__overlay").parentElement;
+  if (!selectedRequest) {
+    return null;
   }
-  activeRequestID = row.querySelector(".c-item-cell[data-column-id='ID']").textContent;
-  setTimeout(() => {
-    attachHighlightButton();
-  }, 10);
-};
-var attachHighlightButton = () => {
-  const requestBody = document.querySelector(".c-request-skeleton__body");
-  if (!requestBody) {
-    return;
-  }
-  requestBody.removeEventListener("contextmenu", handleContextMenu);
-  requestBody.addEventListener("contextmenu", handleContextMenu);
-};
-var handleContextMenu = (event) => {
-  const target = event.target;
-  if (target.closest(".c-request-skeleton__body")) {
-    setTimeout(() => modifyContextMenu(activeRequestID, null), 10);
-    return;
-  }
-  const row = target.closest(".c-item-row");
-  if (!row) {
-    return;
-  }
-  const rowID = row.querySelector(".c-item-cell[data-column-id='ID']").textContent;
-  handleClick(event);
-  setTimeout(() => modifyContextMenu(rowID, row), 10);
+  const requestID = selectedRequest.querySelector("div[data-column-id=ID]");
+  return requestID?.textContent;
 };
 var getRowElementByID = (rowID) => {
   const items = document.querySelectorAll(`.c-item-row .c-item-cell[data-column-id='ID']`);
@@ -1266,16 +1241,15 @@ var getRowElementByID = (rowID) => {
     }
   }
 };
-var modifyContextMenu = (rowID, row) => {
+var modifyContextMenu = (rowID) => {
   const contextMenu = document.querySelector(".c-menu");
   const contextItems = contextMenu.querySelectorAll(".c-item");
   const contextDividers = contextMenu.querySelectorAll(".c-divider");
-  if (!contextMenu || !contextItems || !contextDividers) {
+  if (!contextMenu || !contextItems || !contextDividers)
     return;
-  }
-  if (!row) {
-    row = getRowElementByID(rowID);
-  }
+  const row = getRowElementByID(rowID);
+  if (!row)
+    return;
   const clonedDivider = contextDividers[0].cloneNode(true);
   contextMenu.insertBefore(clonedDivider, contextItems[contextItems.length]);
   const highlightRowMenu = contextMenu.querySelector(".fa-caret-right").parentElement.parentElement.cloneNode(true);
@@ -1326,8 +1300,11 @@ var modifyContextMenu = (rowID, row) => {
   });
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
-    cItemMenu.style.left = "0";
-    cItemMenu.style.top = "120px";
+    cItemMenu.style.left = "13.5rem";
+    cItemMenu.style.top = "220px";
+    if (cItemMenu.getBoundingClientRect().right + 100 > window.innerWidth) {
+      cItemMenu.style.left = "-10rem";
+    }
   });
   contextItems.forEach((item) => item.addEventListener("mouseenter", closeCustomContextMenu));
   highlightRowMenu.querySelectorAll(".c-item").forEach((color) => {
@@ -1400,21 +1377,6 @@ var observeHTTPRequests = () => {
         colorizeCell(cell);
         return;
       }
-      if (mutation.addedNodes.length === 0)
-        return;
-      const addedNode = mutation.addedNodes[0];
-      if (addedNode.classList?.contains("c-table__item-row")) {
-        if (addedNode.textContent.trim() == "Loading...") {
-          setTimeout(() => {
-            if (addedNode == null || addedNode.textContent.trim() == "Loading...") {
-              return;
-            }
-            modifyItemRow(addedNode);
-          }, 1000);
-          return;
-        }
-        modifyItemRow(addedNode);
-      }
     });
     if (mutations.some((mutation) => mutation.target.getAttribute("colorized")))
       return;
@@ -1453,10 +1415,10 @@ var colorizeHTTPFunctionality = () => {
       setTimeout(() => {
         observeHTTPRequests();
         colorizeHttpHistory();
-        listenForRightClick();
       }, 100);
     }
   });
+  highlightHTTPRow();
 };
 
 // src/utils/Modal.ts
@@ -1496,41 +1458,42 @@ var openModal = ({ title, content }) => {
   document.body.appendChild(modal);
 };
 
-// src/events/onDropdownMenuOpen.ts
-class OnDropdownMenuOpen {
+// src/events/onContextMenuOpen.ts
+class OnContextMenuOpen {
   handlers = [];
   addHandler(handler) {
     this.handlers.push(handler);
   }
   init() {
-    let observers = [];
-    EventManager_default.on("onPageOpen", () => {
-      setTimeout(() => {
-        observers.forEach((observer) => observer.disconnect());
-        observers = [];
-        const contextMenus = document.querySelectorAll(".c-context-menu__floating");
-        contextMenus.forEach((menu) => {
-          const observer = new MutationObserver((mutations) => {
-            if (mutations.reduce((acc, mutation) => acc + mutation.addedNodes.length, 0) < 2) {
-              return;
-            }
-            this.trigger(menu);
-          });
-          observer.observe(menu, { childList: true });
-          observers.push(observer);
-        });
-      }, 1000);
+    const observerOptions = {
+      childList: true,
+      subtree: true
+    };
+    const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        const target = mutation.target;
+        if (target.classList.contains("c-context-menu__floating")) {
+          if (isContextMenuOpen()) {
+            this.trigger(target);
+          }
+          break;
+        }
+      }
     });
+    observer.observe(document.body, observerOptions);
   }
   trigger(element) {
     this.handlers.forEach((handler) => handler(element));
   }
 }
-var onDropdownMenuOpen = new OnDropdownMenuOpen;
+var isContextMenuOpen = () => {
+  return document.querySelector(".c-context-menu__floating .c-menu") !== null;
+};
+var onContextMenuOpen = new OnContextMenuOpen;
 
 // src/extensions/qucikMAR/index.ts
 var quickMatchAndReplace = () => {
-  EventManager_default.on("onDropdownMenuOpen", (element) => {
+  EventManager_default.on("onContextMenuOpen", (element) => {
     if (!(window.location.hash == "#/replay" || window.location.hash == "#/intercept"))
       return;
     if (document.getSelection().toString().trim() == "")
@@ -1538,13 +1501,14 @@ var quickMatchAndReplace = () => {
     const dropdown = element;
     const menu = dropdown.querySelector(".c-menu");
     const dropdownItems = dropdown.querySelectorAll(".c-item");
-    let item = Array.from(dropdownItems).find((item2) => item2.querySelector(".c-item__content").textContent.trim() == "Send to Automate");
-    if (!item) {
-      item = Array.from(dropdownItems).find((item2) => item2.querySelector(".c-item__content").textContent.trim() == "Copy");
-      if (!item)
-        return;
+    const newItem = dropdownItems[0].cloneNode(true);
+    let insertBefore = dropdownItems[0];
+    for (let i = 0;i < dropdownItems.length; i++) {
+      if (dropdownItems[i].querySelector(".c-item__content").textContent == "Send to Automate") {
+        insertBefore = dropdownItems[i];
+        break;
+      }
     }
-    const newItem = item.cloneNode(true);
     newItem.querySelector(".c-item__content").textContent = "Send to Match & Replace";
     newItem.querySelector(".c-item__trailing-visual")?.remove();
     newItem.querySelector(".c-item__leading-visual")?.remove();
@@ -1556,7 +1520,7 @@ var quickMatchAndReplace = () => {
       }, 5);
       menu.remove();
     });
-    menu.insertBefore(newItem, item.nextSibling);
+    menu.insertBefore(newItem, insertBefore.nextSibling);
   });
 };
 
@@ -1696,7 +1660,7 @@ var init2 = () => {
   EventManager_default.registerEvent("onCaidoLoad", onCaidoLoad);
   EventManager_default.registerEvent("onSettingsTabOpen", onSettingsTabOpen);
   EventManager_default.registerEvent("onPageOpen", onPageOpen);
-  EventManager_default.registerEvent("onDropdownMenuOpen", onDropdownMenuOpen);
+  EventManager_default.registerEvent("onContextMenuOpen", onContextMenuOpen);
   setup();
   EventManager_default.on("onCaidoLoad", (event) => {
     quickSSRFFunctionality();
