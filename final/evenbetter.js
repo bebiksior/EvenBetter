@@ -540,7 +540,7 @@ var createEvenBetterTabHTML = (themes4, currentTheme) => {
               <div class="c-text-input__outer">
                 <div class="c-text-input__inner">
                   <input
-                    placeholder="$ssrfinstance"
+                    placeholder="\$ssrfinstance"
                     spellcheck="false"
                     class="c-text-input__input"
                   />
@@ -1299,10 +1299,10 @@ var modifyContextMenu = (rowID) => {
   });
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
-    cItemMenu.style.left = "13.5rem";
+    cItemMenu.style.left = "14em";
     cItemMenu.style.top = "220px";
     if (cItemMenu.getBoundingClientRect().right + 100 > window.innerWidth) {
-      cItemMenu.style.left = "-10rem";
+      cItemMenu.style.left = "-6rem";
     }
   });
   contextItems.forEach((item) => item.addEventListener("mouseenter", closeCustomContextMenu));
@@ -1511,16 +1511,20 @@ var quickMatchAndReplace = () => {
     newItem.querySelector(".c-item__content").textContent = "Send to Match & Replace";
     newItem.querySelector(".c-item__trailing-visual")?.remove();
     newItem.querySelector(".c-item__leading-visual")?.remove();
+    let selectedText = "";
+    document.addEventListener("mousedown", () => {
+      selectedText = document.getSelection().toString().trim();
+    });
     newItem.addEventListener("click", () => {
-      const selectedText = document.getSelection().toString();
+      const textToUse = selectedText;
       window.location.hash = "#/tamper";
       let interval = setInterval(() => {
-        const searchInput = document.querySelector(".c-rule-form-create__search textarea");
+        const searchInput = document.querySelector(".c-tamper textarea");
         if (searchInput) {
-          searchInput.value = selectedText;
+          searchInput.value = textToUse;
           clearInterval(interval);
         }
-      }, 3);
+      }, 2);
       menu.remove();
     });
     menu.insertBefore(newItem, insertBefore.nextSibling);

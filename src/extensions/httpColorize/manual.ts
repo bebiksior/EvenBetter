@@ -112,11 +112,11 @@ const modifyContextMenu = (rowID: string) => {
 
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
-    cItemMenu.style.left = "13.5rem";
+    cItemMenu.style.left = "14em";
     cItemMenu.style.top = "220px";
 
     if (cItemMenu.getBoundingClientRect().right + 100 > window.innerWidth) {
-      cItemMenu.style.left = "-10rem";
+      cItemMenu.style.left = "-6rem";
     }
   });
 

@@ -17,10 +17,13 @@ export const quickMatchAndReplace = () => {
     const dropdownItems = dropdown.querySelectorAll(".c-item");
 
     const newItem = dropdownItems[0].cloneNode(true) as HTMLElement;
-    
+
     let insertBefore = dropdownItems[0];
     for (let i = 0; i < dropdownItems.length; i++) {
-      if (dropdownItems[i].querySelector(".c-item__content").textContent == "Send to Automate") {
+      if (
+        dropdownItems[i].querySelector(".c-item__content").textContent ==
+        "Send to Automate"
+      ) {
         insertBefore = dropdownItems[i];
         break;
       }
@@ -30,19 +33,27 @@ export const quickMatchAndReplace = () => {
       "Send to Match & Replace";
     newItem.querySelector(".c-item__trailing-visual")?.remove();
     newItem.querySelector(".c-item__leading-visual")?.remove();
+
+    // we can't just do `document.getSelection().toString()` in the `click` event because Safari clears it before click event is triggered :( (spend like 2 hours to figure this out)
+    let selectedText = "";
+    document.addEventListener("mousedown", () => {
+      selectedText = document.getSelection().toString().trim();
+    });
+
     newItem.addEventListener("click", () => {
-      const selectedText = document.getSelection().toString();
+      const textToUse = selectedText;
 
       window.location.hash = "#/tamper";
       let interval = setInterval(() => {
         const searchInput = document.querySelector(
-          ".c-rule-form-create__search textarea"
+          ".c-tamper textarea"
         ) as HTMLInputElement;
+
         if (searchInput) {
-          searchInput.value = selectedText;
+          searchInput.value = textToUse;
           clearInterval(interval);
         }
-      }, 3);
+      }, 2);
 
       menu.remove();
     });
