@@ -951,7 +951,7 @@ var replaceSSRFInstanceText = (mutation, originalTextContent) => {
   }).then((response) => response.json()).then((data) => {
     const updatedText = newTextContent.replace("$creating_instance", "https://" + data + ".c5.rs");
     mutation.target.textContent = updatedText;
-    window.open(SSRF_INSTANCE_URL + data);
+    window.open(SSRF_INSTANCE_URL + data, "_blank");
   }).catch(() => {
     const updatedText = newTextContent.replace("$creating_instance", "$creating_instance_failed");
     mutation.target.textContent = updatedText;
@@ -994,7 +994,11 @@ var addImportButton = () => {
       reader.onload = (e) => {
         const target2 = e.target;
         const data = JSON.parse(target2.result);
-        createNewScopePreset(data);
+        Caido.scopes.createScope({
+          name: data.name,
+          allowlist: data.allowlist,
+          denylist: data.denylist
+        });
       };
       reader.readAsText(file);
     });
@@ -1018,7 +1022,7 @@ var observeScopeTab = () => {
   scopeTabObserver = new MutationObserver((m) => {
     if (m.some((m2) => m2.attributeName === "style" || m2.target.classList.contains("c-preset-form-create__header")))
       return;
-    attachDownloadButtonV2();
+    attachDownloadButton();
   });
   scopeTabObserver.observe(presetForm, {
     childList: true,
@@ -1026,12 +1030,12 @@ var observeScopeTab = () => {
     subtree: true
   });
 };
-var attachDownloadButtonV2 = () => {
+var attachDownloadButton = () => {
   document.querySelector("#scope-presents-download")?.remove();
   const presetCreateHeader = document.querySelector(".c-preset-form-create__header");
   const downloadButton = presetCreateHeader.querySelector(".c-scope-tooltip").cloneNode(true);
   downloadButton.id = "scope-presents-download";
-  downloadButton.querySelector("button").innerHTML = `<div data-v-f56ffbcc="" class="c-button__leading-icon"><i data-v-f56ffbcc="" class="c-icon fas fa-file-arrow-down"></i></div>Download`;
+  downloadButton.querySelector("button").innerHTML = `<div class="c-button__leading-icon"><i class="c-icon fas fa-file-arrow-down"></i></div>Download`;
   downloadButton.querySelector("button").addEventListener("click", () => {
     const id = getActiveScopePreset();
     if (!id)
@@ -1049,26 +1053,6 @@ var attachDownloadButtonV2 = () => {
     });
   });
   presetCreateHeader.appendChild(downloadButton);
-};
-var createNewScopePreset = (data) => {
-  const payload = {
-    operationName: "createScope",
-    query: `mutation createScope(\$input: CreateScopeInput!) {\n  createScope(input: \$input) {\n    error {\n      ... on InvalidGlobTermsUserError {\n        ...invalidGlobTermsUserErrorFull\n      }\n      ... on OtherUserError {\n        ...otherUserErrorFull\n      }\n    }\n    scope {\n      ...scopeFull\n    }\n  }\n}\nfragment invalidGlobTermsUserErrorFull on InvalidGlobTermsUserError {\n  ...userErrorFull\n  terms\n}\nfragment userErrorFull on UserError {\n  __typename\n  code\n}\nfragment otherUserErrorFull on OtherUserError {\n  ...userErrorFull\n}\nfragment scopeFull on Scope {\n  __typename\n  id\n  name\n  allowlist\n  denylist\n  indexed\n}`,
-    variables: {
-      input: {
-        allowlist: data.allowlist,
-        denylist: data.denylist,
-        name: data.name
-      }
-    }
-  };
-  fetch(document.location.origin + "/graphql", {
-    body: JSON.stringify(payload),
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken
-    }
-  });
 };
 var getScopePreset = (id) => {
   const payload = {
@@ -1298,6 +1282,9 @@ var modifyContextMenu = (rowID) => {
     }
   });
   highlightRowMenu.addEventListener("mouseenter", () => {
+    const openedItemMenu = document.querySelector(".c-item .c-menu");
+    if (openedItemMenu)
+      openedItemMenu.style.display = "none";
     cItemMenu.style.display = "block";
     cItemMenu.style.top = contextMenu.clientHeight - cItemMenu.clientHeight / 1.5 + "px";
     cItemMenu.style.left = contextMenu.offsetWidth + "px";
@@ -1305,7 +1292,12 @@ var modifyContextMenu = (rowID) => {
       cItemMenu.style.left = -cItemMenu.clientWidth + "px";
     }
   });
-  contextItems.forEach((item) => item.addEventListener("mouseenter", closeCustomContextMenu));
+  contextItems.forEach((item) => item.addEventListener("mouseenter", () => {
+    closeCustomContextMenu();
+    const openedItemMenu = document.querySelector(".c-item .c-menu");
+    if (openedItemMenu)
+      openedItemMenu.style.display = "block";
+  }));
   highlightRowMenu.querySelectorAll(".evenbetter__c-item").forEach((color) => {
     color.addEventListener("click", () => {
       let colorText = color.querySelector(".evenbetter__c-item__content").textContent;
@@ -1329,9 +1321,8 @@ var modifyContextMenu = (rowID) => {
 };
 var closeCustomContextMenu = () => {
   const highlightRowMenu = document.getElementById("highlightRowMenu");
-  if (highlightRowMenu) {
+  if (highlightRowMenu)
     highlightRowMenu.querySelector(".evenbetter__c-item__menu").style.display = "none";
-  }
 };
 var storeHighlightedRow = (rowID, color) => {
   const highlightedRows = JSON.parse(localStorage.getItem(getProjectName() + ".highlightedRows")) || {};
@@ -1566,28 +1557,43 @@ var attachQuickDecode = () => {
   quickDecode.style.display = "none";
   quickDecode.innerHTML = ` 
   <div class="evenbetter__qd-selected-text">
-    <div class="evenbetter__qd-selected-text-label">Decoded text:</div>
+    <div class="evenbetter__qd-selected-text-top">
+      <div class="evenbetter__qd-selected-text-label">
+        Decoded text:
+      </div>
+      <i class="c-icon fas fa-copy"></i>
+    </div>
     <div class="evenbetter__qd-selected-text-box"></div>
   </div>
   `;
+  const copyIcon = quickDecode.querySelector(".fa-copy");
+  copyIcon.addEventListener("click", () => {
+    const decodedTextBox = document.querySelector(".evenbetter__qd-selected-text-box");
+    const decodedText = decodedTextBox.textContent;
+    navigator.clipboard.writeText(decodedText);
+  });
   document.addEventListener("selectionchange", (e) => {
     if (window.location.hash !== "#/replay")
       return;
     const selectedText = window.getSelection().toString();
-    const decodedTextBox = document.querySelector(".evenbetter__qd-selected-text-box");
-    const decodedTextLabel = document.querySelector(".evenbetter__qd-selected-text-label");
-    if (selectedText.trim() !== "") {
-      const decoded = tryToDecode(selectedText);
-      quickDecode.style.display = "block";
-      decodedTextLabel.textContent = `Decoded text (${decoded.encodeMethod}):`;
-      if (isValidJSON(decoded.decodedContent)) {
-        decodedTextBox.innerHTML = document.createElement("pre").innerHTML = syntaxHighlight(decoded.decodedContent);
+    setTimeout(() => {
+      if (document.querySelector(".cm-selectionBackground") && selectedText === "")
+        return;
+      const decodedTextBox = document.querySelector(".evenbetter__qd-selected-text-box");
+      const decodedTextLabel = document.querySelector(".evenbetter__qd-selected-text-label");
+      if (selectedText.trim() !== "") {
+        const decoded = tryToDecode(selectedText);
+        quickDecode.style.display = "block";
+        decodedTextLabel.textContent = `Decoded text (${decoded.encodeMethod}):`;
+        if (isValidJSON(decoded.decodedContent)) {
+          decodedTextBox.innerHTML = document.createElement("pre").innerHTML = syntaxHighlight(decoded.decodedContent);
+        } else {
+          decodedTextBox.textContent = decoded.decodedContent;
+        }
       } else {
-        decodedTextBox.textContent = decoded.decodedContent;
+        quickDecode.style.display = "none";
       }
-    } else {
-      quickDecode.style.display = "none";
-    }
+    }, 8);
   });
   sessionListBody.appendChild(quickDecode);
 };
@@ -1612,20 +1618,24 @@ var decodeOnHover = () => {
   });
 };
 var tryToDecode = (input) => {
-  try {
-    const decodedBase64 = atob(input);
-    return { encodeMethod: "base64", decodedContent: decodedBase64 };
-  } catch (error) {
-    if (isUrlEncoded(input)) {
-      try {
-        const decodedUrl = decodeURIComponent(input);
-        return { encodeMethod: "url", decodedContent: decodedUrl };
-      } catch (error2) {
-        return { encodeMethod: "none", decodedContent: input };
-      }
+  const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+  if (base64Regex.test(input)) {
+    try {
+      const decodedBase64 = atob(input);
+      return { encodeMethod: "base64", decodedContent: decodedBase64 };
+    } catch (error) {
+      return { encodeMethod: "none", decodedContent: input };
     }
-    return { encodeMethod: "none", decodedContent: input };
   }
+  if (isUrlEncoded(input)) {
+    try {
+      const decodedUrl = decodeURIComponent(input);
+      return { encodeMethod: "url", decodedContent: decodedUrl };
+    } catch (error) {
+      return { encodeMethod: "none", decodedContent: input };
+    }
+  }
+  return { encodeMethod: "none", decodedContent: input };
 };
 var isValidJSON = (str) => {
   try {

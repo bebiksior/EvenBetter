@@ -1,9 +1,12 @@
 import eventManagerInstance from "../../events/EventManager";
 import { PageOpenEvent } from "../../events/onPageOpen";
-import { getSetting } from "../../settings";
+import { getSetting, setSetting } from "../../settings";
 
 const SSRF_INSTANCE_API_URL = "https://api.cvssadvisor.com/ssrf/api/instance",
-  SSRF_INSTANCE_URL = "https://ssrf.cvssadvisor.com/instance/";
+  SSRF_INSTANCE_URL = "https://ssrf.cvssadvisor.com/instance/",
+  SSRF_TOOL_URL = "https://ssrf.cvssadvisor.com/";
+
+declare const Caido: any;
 
 export const quickSSRFFunctionality = () => {
   eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
@@ -14,6 +17,16 @@ export const quickSSRFFunctionality = () => {
       setTimeout(() => observeReplayInput(), 1000);
     }
   });
+
+  /*const ssrfPageContent = quickSSRFPage();
+  Caido.navigation.addPage("/evenbetter/quick-ssrf", {
+    body: ssrfPageContent
+  })
+
+  Caido.sidebar.registerItem("Quick SSRF", "/evenbetter/quick-ssrf", {
+    icon: "fas fa-compass",
+    group: "EvenBetter"
+  });*/
 };
 
 let replayInputObserver: MutationObserver | null = null;
@@ -67,8 +80,7 @@ const replaceSSRFInstanceText = (
       );
       mutation.target.textContent = updatedText;
 
-      // This doesn't work on MacOS :/
-      window.open(SSRF_INSTANCE_URL + data);
+      window.open(SSRF_INSTANCE_URL + data, "_blank");
     })
     .catch(() => {
       const updatedText = newTextContent.replace(

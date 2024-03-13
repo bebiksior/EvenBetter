@@ -110,18 +110,31 @@ const modifyContextMenu = (rowID: string) => {
       }
     });
 
-    highlightRowMenu.addEventListener("mouseenter", () => {
-      cItemMenu.style.display = "block";
-      cItemMenu.style.top = contextMenu.clientHeight - cItemMenu.clientHeight/1.5 + "px";
-      cItemMenu.style.left = contextMenu.offsetWidth + "px";
+  highlightRowMenu.addEventListener("mouseenter", () => {
+    const openedItemMenu = document.querySelector(
+      ".c-item .c-menu"
+    ) as HTMLElement;
+    if (openedItemMenu) openedItemMenu.style.display = "none";
 
-      if (cItemMenu.getBoundingClientRect().right > window.innerWidth) {
-        cItemMenu.style.left = -cItemMenu.clientWidth + "px";
-      }
+    cItemMenu.style.display = "block";
+    cItemMenu.style.top =
+      contextMenu.clientHeight - cItemMenu.clientHeight / 1.5 + "px";
+    cItemMenu.style.left = contextMenu.offsetWidth + "px";
+
+    if (cItemMenu.getBoundingClientRect().right > window.innerWidth) {
+      cItemMenu.style.left = -cItemMenu.clientWidth + "px";
+    }
   });
 
   contextItems.forEach((item) =>
-    item.addEventListener("mouseenter", closeCustomContextMenu)
+    item.addEventListener("mouseenter", () => {
+      closeCustomContextMenu();
+      
+      const openedItemMenu = document.querySelector(
+        ".c-item .c-menu"
+      ) as HTMLElement;
+      if (openedItemMenu) openedItemMenu.style.display = "block";
+    })
   );
 
   highlightRowMenu.querySelectorAll(".evenbetter__c-item").forEach((color) => {
@@ -153,11 +166,10 @@ const modifyContextMenu = (rowID: string) => {
 
 const closeCustomContextMenu = () => {
   const highlightRowMenu = document.getElementById("highlightRowMenu");
-  if (highlightRowMenu) {
+  if (highlightRowMenu)
     (
       highlightRowMenu.querySelector(".evenbetter__c-item__menu") as HTMLElement
     ).style.display = "none";
-  }
 };
 
 const storeHighlightedRow = (rowID: string, color: string) => {

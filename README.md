@@ -10,7 +10,7 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 ## Changelog v2.0
 - **v2.0**: EvenBetter code has been rewritten in TypeScript, which makes it more maintainable and easier to contribute to :D
 - **v2.0**: **Quick Decode**: new feature that allows you to quickly decode text just by selecting or hovering over it on the Replay page
-- **v2.0**: **Send to Match & Replace**: new context menu button on the HTTP History page that allows you to quickly send selected text into the Match & Replace page
+- **v2.0**: **Send to Match & Replace**: new context menu button page that allows you to quickly send selected text into the Match & Replace page
 - **v2.0**: Added two new themes: **Neon** and **Deep Dark**
 - **v2.0**: ESC keybind now closes the context menu.
 - **v2.0**: EvenBetter will warn you if you are using old CSS version.

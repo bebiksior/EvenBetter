@@ -903,6 +903,21 @@
   background: var(--c-bg-default);
 }
 
+.evenbetter__qd-selected-text-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.evenbetter__qd-selected-text-top i {
+  cursor: pointer;
+  transition: 0.2s ease transform;
+}
+
+.evenbetter__qd-selected-text-top i:active {
+  transform: scale(0.9);
+}
+
 .evenbetter__qd-selected-text {
   padding: 0.6em;
   margin: 0.5em;
@@ -923,4 +938,10 @@
 }
 .evenbetter__syntax-key {
   color: #ecae38;
+}
+
+
+.evenbetter__quick-ssrf,
+#quick-ssrf-page {
+  height: 100%;
 }

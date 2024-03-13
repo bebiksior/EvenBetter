@@ -41,6 +41,13 @@
             "version": "1.0",
             "author": "bebiks",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
+        },
+        {
+            "name": "Introspection Query",
+            "description": "Useful to ask a GraphQL schema for information about what queries it supports, if enabled.",
+            "version": "1.0",
+            "author": "Vasily",
+            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Introspection-Query.json"
         }
     ]
 }

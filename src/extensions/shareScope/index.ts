@@ -1,5 +1,7 @@
 import eventManagerInstance from "../../events/EventManager";
 
+declare const Caido: any;
+
 export const onScopeTabOpen = () => {
   eventManagerInstance.on("onPageOpen", (data: any) => {
     if (data.newUrl == "#/scope") {
@@ -41,7 +43,12 @@ const addImportButton = () => {
       reader.onload = (e) => {
         const target = e.target as FileReader;
         const data = JSON.parse(target.result as string);
-        createNewScopePreset(data);
+
+        Caido.scopes.createScope({
+          name: data.name,
+          allowlist: data.allowlist,
+          denylist: data.denylist,
+        });
       };
       reader.readAsText(file);
     });
@@ -82,7 +89,7 @@ const observeScopeTab = () => {
     )
       return;
 
-    attachDownloadButtonV2();
+    attachDownloadButton();
   });
 
   scopeTabObserver.observe(presetForm, {
@@ -92,7 +99,7 @@ const observeScopeTab = () => {
   });
 };
 
-const attachDownloadButtonV2 = () => {
+const attachDownloadButton = () => {
   document.querySelector("#scope-presents-download")?.remove();
 
   const presetCreateHeader = document.querySelector(
@@ -107,7 +114,7 @@ const attachDownloadButtonV2 = () => {
 
   downloadButton.querySelector(
     "button"
-  ).innerHTML = `<div data-v-f56ffbcc="" class="c-button__leading-icon"><i data-v-f56ffbcc="" class="c-icon fas fa-file-arrow-down"></i></div>Download`;
+  ).innerHTML = `<div class="c-button__leading-icon"><i class="c-icon fas fa-file-arrow-down"></i></div>Download`;
   downloadButton.querySelector("button").addEventListener("click", () => {
     const id = getActiveScopePreset();
     if (!id) return;
@@ -127,30 +134,6 @@ const attachDownloadButtonV2 = () => {
   });
 
   presetCreateHeader.appendChild(downloadButton);
-};
-
-const createNewScopePreset = (data: any) => {
-  const payload = {
-    operationName: "createScope",
-    query: `mutation createScope($input: CreateScopeInput!) {\n  createScope(input: $input) {\n    error {\n      ... on InvalidGlobTermsUserError {\n        ...invalidGlobTermsUserErrorFull\n      }\n      ... on OtherUserError {\n        ...otherUserErrorFull\n      }\n    }\n    scope {\n      ...scopeFull\n    }\n  }\n}\nfragment invalidGlobTermsUserErrorFull on InvalidGlobTermsUserError {\n  ...userErrorFull\n  terms\n}\nfragment userErrorFull on UserError {\n  __typename\n  code\n}\nfragment otherUserErrorFull on OtherUserError {\n  ...userErrorFull\n}\nfragment scopeFull on Scope {\n  __typename\n  id\n  name\n  allowlist\n  denylist\n  indexed\n}`,
-    variables: {
-      input: {
-        allowlist: data.allowlist,
-        denylist: data.denylist,
-        name: data.name,
-      },
-    },
-  };
-
-  fetch(document.location.origin + "/graphql", {
-    body: JSON.stringify(payload),
-    method: "POST",
-    headers: {
-      Authorization:
-        "Bearer " +
-        JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken,
-    },
-  });
 };
 
 const getScopePreset = (id: any) => {

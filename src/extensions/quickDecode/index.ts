@@ -14,35 +14,57 @@ const attachQuickDecode = () => {
 
   quickDecode.innerHTML = ` 
   <div class="evenbetter__qd-selected-text">
-    <div class="evenbetter__qd-selected-text-label">Decoded text:</div>
+    <div class="evenbetter__qd-selected-text-top">
+      <div class="evenbetter__qd-selected-text-label">
+        Decoded text:
+      </div>
+      <i class="c-icon fas fa-copy"></i>
+    </div>
     <div class="evenbetter__qd-selected-text-box"></div>
   </div>
   `;
+
+  const copyIcon = quickDecode.querySelector(".fa-copy");
+  copyIcon.addEventListener("click", () => {
+    const decodedTextBox = document.querySelector(
+      ".evenbetter__qd-selected-text-box"
+    ) as HTMLElement;
+    const decodedText = decodedTextBox.textContent;
+    navigator.clipboard.writeText(decodedText);
+  });
 
   document.addEventListener("selectionchange", (e) => {
     if (window.location.hash !== "#/replay") return;
 
     const selectedText = window.getSelection().toString();
-    const decodedTextBox = document.querySelector(
-      ".evenbetter__qd-selected-text-box"
-    );
-    const decodedTextLabel = document.querySelector(
-      ".evenbetter__qd-selected-text-label"
-    );
+    setTimeout(() => {
+      if (
+        document.querySelector(".cm-selectionBackground") &&
+        selectedText === ""
+      )
+        return;
 
-    if (selectedText.trim() !== "") {
-      const decoded = tryToDecode(selectedText);
+      const decodedTextBox = document.querySelector(
+        ".evenbetter__qd-selected-text-box"
+      );
+      const decodedTextLabel = document.querySelector(
+        ".evenbetter__qd-selected-text-label"
+      );
 
-      quickDecode.style.display = "block";
-      decodedTextLabel.textContent = `Decoded text (${decoded.encodeMethod}):`;
-      if (isValidJSON(decoded.decodedContent)) {
-        decodedTextBox.innerHTML = document.createElement("pre").innerHTML = syntaxHighlight(decoded.decodedContent);
+      if (selectedText.trim() !== "") {
+        const decoded = tryToDecode(selectedText);
+        quickDecode.style.display = "block";
+        decodedTextLabel.textContent = `Decoded text (${decoded.encodeMethod}):`;
+        if (isValidJSON(decoded.decodedContent)) {
+          decodedTextBox.innerHTML = document.createElement("pre").innerHTML =
+            syntaxHighlight(decoded.decodedContent);
+        } else {
+          decodedTextBox.textContent = decoded.decodedContent;
+        }
       } else {
-        decodedTextBox.textContent = decoded.decodedContent;
+        quickDecode.style.display = "none";
       }
-    } else {
-      quickDecode.style.display = "none";
-    }
+    }, 8);
   });
 
   sessionListBody.appendChild(quickDecode);
@@ -50,22 +72,30 @@ const attachQuickDecode = () => {
 
 // https://stackoverflow.com/questions/4810841/pretty-print-json-using-javascript
 function syntaxHighlight(json: string) {
-  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-      var cls = 'number';
+  json = json
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  return json.replace(
+    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    function (match) {
+      var cls = "number";
       if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-              cls = 'key';
-          } else {
-              cls = 'string';
-          }
+        if (/:$/.test(match)) {
+          cls = "key";
+        } else {
+          cls = "string";
+        }
       } else if (/true|false/.test(match)) {
-          cls = 'boolean';
+        cls = "boolean";
       } else if (/null/.test(match)) {
-          cls = 'null';
+        cls = "null";
       }
-      return '<span class="evenbetter__syntax-' + cls + '">' + match + '</span>';
-  });
+      return (
+        '<span class="evenbetter__syntax-' + cls + '">' + match + "</span>"
+      );
+    }
+  );
 }
 
 function isUrlEncoded(str: string) {
@@ -95,21 +125,26 @@ const decodeOnHover = () => {
 };
 
 const tryToDecode = (input: string) => {
-  try {
-    const decodedBase64 = atob(input);
-    return { encodeMethod: "base64", decodedContent: decodedBase64 };
-  } catch (error) {
-    if (isUrlEncoded(input)) {
-      try {
-        const decodedUrl = decodeURIComponent(input);
-        return { encodeMethod: "url", decodedContent: decodedUrl };
-      } catch (error) {
-        return { encodeMethod: "none", decodedContent: input };
-      }
+  const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+  if (base64Regex.test(input)) {
+    try {
+      const decodedBase64 = atob(input);
+      return { encodeMethod: "base64", decodedContent: decodedBase64 };
+    } catch (error) {
+      return { encodeMethod: "none", decodedContent: input };
     }
-
-    return { encodeMethod: "none", decodedContent: input };
   }
+
+  if (isUrlEncoded(input)) {
+    try {
+      const decodedUrl = decodeURIComponent(input);
+      return { encodeMethod: "url", decodedContent: decodedUrl };
+    } catch (error) {
+      return { encodeMethod: "none", decodedContent: input };
+    }
+  }
+
+  return { encodeMethod: "none", decodedContent: input };
 };
 
 const isValidJSON = (str: string) => {
