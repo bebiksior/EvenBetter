@@ -1,7 +1,3 @@
-.c-header-cell {
-  border: (--header-cell-width) solid var(--c-header-cell-border) !important;
-}
-
 :root {
   --c-header-cell-border: #101010 !important;
   --c-bg-default: #050607 !important;
@@ -12,6 +8,11 @@
   --selection-background: rgba(255, 255, 255, 0.15) !important;
   --header-cell-width: 1px !important;
   --selected-row-background: var(--c-bg-default) !important;
+  --evenbetter-css-version: "v2.0";
+}
+
+.c-header-cell {
+  border: (--header-cell-width) solid var(--c-header-cell-border) !important;
 }
 
 .cm-selectionBackground {
@@ -455,6 +456,10 @@
   border: var(--c-border-width-1) solid var(--c-border-default);
   background-color: var(--c-bg-default);
   color: var(--c-fg-default);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0 0.5em;
 }
 
 .workflows-shortcuts .c-text-input {
@@ -556,7 +561,7 @@
   padding: var(--c-space-3) 0;
   border-radius: var(--c-border-radius-2);
   border: var(--c-border-width-1) solid var(--c-border-default);
-  min-width: 10em;
+  min-width: 5.5em;
 }
 
 .evenbetter__c-item__menu {
@@ -871,4 +876,72 @@
 
 .c-evenbetter_item-row__select {
   width: 5em;
+}
+
+.c-replay__tab-list .c-button__input {
+  padding: 0 0.5rem !important;
+}
+
+.c-replay__tab-list .c-button__input {
+  min-height: 2rem !important;
+}
+
+.c-replay__tab-list .c-tab-list__body {
+  gap: 0.3rem !important;
+}
+
+.evenbetter__qd-body {
+  max-height: 40vh;
+  background-color: var(--c-bg-default);
+  overflow: auto;
+  word-wrap: break-word;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+}
+
+.evenbetter__qd-selected-text-box {
+  padding: 0.4em;
+  background: var(--c-bg-default);
+}
+
+.evenbetter__qd-selected-text-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.evenbetter__qd-selected-text-top i {
+  cursor: pointer;
+  transition: 0.2s ease transform;
+}
+
+.evenbetter__qd-selected-text-top i:active {
+  transform: scale(0.9);
+}
+
+.evenbetter__qd-selected-text {
+  padding: 0.6em;
+  margin: 0.5em;
+  background: var(--c-bg-subtle);
+}
+
+.evenbetter__syntax-string {
+  color: #b5cea8;
+}
+.evenbetter__syntax-number {
+  color: #569cd6;
+}
+.evenbetter__syntax-boolean {
+  color: #ce9178;
+}
+.evenbetter__syntax-null {
+  color: #d2a8ff;
+}
+.evenbetter__syntax-key {
+  color: #ecae38;
+}
+
+
+.evenbetter__quick-ssrf,
+#quick-ssrf-page {
+  height: 100%;
 }
