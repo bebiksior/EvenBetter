@@ -15,6 +15,8 @@ import { quickMatchAndReplace } from "./extensions/qucikMAR";
 import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
 
+declare const Caido: any;
+
 const init = () => {
   log.info(`EvenBetter ${CURRENT_VERSION} is loading, thanks for using it! 🎉`);
 

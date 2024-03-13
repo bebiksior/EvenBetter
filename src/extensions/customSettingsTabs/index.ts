@@ -11,6 +11,8 @@ interface SettingsTab {
   content: HTMLElement;
 }
 
+declare const Caido: any;
+
 export const setup = () => {
   eventManagerInstance.on("onSettingsTabOpen", (data: string) => {
     adjustActiveTab(data);
@@ -91,23 +93,24 @@ const getNavItemData: (navItem: Element) => SettingsTab = (
     };
   }
 
-
   log.error("Couldn't get navitemdata");
   return null;
 };
 
 const getNavigationItem = (name: string): Element | null => {
-  const settingsTabs = Array.from(document.querySelectorAll(
-    ".c-settings__navigation .c-underline-nav-item"
-  ));
+  const settingsTabs = Array.from(
+    document.querySelectorAll(".c-settings__navigation .c-underline-nav-item")
+  );
 
-  const foundTab = settingsTabs.find(tab => {
-    const tabName = (tab.querySelector(".c-button__label") as HTMLElement)?.textContent?.trim();
+  const foundTab = settingsTabs.find((tab) => {
+    const tabName = (
+      tab.querySelector(".c-button__label") as HTMLElement
+    )?.textContent?.trim();
     return tabName && tabName.toLowerCase() === name.toLowerCase();
   });
 
   return foundTab || null;
-}
+};
 
 // render custom tabs
 export const renderCustomTabs = () => {
@@ -135,7 +138,9 @@ export const renderCustomTabs = () => {
 
       newTab.querySelector(".c-button__label").innerHTML = tab.icon + tab.name;
 
-      newTab.querySelector(".c-button").addEventListener("click", () => openCustomTab(tab));
+      newTab
+        .querySelector(".c-button")
+        .addEventListener("click", () => openCustomTab(tab));
 
       settingsNavigation.appendChild(newTab);
     }
@@ -144,9 +149,7 @@ export const renderCustomTabs = () => {
 
 const openCustomTab = (tab: SettingsTab) => {
   const previousTab = window.location.hash.split("/")[2].split("?")[0];
-  const content = document.querySelector<HTMLElement>(
-    ".c-settings__content"
-  );
+  const content = document.querySelector<HTMLElement>(".c-settings__content");
   if (!content) {
     log.error("Couldn't find settings tab content, aborting...");
     return;
@@ -164,7 +167,8 @@ const openCustomTab = (tab: SettingsTab) => {
 
   const tabContent = content.children[0] as HTMLElement;
   tabContent.style.display = "none";
-  window.location.hash = window.location.hash.split("?")[0] + `?custom-path=#/settings/${tab.id}`;
+  window.location.hash =
+    window.location.hash.split("?")[0] + `?custom-path=#/settings/${tab.id}`;
 
   adjustActiveTab(tab.id);
 
@@ -213,6 +217,6 @@ const customSettingsTabs: SettingsTab[] = [
     icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>',
     id: "library",
     content: evenBetterLibraryTab(),
-  }
+  },
 ];
 export default customSettingsTabs;

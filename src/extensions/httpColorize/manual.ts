@@ -37,7 +37,7 @@ const getRowElementByID = (rowID: string): HTMLElement | null => {
 };
 
 const modifyContextMenu = (rowID: string) => {
-  const contextMenu = document.querySelector(".c-menu");
+  const contextMenu = document.querySelector(".c-menu") as HTMLElement;
   const contextItems = contextMenu.querySelectorAll(".c-item");
   const contextDividers = contextMenu.querySelectorAll(".c-divider");
 
@@ -110,14 +110,14 @@ const modifyContextMenu = (rowID: string) => {
       }
     });
 
-  highlightRowMenu.addEventListener("mouseenter", () => {
-    cItemMenu.style.display = "block";
-    cItemMenu.style.left = "14em";
-    cItemMenu.style.top = "220px";
+    highlightRowMenu.addEventListener("mouseenter", () => {
+      cItemMenu.style.display = "block";
+      cItemMenu.style.top = contextMenu.clientHeight - cItemMenu.clientHeight/1.5 + "px";
+      cItemMenu.style.left = contextMenu.offsetWidth + "px";
 
-    if (cItemMenu.getBoundingClientRect().right + 100 > window.innerWidth) {
-      cItemMenu.style.left = "-6rem";
-    }
+      if (cItemMenu.getBoundingClientRect().right > window.innerWidth) {
+        cItemMenu.style.left = -cItemMenu.clientWidth + "px";
+      }
   });
 
   contextItems.forEach((item) =>

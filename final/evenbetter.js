@@ -1299,10 +1299,10 @@ var modifyContextMenu = (rowID) => {
   });
   highlightRowMenu.addEventListener("mouseenter", () => {
     cItemMenu.style.display = "block";
-    cItemMenu.style.left = "14em";
-    cItemMenu.style.top = "220px";
-    if (cItemMenu.getBoundingClientRect().right + 100 > window.innerWidth) {
-      cItemMenu.style.left = "-6rem";
+    cItemMenu.style.top = contextMenu.clientHeight - cItemMenu.clientHeight / 1.5 + "px";
+    cItemMenu.style.left = contextMenu.offsetWidth + "px";
+    if (cItemMenu.getBoundingClientRect().right > window.innerWidth) {
+      cItemMenu.style.left = -cItemMenu.clientWidth + "px";
     }
   });
   contextItems.forEach((item) => item.addEventListener("mouseenter", closeCustomContextMenu));
