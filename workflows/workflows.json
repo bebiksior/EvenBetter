@@ -23,8 +23,9 @@
         },
         {
             "name": "AI Hacking Suggestions",
-            "description": "PoC for a call to openai's api. (doesn't work on Windows)",
+            "description": "PoC for a call to openai's api.",
             "version": "1.0",
+            "os": "MacOS, Linux",
             "author": "rez0",
             "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
         },
