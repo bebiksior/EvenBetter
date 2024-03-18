@@ -32,7 +32,7 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/405d095e-338b-4796-b722-555d8eb73e92)
 
 ## PwnFox compatibility
-With Caido version `0.32.0`, passive workflows were introduced, allowing us to integrate PwnFox support within Caido. Dynamic coloring has not been implemented yet which makes it harder to create workflow for PwnFox. With EvenBetter you can download the [PwnFox Support Workflow](https://github.com/bebiksior/EvenBetter/workflow/workflow-PwnFox_Support.json) and simply import it on the Workflow page!
+With Caido version `0.32.0`, passive workflows were introduced, allowing us to integrate PwnFox support within Caido. Dynamic coloring has not been implemented yet which makes it harder to create workflow for PwnFox. With EvenBetter you can download the [PwnFox Support Workflow](https://github.com/bebiksior/EvenBetter/blob/main/workflows/workflow-PwnFox_Support.json) and simply import it on the Workflow page!
 
 ## Share scope with your team
 You can now share your scope presets with your team by exporting and importing them.
