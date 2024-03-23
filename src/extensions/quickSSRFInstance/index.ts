@@ -1,10 +1,7 @@
 import eventManagerInstance from "../../events/EventManager";
 import { PageOpenEvent } from "../../events/onPageOpen";
-import { getSetting, setSetting } from "../../settings";
-
-const SSRF_INSTANCE_API_URL = "https://api.cvssadvisor.com/ssrf/api/instance",
-  SSRF_INSTANCE_URL = "https://ssrf.cvssadvisor.com/instance/",
-  SSRF_TOOL_URL = "https://ssrf.cvssadvisor.com/";
+import { getSetting } from "../../settings";
+import { registerPage, ssrfInstance } from "./page";
 
 declare const Caido: any;
 
@@ -18,15 +15,7 @@ export const quickSSRFFunctionality = () => {
     }
   });
 
-  /*const ssrfPageContent = quickSSRFPage();
-  Caido.navigation.addPage("/evenbetter/quick-ssrf", {
-    body: ssrfPageContent
-  })
-
-  Caido.sidebar.registerItem("Quick SSRF", "/evenbetter/quick-ssrf", {
-    icon: "fas fa-compass",
-    group: "EvenBetter"
-  });*/
+  registerPage()
 };
 
 let replayInputObserver: MutationObserver | null = null;
@@ -46,7 +35,11 @@ const observeReplayInput = () => {
       const originalTextContent = mutation.target.textContent;
 
       if (originalTextContent.includes(ssrfInstancePlaceholder)) {
-        replaceSSRFInstanceText(mutation, originalTextContent);
+        const newTextContent = originalTextContent.replace(
+          getSetting("ssrfInstancePlaceholder"),
+          ssrfInstance.url
+        );
+        mutation.target.textContent = newTextContent;
       }
     });
   });
@@ -57,36 +50,4 @@ const observeReplayInput = () => {
   };
 
   replayInputObserver.observe(replayInput, config);
-};
-
-const replaceSSRFInstanceText = (
-  mutation: MutationRecord,
-  originalTextContent: string
-) => {
-  const newTextContent = originalTextContent.replace(
-    getSetting("ssrfInstancePlaceholder"),
-    "$creating_instance"
-  );
-  mutation.target.textContent = newTextContent;
-
-  fetch(SSRF_INSTANCE_API_URL, {
-    method: "POST",
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const updatedText = newTextContent.replace(
-        "$creating_instance",
-        "https://" + data + ".c5.rs"
-      );
-      mutation.target.textContent = updatedText;
-
-      window.open(SSRF_INSTANCE_URL + data, "_blank");
-    })
-    .catch(() => {
-      const updatedText = newTextContent.replace(
-        "$creating_instance",
-        "$creating_instance_failed"
-      );
-      mutation.target.textContent = updatedText;
-    });
 };

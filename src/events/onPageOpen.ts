@@ -23,12 +23,15 @@ export class OnPageOpen implements Event<PageOpenEvent> {
 
         previousUrl = window.location.href;
 
-        if (newPath.includes("?custom-path=")) 
+        if (newPath.includes("?custom-path="))
           newPath = newPath.split("?custom-path=")[1];
 
         if (oldPath.includes("?custom-path="))
           oldPath = oldPath.split("?custom-path=")[1];
 
+        document
+          .querySelector(".c-content")
+          ?.setAttribute("data-page", newPath);
 
         this.trigger({
           newUrl: newPath,

@@ -8,7 +8,7 @@
   --selection-background: rgba(255, 255, 255, 0.15) !important;
   --header-cell-width: 1px !important;
   --selected-row-background: var(--c-bg-default) !important;
-  --evenbetter-css-version: "v2.0";
+  --evenbetter-css-version: "v2.1";
 }
 
 .c-header-cell {
@@ -177,6 +177,11 @@
   color: var(--c-fg-subtle);
   word-break: break-word;
   user-select: text !important;
+  -webkit-user-select: text !important;
+
+  white-space: break-spaces;
+  overflow: auto;
+  max-height: 40em;
 }
 
 .evenbetter-modal__content-body a {
@@ -196,11 +201,6 @@
 
 .evenbetter-modal__content-body-close:hover {
   background-color: var(--c-bg-default);
-}
-
-/* Fixes scrollbar issue in the Filter tab */
-.c-drawer__body {
-  max-height: 95%;
 }
 
 .c-evenbetter_library_card .header-description,
@@ -330,6 +330,7 @@
   width: 100%;
 }
 
+.c-evenbetter_quick-ssrf .c-text-input__inner,
 .even-better__settings .c-text-input__inner {
   display: flex;
   gap: var(--c-space-1);
@@ -343,6 +344,7 @@
   min-height: var(--c-space-10);
 }
 
+.c-evenbetter_quick-ssrf .c-text-input__input,
 .even-better__settings .c-text-input__input {
   width: 100%;
   background: transparent;
@@ -353,6 +355,7 @@
   line-height: inherit;
 }
 
+.c-evenbetter_quick-ssrf .c-text-input__inner,
 .even-better__settings .c-text-input__inner {
   display: flex;
   gap: var(--c-space-1);
@@ -448,11 +451,11 @@
   transform: scale(1);
 }
 
+.c-evenbetter_quick-ssrf select,
 .settings-box__content select {
   width: 100%;
   height: var(--c-space-10);
-  padding: var(--c-space-1);
-  border-radius: var(--c-border-radius-2);
+  border-radius: var(--c-border-radius-2) 0px 0px var(--c-border-radius-2) !important;
   border: var(--c-border-width-1) solid var(--c-border-default);
   background-color: var(--c-bg-default);
   color: var(--c-fg-default);
@@ -462,71 +465,6 @@
   padding: 0 0.5em;
 }
 
-.workflows-shortcuts .c-text-input {
-  width: 30%;
-}
-
-.new-shortcut {
-  display: flex;
-  justify-content: space-between;
-}
-
-.new-shortcut .shortcut-record {
-  width: 30%;
-}
-
-.new-shortcut button {
-  margin: 0;
-}
-
-.shortcuts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.shortcuts-list__item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.shortcuts-list__item-title {
-  width: 40%;
-}
-
-.shortcuts-list__item-value {
-  width: 50%;
-}
-
-.shortcuts-list__item-delete {
-  color: #f58e97;
-  cursor: pointer;
-  transition: 0.2s ease color;
-  width: 15%;
-}
-
-.shortcuts-list__item-delete:hover {
-  color: #da545f;
-}
-
-.shortcuts-header .shortcuts-list__item-title {
-  color: var(--c-fg-subtle) !important;
-}
-
-.shortcuts-header .shortcuts-list__item-value {
-  color: var(--c-fg-subtle) !important;
-}
-
-.shortcuts-header .shortcuts-list__item-delete {
-  color: var(--c-fg-subtle) !important;
-}
-
-.shortcut-record input {
-  cursor: pointer;
-}
-
-/* Convert tab, actions fix */
 .c-workflow-table-item__actions {
   display: flex;
   justify-content: flex-start !important;
@@ -553,41 +491,6 @@
 #scope-presents-import .c-button__label p,
 #workflow-import .c-button__label p {
   margin: 0 !important;
-}
-
-.evenbetter__c-menu {
-  background-color: var(--c-bg-default);
-  box-shadow: var(--c-box-shadow-large);
-  padding: var(--c-space-3) 0;
-  border-radius: var(--c-border-radius-2);
-  border: var(--c-border-width-1) solid var(--c-border-default);
-  min-width: 5.5em;
-}
-
-.evenbetter__c-item__menu {
-  position: var(--16ce9623);
-  top: var(--5281e0a5);
-  left: var(--04932a92);
-}
-
-.evenbetter__c-item:hover {
-  background-color: var(--c-bg-subtle);
-}
-
-.evenbetter__c-item {
-  display: flex;
-  color: var(--c-fg-default);
-  padding: var(--c-space-1) var(--c-space-2);
-  border-radius: var(--c-border-radius-1);
-  margin: 0 var(--c-space-2);
-  cursor: pointer;
-}
-
-.evenbetter__c-item__content {
-  white-space: nowrap;
-  flex: 1;
-  display: flex;
-  align-items: center;
 }
 
 .c-evenbetter_library-table {
@@ -672,7 +575,8 @@
 .c-evenbetter_table-container {
   overscroll-behavior-y: none;
   height: 100%;
-  border: 1px solid var(--c-bg-default) !important;
+  border: 5px solid var(--c-bg-default) !important;
+  border-radius: 5px !important;
 }
 
 .c-evenbetter_table_header-row {
@@ -696,6 +600,15 @@
   min-width: var(--1e00f3f4);
   box-sizing: border-box;
   border: (--header-cell-width) solid var(--c-header-cell-border) !important;
+}
+
+.c-evenbetter_table_row[data-is-even="true"] {
+  background-color: var(--c-table-even-item-row);
+}
+
+.c-evenbetter_table_row:hover {
+  cursor: pointer;
+  background-color: var(--c-table-item-row-hover);
 }
 
 [data-sortable="true"][data-is-resizing="false"]
@@ -899,6 +812,7 @@
 }
 
 .evenbetter__qd-selected-text-box {
+  white-space: pre-wrap;
   padding: 0.4em;
   background: var(--c-bg-default);
 }
@@ -907,7 +821,6 @@
   display: flex;
   justify-content: space-between;
 }
-
 
 .evenbetter__qd-selected-text-top i {
   cursor: pointer;
@@ -940,8 +853,147 @@
   color: #ecae38;
 }
 
-
 .evenbetter__quick-ssrf,
 #quick-ssrf-page {
   height: 100%;
+}
+
+.c-evenbetter_quick-ssrf h1 {
+  margin: 0;
+}
+
+.c-content[data-page="#/evenbetter/quick-ssrf"] {
+  background-color: var(--c-bg-subtle);
+  padding: 1em;
+  overflow: auto;
+}
+
+.divider {
+  border-top: 1px solid var(--c-fg-subtle);
+  opacity: 0.2;
+  margin: 1em 0;
+}
+
+.c-evenbetter_quick-ssrf__description h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.c-evenbetter_quick-ssrf__description p {
+  color: var(--c-fg-subtle);
+  margin: 0;
+}
+
+.c-evenbetter_quick-ssrf .header-description {
+  color: var(--c-fg-subtle);
+}
+
+.c-evenbetter_quick-ssrf .header-title h1 {
+  font-size: 22.5px;
+}
+
+.c-evenbetter_quick-ssrf header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.c-evenbetter_quick-ssrf .c-text-input {
+  width: 20em;
+}
+
+.c-evenbetter_quick-ssrf .c-text-input__inner {
+  border-radius: var(--c-border-radius-2) 0 0 var(--c-border-radius-2) !important;
+}
+
+.header-right {
+  display: flex;
+  gap: 1em;
+}
+
+.evenbetter_quick-ssrf_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+  border: var(--c-border-width-1) solid var(--c-border-default);
+  border-radius: 0 var(--c-border-radius-2) var(--c-border-radius-2) 0;
+  color: var(--c-fg-default);
+  background-color: var(--c-bg-default);
+  max-height: var(--c-space-10);
+  cursor: pointer;
+
+  transition: 0.2s ease background-color, transform;
+}
+
+.evenbetter_quick-ssrf_button:hover {
+  background-color: var(--c-bg-subtle);
+}
+
+.evenbetter_quick-ssrf_button:active {
+  transform: scale(0.95);
+}
+
+.even-better__settings select,
+.c-evenbetter_quick-ssrf select {
+  width: 15em;
+  background-image: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20viewBox%3D%220%20-4.5%2020%2020%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20fill%3D%22%23ffffff%22%3E%3Cg%20id%3D%22SVGRepo_bgCarrier%22%20stroke-width%3D%220%22%3E%3C%2Fg%3E%3Cg%20id%3D%22SVGRepo_tracerCarrier%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fg%3E%3Cg%20id%3D%22SVGRepo_iconCarrier%22%3E%20%3Ctitle%3Earrow_down%20%5B%23ffffff%5D%3C%2Ftitle%3E%20%3Cdesc%3ECreated%20with%20Sketch.%3C%2Fdesc%3E%20%3Cdefs%3E%20%3C%2Fdefs%3E%20%3Cg%20id%3D%22Page-1%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%20%3Cg%20id%3D%22Dribbble-Light-Preview%22%20transform%3D%22translate%28-220.000000%2C%20-6684.000000%29%22%20fill%3D%22%23ffffff%22%3E%20%3Cg%20id%3D%22icons%22%20transform%3D%22translate%2856.000000%2C%20160.000000%29%22%3E%20%3Cpath%20d%3D%22M164.292308%2C6524.36583%20L164.292308%2C6524.36583%20C163.902564%2C6524.77071%20163.902564%2C6525.42619%20164.292308%2C6525.83004%20L172.555873%2C6534.39267%20C173.33636%2C6535.20244%20174.602528%2C6535.20244%20175.383014%2C6534.39267%20L183.70754%2C6525.76791%20C184.093286%2C6525.36716%20184.098283%2C6524.71997%20183.717533%2C6524.31405%20C183.328789%2C6523.89985%20182.68821%2C6523.89467%20182.29347%2C6524.30266%20L174.676479%2C6532.19636%20C174.285736%2C6532.60124%20173.653152%2C6532.60124%20173.262409%2C6532.19636%20L165.705379%2C6524.36583%20C165.315635%2C6523.96094%20164.683051%2C6523.96094%20164.292308%2C6524.36583%22%20id%3D%22arrow_down-%5B%23ffffff%5D%22%3E%20%3C%2Fpath%3E%20%3C%2Fg%3E%20%3C%2Fg%3E%20%3C%2Fg%3E%20%3C%2Fg%3E%3C%2Fsvg%3E);
+  background-repeat: no-repeat;
+  background-position: right 0.7rem top 50%;
+  background-size: 0.65rem auto;
+}
+
+.ssrf-instance-url {
+  color: var(--c-fg-subtle) !important;
+}
+
+.evenbetter_quick-ssrf_switch,
+.evenbetter_quick-ssrf_copy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.c-evenbetter_quick-ssrf div {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+.c-evenbetter_quick-ssrf {
+  overflow: auto;
+  min-width: 1150px;
+}
+
+.http_method {
+  color: var(--c-fg-subtle);
+}
+
+.http_url {
+  color: var(--c-fg-default);
+}
+
+.htto_version {
+  color: var(--c-fg-subtle);
+}
+
+.http_header-key {
+  color: var(--c-fg-subtle);
+}
+
+.http_header-value {
+  color: var(--c-fg-default);
+}
+
+.http_body {
+  color: var(--c-fg-default);
+}
+
+.c-settings .c-card {
+  overflow: auto !important;
+}
+
+/* fix for context menu dividers issue in v0.34.0 */
+.c-divider {
+  height: 1px !important;
 }

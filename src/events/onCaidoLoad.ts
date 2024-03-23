@@ -16,7 +16,7 @@ export class OnCaidoLoad implements Event {
         clearInterval(interval);
         this.trigger();
       }
-    }, 100);
+    }, 25);
 
     loadTheme(getSetting("theme"));
   }

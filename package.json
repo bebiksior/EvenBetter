@@ -12,5 +12,9 @@
   "devDependencies": {
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/node": "^20.11.30",
+    "crypto": "^1.0.1"
   }
 }

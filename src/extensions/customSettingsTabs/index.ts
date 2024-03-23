@@ -26,6 +26,21 @@ export const setup = () => {
       init();
     }
   });
+
+  customSettingsTabs = [
+    {
+      name: "EvenBetter",
+      icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-bug"></i></div>',
+      id: "evenbetter",
+      content: evenBetterSettingsTab(),
+    },
+    {
+      name: "Library",
+      icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>',
+      id: "library",
+      content: evenBetterLibraryTab(),
+    },
+  ];
 };
 
 const init = () => {
@@ -112,7 +127,6 @@ const getNavigationItem = (name: string): Element | null => {
   return foundTab || null;
 };
 
-// render custom tabs
 export const renderCustomTabs = () => {
   const settingsNavigation = document.querySelector(".c-underline-nav");
   if (!settingsNavigation) {
@@ -172,7 +186,6 @@ const openCustomTab = (tab: SettingsTab) => {
 
   adjustActiveTab(tab.id);
 
-  // this is only one time listener, should remove the event listener after click
   getNavigationItem(previousTab)?.addEventListener("click", () => {
     window.location.hash = window.location.hash.split("?")[0];
   });
@@ -205,18 +218,5 @@ const getCustomSettingsTab = (id: string) => {
   return customSettingsTabs.find((tab) => tab.id === id);
 };
 
-const customSettingsTabs: SettingsTab[] = [
-  {
-    name: "EvenBetter",
-    icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-bug"></i></div>',
-    id: "evenbetter",
-    content: evenBetterSettingsTab(),
-  },
-  {
-    name: "Library",
-    icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>',
-    id: "library",
-    content: evenBetterLibraryTab(),
-  },
-];
+let customSettingsTabs: SettingsTab[] = [];
 export default customSettingsTabs;

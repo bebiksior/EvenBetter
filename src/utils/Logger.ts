@@ -6,6 +6,7 @@ export enum LogLevel {
   WARN = "warn",
   DEBUG = "debug",
 }
+window.global = window;
 
 export class Logger {
   log(level: LogLevel, message: string) {

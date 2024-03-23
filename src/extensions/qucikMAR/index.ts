@@ -10,7 +10,9 @@ export const quickMatchAndReplace = () => {
     )
       return;
 
-    if (document.getSelection().toString().trim() == "") return;
+
+    const selection = document.getSelection();
+    if (selection.toString().trim() == "") return;
 
     const dropdown = element as HTMLElement;
     const menu = dropdown.querySelector(".c-menu");
@@ -34,10 +36,10 @@ export const quickMatchAndReplace = () => {
     newItem.querySelector(".c-item__trailing-visual")?.remove();
     newItem.querySelector(".c-item__leading-visual")?.remove();
 
-    // we can't just do `document.getSelection().toString()` in the `click` event because Safari clears it before click event is triggered :( (spend like 2 hours to figure this out)
+    // we can't just do `selection.toString()` in the `click` event because Safari clears it before click event is triggered :(
     let selectedText = "";
     document.addEventListener("mousedown", () => {
-      selectedText = document.getSelection().toString().trim();
+      selectedText = selection.toString().trim();
     });
 
     newItem.addEventListener("click", () => {
@@ -51,6 +53,7 @@ export const quickMatchAndReplace = () => {
 
         if (searchInput) {
           searchInput.value = textToUse;
+
           clearInterval(interval);
         }
       }, 2);

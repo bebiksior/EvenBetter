@@ -1,17 +1,31 @@
+import { Table, addRow } from "../../../components/table";
 import eventManagerInstance from "../../../events/EventManager";
+import { PageOpenEvent } from '../../../events/onPageOpen';
 
 interface Workflow {
   name: string;
   description: string;
   version: string;
   author: string;
+  os: string;
   url: string;
 }
 
 export const evenBetterLibraryTab = () => {
+  const libraryColumns = [
+    { name: "Name", width: "20em", content: "Name" },
+    { name: "Version", width: "7em", content: "Version" },
+    { name: "Description", width: "40em", content: "Description" },
+    { name: "Author", width: "10em", content: "Author" },
+    { name: "OS", width: "10em", content: "Supported OS" },
+    { name: "Actions", width: "10em", content: "Actions" },
+  ];
+
   const evenBetterTab = document.createElement("div");
   evenBetterTab.innerHTML = createEvenBetterLibraryHTML();
-  evenBetterTab.classList.add("evenbetter-custom-tab");
+
+  const libraryData: Map<string, HTMLElement>[] = [];
+  const libraryTable = Table({ columns: libraryColumns, data: libraryData, height: "300px"});
 
   fetch(
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflows.json?cache=" +
@@ -19,14 +33,76 @@ export const evenBetterLibraryTab = () => {
   ).then((response) => {
     response.json().then((data) => {
       data.workflows.forEach((plugin: Workflow) => {
-        evenBetterTab
-          .querySelector(".c-table__wrapper")
-          .appendChild(createLibraryPluginElement(plugin));
+        const actionsButton = document.createElement("div");
+        actionsButton.innerHTML = `
+          <div class="c-evenbetter_table-item-row__actions">
+              <div class="c-evenbetter_item-row__select" data-onboarding="select-project">
+                  <div class="c-evenbetter_button" data-plugin-url="${escapeHTML(
+                    plugin.url
+                  )}" data-size="small" data-block="true" data-variant="secondary" data-outline="true" data-plain="false" style="--9bad4558: center;">
+                      <div class="formkit-outer" data-family="button" data-type="button" data-empty="true">
+                          <div class="formkit-wrapper">
+                              <button class="formkit-input c-evenbetter_button__input" type="button" name="button_82" id="input_83">
+                                  <div class="c-evenbetter_button__label">
+                                      Add
+                                  </div>
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>`;
+
+        actionsButton.addEventListener("click", (event) => {
+          const target = event.target as HTMLButtonElement;
+          const url = target
+            .closest(".c-evenbetter_button")
+            .getAttribute("data-plugin-url");
+
+          fetch(url).then((response) => {
+            response.json().then((data) => {
+              createWorkflow(data);
+              showWorkflowCount();
+
+              const label = actionsButton.querySelector(
+                ".c-evenbetter_button__label"
+              );
+              label.textContent = "Added";
+
+              setTimeout(() => {
+                label.textContent = "Add";
+              }, 1000);
+            });
+          });
+        });
+
+        addRow(
+          libraryTable,
+          libraryColumns,
+          new Map([
+            ["Name", labelElement(escapeHTML(plugin.name))],
+            ["Version", labelElement(escapeHTML(plugin.version))],
+            ["Description", labelElement(escapeHTML(plugin.description))],
+            ["Author", labelElement(escapeHTML(plugin.author))],
+            ["OS", labelElement(escapeHTML(plugin.os || "All"))],
+            ["Actions", actionsButton],
+          ])
+        );
       });
     });
   });
-  
+
+  evenBetterTab
+    .querySelector("#library .c-evenbetter_library_card-body")
+    .appendChild(libraryTable);
+
   return evenBetterTab;
+};
+
+const labelElement = (text: string) => {
+  const label = document.createElement("div");
+  label.textContent = text;
+  return label;
 };
 
 const createWorkflow = (data: any) => {
@@ -53,87 +129,29 @@ const createWorkflow = (data: any) => {
   });
 };
 
-const createLibraryPluginElement = (plugin: Workflow) => {
-  const evenBetterPlugin = document.createElement("div");
-  evenBetterPlugin.classList.add("c-evenbetter_table-item-row");
-  evenBetterPlugin.innerHTML = `
-            <div class="c-evenbetter_item-row" data-is-selected="true">
-                <div class="c-evenbetter_table-item-cell" data-column-id="name" data-align="start" style="--d40e2d02: max(20em, 56px);">
-                    <div class="c-evenbetter_table-item-cell__inner">
-                        <div class="c-evenbetter_table-item-row__name">
-                            <div class="c-item-row__label">${sanitizeInput(
-                              plugin.name
-                            )}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="c-evenbetter_table-item-cell" data-column-id="version" data-align="start" style="--d40e2d02: max(7em, 56px);">
-                    <div class="c-evenbetter_table-item-cell__inner">v${sanitizeInput(
-                      plugin.version
-                    )}</div>
-                </div>
-                <div class="c-evenbetter_table-item-cell" data-column-id="description" data-align="start" style="--d40e2d02: max(40em, 56px);">
-                    <div class="c-evenbetter_table-item-cell__inner">${sanitizeInput(
-                      plugin.description
-                    )}
-                    </div>
-                </div>
-                <div class="c-evenbetter_table-item-cell" data-column-id="author" data-align="start" style="--d40e2d02: max(10em, 56px);">
-                    <div class="c-evenbetter_table-item-cell__inner">${sanitizeInput(
-                      plugin.author
-                    )}
-                    </div>
-                </div>
-                <div class="c-evenbetter_table-item-cell" data-column-id="actions" data-align="start" style="--d40e2d02: max(10em, 56px);">
-                    <div class="c-evenbetter_table-item-cell__inner">
-                        <div class="c-evenbetter_table-item-row__actions">
-                            <div class="c-evenbetter_item-row__select" data-onboarding="select-project">
-                                <div class="c-evenbetter_button" data-plugin-url="${sanitizeInput(
-                                  plugin.url
-                                )}" data-size="small" data-block="true" data-variant="secondary" data-outline="true" data-plain="false" style="--9bad4558: center;">
-                                    <div class="formkit-outer" data-family="button" data-type="button" data-empty="true">
-                                        <div class="formkit-wrapper">
-                                            <button class="formkit-input c-evenbetter_button__input" type="button" name="button_82" id="input_83">
-                                                <div class="c-evenbetter_button__label">
-                                                    Add
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>    
-                    </div>
-                </div>
-            </div>
-    `;
+const createEvenBetterLibraryHTML = () => {
+  const htmlContent = `
+    <div class="c-evenbetter_library" id="evenbetter-library-content">
+      <div class="c-evenbetter_library-table" id="library">
+          <div class="c-evenbetter_table" tabindex="-1" style="--5b42590e: 42px;">
+              <div class="c-evenbetter_library_card" style="--6ac6656c: 0.25em; --7a039a1d: 0.25em; --9309e9b0: 0.25em; --09ed17ff: 0.25em;">
+                  <header>
+                      <div class="header-title">
+                          <h1>EvenBetter - Library</h1>
+                      </div>
+                      <div class="header-description">
+                          Install workflows into your Caido project with a single click
+                      </div>
+                  </header>
+                  <div class="c-evenbetter_library_card-body">
+                  </div>
+              </div>
+          </div>
+      </div>
+      <p class="c-evenbetter_library-footer-text">Want to contribute? <a href="https://github.com/bebiksior/EvenBetter/pulls" target="_blank">Create a pull request</a></p>
+    </div>`;
 
-  evenBetterPlugin
-    .querySelectorAll(".c-evenbetter_button__input")
-    .forEach((element) => {
-      element.addEventListener("click", (event) => {
-        const target = event.target as HTMLButtonElement;
-        const url = target
-          .closest(".c-evenbetter_button")
-          .getAttribute("data-plugin-url");
-
-        fetch(url).then((response) => {
-          response.json().then((data) => {
-            createWorkflow(data);
-            showWorkflowCount();
-
-            const label = element.querySelector(".c-evenbetter_button__label");
-            label.textContent = "Added";
-
-            setTimeout(() => {
-              label.textContent = "Add";
-            }, 1000);
-          });
-        });
-      });
-    });
-
-  return evenBetterPlugin;
+  return htmlContent;
 };
 
 const showWorkflowCount = () => {
@@ -159,66 +177,7 @@ const showWorkflowCount = () => {
   });
 };
 
-const createEvenBetterLibraryHTML = () => {
-  const htmlContent = `
-    <div class="c-evenbetter_library" id="evenbetter-library-content">
-        <div class="c-evenbetter_library-table">
-            <div class="c-evenbetter_table" tabindex="-1" style="--5b42590e: 42px;">
-                <div class="c-evenbetter_library_card" style="--6ac6656c: 0.25em; --7a039a1d: 0.25em; --9309e9b0: 0.25em; --09ed17ff: 0.25em;">
-                    <header>
-                        <div class="header-title">
-                            <h1>EvenBetter - Library</h1>
-                        </div>
-                        <div class="header-description">
-                            Install workflows into your Caido project with a single click
-                        </div>
-                    </header>
-                    <div class="c-evenbetter_library_card-body">
-                        <div class="c-evenbetter_table_card-body">
-                            <div class="c-evenbetter_table-container" data-is-empty="false" data-is-loading="false" style="overflow-y: auto;">
-                                <div class="c-evenbetter_table_header-row">
-                                    <div class="c-evenbetter_table_header-cell" data-sortable="true" data-resizable="true" data-align="start" data-is-resizing="false" style="--1e00f3f4: 4rem; width: max(20em, 56px);">
-                                        <div class="c-evenbetter_header-cell_wrapper">
-                                            <div class="c-evenbetter_header-cell_content">Name</div>
-                                        </div>
-                                    </div><div class="c-evenbetter_table_header-cell" data-sortable="false" data-resizable="true" data-align="start" data-is-resizing="false" style="--1e00f3f4: 4rem; width: max(7em, 56px);">
-                                        <div class="c-evenbetter_header-cell_wrapper">
-                                            <div class="c-evenbetter_header-cell_content">Version</div>
-                                        </div>
-                                    </div><div class="c-evenbetter_table_header-cell" data-sortable="true" data-resizable="true" data-align="start" data-is-resizing="false" style="--1e00f3f4: 4rem; width: max(40em, 56px);">
-                                        <div class="c-evenbetter_header-cell_wrapper">
-                                            <div class="c-evenbetter_header-cell_content">
-                                                Description
-                                            </div>
-                                        </div>
-                                    </div><div class="c-evenbetter_table_header-cell" data-sortable="true" data-resizable="true" data-align="start" data-is-resizing="false" style="--1e00f3f4: 4rem; width: max(10em, 56px);">
-                                        <div class="c-evenbetter_header-cell_wrapper">
-                                            <div class="c-evenbetter_header-cell_content">
-                                                Author
-                                            </div>
-                                        </div>
-                                    </div><div class="c-evenbetter_table_header-cell" data-sortable="false" data-resizable="false" data-align="start" style="--1e00f3f4: 4rem; width: max(10em, 56px);">
-                                        <div class="c-evenbetter_header-cell_wrapper">
-                                            <div class="c-evenbetter_header-cell_content">Actions</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="c-table__wrapper" style="width: 100%; height: 250px; margin-top: 0px;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <p class="c-evenbetter_library-footer-text">Want to contribute? <a href="https://github.com/bebiksior/EvenBetter/pulls" target="_blank">Create a pull request</a></p>
-    </div>
-    `;
-
-  return htmlContent;
-};
-
-function sanitizeInput(input: string) {
+function escapeHTML(input: string) {
   return input
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")

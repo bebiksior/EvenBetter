@@ -26,6 +26,8 @@ const generateModal = ({ title, content }: ModalContent): HTMLDivElement => {
   modal.querySelector(".evenbetter-modal__content-body-text").innerHTML =
     content;
 
+  modal.setAttribute("data-modal-title", title);
+
   modal
     .querySelector(".evenbetter-modal__content-body-close")
     ?.addEventListener("click", closeModal);
