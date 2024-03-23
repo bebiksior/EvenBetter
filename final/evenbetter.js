@@ -19302,11 +19302,32 @@ var quickSSRFPage = () => {
   refreshIcon.parentElement.addEventListener("click", () => {
     refreshSSRFInstance(table3, ssrfInstanceInput);
   });
-  refreshSSRFInstance(table3, ssrfInstanceInput).then(() => updateDataInterval(table3, tableColumns, true));
+  updateDataInterval(table3, tableColumns, true);
+  EventManager_default.on("onPageOpen", (data2) => {
+    if (data2.newUrl === "#/evenbetter/quick-ssrf") {
+      updateDataInterval(table3, tableColumns);
+    }
+  });
   return page;
+};
+var updateIcon = () => {
+  const icon = document.querySelector(`.c-evenbetter_quick-ssrf .evenbetter_quick-ssrf_button i`);
+  if (!icon)
+    return;
+  if (!ssrfInstance)
+    icon.className = "fas fa-plus";
+  else
+    icon.className = "fas fa-sync-alt";
 };
 var addedIDs = [];
 var updateDataInterval = (table3, tableColumns, startTimeoutLoop) => {
+  updateIcon();
+  if (startTimeoutLoop) {
+    const nextExecutionTime = window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
+    setTimeout(() => updateDataInterval(table3, tableColumns, true), nextExecutionTime);
+  }
+  if (!ssrfInstance)
+    return;
   const addRequest = (request) => {
     if (window.location.hash !== "#/evenbetter/quick-ssrf")
       incrementHitsCount();
@@ -19339,6 +19360,8 @@ var updateDataInterval = (table3, tableColumns, startTimeoutLoop) => {
       });
       break;
     case "interactsh.com":
+      if (ssrfInstance.secretKey == null)
+        return;
       poll(ssrfInstance.secretKey, ssrfInstance.id, ssrfInstance.privateKey).then((data) => {
         if (!data || !data.decodedData)
           return;
@@ -19355,15 +19378,6 @@ var updateDataInterval = (table3, tableColumns, startTimeoutLoop) => {
       });
       break;
   }
-  if (startTimeoutLoop) {
-    const nextExecutionTime = window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
-    setTimeout(() => updateDataInterval(table3, tableColumns, true), nextExecutionTime);
-  }
-  EventManager_default.on("onPageOpen", (data) => {
-    if (data.newUrl === "#/evenbetter/quick-ssrf") {
-      updateDataInterval(table3, tableColumns);
-    }
-  });
 };
 var incrementHitsCount = () => {
   document.querySelectorAll(".c-sidebar-item__content").forEach((element) => {
@@ -19401,6 +19415,10 @@ var refreshSSRFInstance = async (table3, ssrfInstanceInput) => {
         addedIDs = [];
         setSetting("ssrfInstanceTool", selectedTool);
         setSetting("ssrfInstanceHostname", ssrfInstance.url);
+        updateIcon();
+      }).catch((e) => {
+        ssrfInstanceInput.value = "Failed, check console logs.";
+        console.error(e);
       });
     case "interactsh.com":
       ssrfInstanceInput.value = "Creating...";
@@ -19421,6 +19439,16 @@ var refreshSSRFInstance = async (table3, ssrfInstanceInput) => {
         ssrfInstanceInput.value = ssrfInstance.url;
         setSetting("ssrfInstanceTool", selectedTool);
         setSetting("ssrfInstanceHostname", ssrfInstance.url);
+        updateIcon();
+      }).catch((e) => {
+        ssrfInstanceInput.value = "Failed, check console logs.";
+        console.error(e);
+        if (e.message.includes("crypto.subtle") && window.location.href === "#/evenbetter/quick-ssrf") {
+          openModal({
+            title: "Error",
+            content: "Interactsh.com is not supported yet on non-local Caido instances :("
+          });
+        }
       });
   }
 };
@@ -19482,6 +19510,43 @@ var getSelectedSSRFTool = () => {
 };
 
 // src/extensions/quickSSRFInstance/index.ts
+var getCursorPosition = function(parent, node, offset, stat) {
+  if (stat.done)
+    return stat;
+  let currentNode = null;
+  if (parent.childNodes.length == 0) {
+    stat.pos += parent.textContent.length;
+  } else {
+    for (let i = 0;i < parent.childNodes.length && !stat.done; i++) {
+      currentNode = parent.childNodes[i];
+      if (currentNode === node) {
+        stat.pos += offset;
+        stat.done = true;
+        return stat;
+      } else
+        getCursorPosition(currentNode, node, offset, stat);
+    }
+  }
+  return stat;
+};
+var setCursorPosition = function(parent, range, stat) {
+  if (stat.done)
+    return range;
+  if (parent.childNodes.length == 0) {
+    if (parent.textContent.length >= stat.pos) {
+      range.setStart(parent, stat.pos);
+      stat.done = true;
+    } else {
+      stat.pos = stat.pos - parent.textContent.length;
+    }
+  } else {
+    for (let i = 0;i < parent.childNodes.length && !stat.done; i++) {
+      let currentNode = parent.childNodes[i];
+      setCursorPosition(currentNode, range, stat);
+    }
+  }
+  return range;
+};
 var quickSSRFFunctionality = () => {
   EventManager_default.on("onPageOpen", (data) => {
     if (data.newUrl == "#/replay" && getSetting("ssrfInstanceFunctionality") === "true") {
@@ -19504,8 +19569,31 @@ var observeReplayInput = () => {
     mutations.forEach((mutation) => {
       const originalTextContent = mutation.target.textContent;
       if (originalTextContent.includes(ssrfInstancePlaceholder)) {
+        if (!ssrfInstance) {
+          openModal({
+            title: "SSRF Instance not found",
+            content: "Please create an SSRF instance from the sidebar Quick SSRF page before using this functionality."
+          });
+          return;
+        }
+        const sel = window.getSelection();
+        const node = sel.focusNode;
+        const offset = sel.focusOffset;
+        const pos = getCursorPosition(mutation.target, node, offset, {
+          pos: 0,
+          done: false
+        });
+        if (offset === 0)
+          pos.pos += 0.5;
         const newTextContent = originalTextContent.replace(getSetting("ssrfInstancePlaceholder"), ssrfInstance.url);
         mutation.target.textContent = newTextContent;
+        sel.removeAllRanges();
+        const range = setCursorPosition(mutation.target, document.createRange(), {
+          pos: pos.pos,
+          done: false
+        });
+        range.collapse(true);
+        sel.addRange(range);
       }
     });
   });
@@ -19905,6 +19993,19 @@ var attachQuickDecode = () => {
       newValue = encodeURIComponent(newValue);
     } else if (encodeMethod === "base64") {
       newValue = btoa(newValue);
+    } else if (encodeMethod === "url+base64") {
+      newValue = encodeURIComponent(btoa(newValue));
+    }
+    if (isPrettifyEnabled()) {
+      let anyLineHasInsertWidget = false;
+      selectedLineElements.forEach((line) => {
+        if (line.querySelector(".c-insert-widget")) {
+          anyLineHasInsertWidget = true;
+        }
+      });
+      if (anyLineHasInsertWidget) {
+        linesContent = linesContent.replace(/\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/g, "");
+      }
     }
     for (let i = 1;i < selectedLineElements.length; i++) {
       selectedLineElements[i].remove();
@@ -19943,7 +20044,16 @@ var attachQuickDecode = () => {
           textError.textContent = "Modyfing multiple lines is not supported yet";
           decodedTextBox.setAttribute("contenteditable", "false");
         }
+        if (document.activeElement.closest(`.c-response-body`)) {
+          decodedTextBox.setAttribute("contenteditable", "false");
+        }
         quickDecode.style.display = "block";
+        document.querySelector(`.c-send-request-button`)?.addEventListener(`click`, () => {
+          const quickDecodeBody = document.querySelector(".evenbetter__qd-body");
+          if (!quickDecodeBody)
+            return;
+          quickDecodeBody.style.display = "none";
+        });
       } else {
         encodeMethod = "none";
         quickDecode.style.display = "none";
@@ -19951,6 +20061,9 @@ var attachQuickDecode = () => {
     }, 8);
   });
   sessionListBody.appendChild(quickDecode);
+};
+var isPrettifyEnabled = () => {
+  return document.querySelector(`.c-request-skeleton__footer .c-pretty-button[data-is-pretty="true"]`) !== null;
 };
 var decodeOnHover = () => {
   const codeLines = document.querySelectorAll(".cm-line");
@@ -19972,7 +20085,7 @@ var decodeOnHover = () => {
     line.addEventListener("mouseout", () => line.removeAttribute("title"));
   });
 };
-var tryToDecode = (input) => {
+var base64Decode = (input) => {
   const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
   if (base64Regex.test(input)) {
     try {
@@ -19982,9 +20095,20 @@ var tryToDecode = (input) => {
       return { encodeMethod: "none", decodedContent: input };
     }
   }
+  return { encodeMethod: "none", decodedContent: input };
+};
+var tryToDecode = (input) => {
+  const base64Decoded = base64Decode(input);
+  if (base64Decoded.encodeMethod !== "none") {
+    return base64Decoded;
+  }
   if (isUrlEncoded(input)) {
     try {
       const decodedUrl = decodeURIComponent(input);
+      const base64Decoded2 = base64Decode(decodedUrl);
+      if (base64Decoded2.encodeMethod !== "none" && input.length > 8) {
+        return { encodeMethod: "url+base64", decodedContent: base64Decoded2.decodedContent };
+      }
       return { encodeMethod: "url", decodedContent: decodedUrl };
     } catch (error) {
       return { encodeMethod: "none", decodedContent: input };

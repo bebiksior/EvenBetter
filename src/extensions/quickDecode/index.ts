@@ -112,6 +112,24 @@ const attachQuickDecode = () => {
       newValue = encodeURIComponent(newValue);
     } else if (encodeMethod === "base64") {
       newValue = btoa(newValue);
+    } else if (encodeMethod === "url+base64") {
+      newValue = encodeURIComponent(btoa(newValue));
+    }
+
+    if (isPrettifyEnabled()) {
+      let anyLineHasInsertWidget = false;
+      selectedLineElements.forEach((line) => {
+        if (line.querySelector(".c-insert-widget")) {
+          anyLineHasInsertWidget = true;
+        }
+      });
+
+      if (anyLineHasInsertWidget) {
+        linesContent = linesContent.replace(
+          /\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/g,
+          ""
+        );
+      }
     }
 
     for (let i = 1; i < selectedLineElements.length; i++) {
@@ -174,11 +192,27 @@ const attachQuickDecode = () => {
         textError.textContent = "";
         decodedTextBox.setAttribute("contenteditable", "true");
         if (selectedLineElements.length > 1) {
-          textError.textContent = "Modyfing multiple lines is not supported yet";
+          textError.textContent =
+            "Modyfing multiple lines is not supported yet";
+          decodedTextBox.setAttribute("contenteditable", "false");
+        }
+
+        if (document.activeElement.closest(`.c-response-body`)) {
           decodedTextBox.setAttribute("contenteditable", "false");
         }
 
         quickDecode.style.display = "block";
+
+        document
+          .querySelector(`.c-send-request-button`)
+          ?.addEventListener(`click`, () => {
+            const quickDecodeBody = document.querySelector(
+              ".evenbetter__qd-body"
+            ) as HTMLElement;
+            if (!quickDecodeBody) return;
+
+            quickDecodeBody.style.display = "none";
+          });
       } else {
         encodeMethod = "none";
         quickDecode.style.display = "none";
@@ -187,6 +221,14 @@ const attachQuickDecode = () => {
   });
 
   sessionListBody.appendChild(quickDecode);
+};
+
+const isPrettifyEnabled = () => {
+  return (
+    document.querySelector(
+      `.c-request-skeleton__footer .c-pretty-button[data-is-pretty="true"]`
+    ) !== null
+  );
 };
 
 function isUrlEncoded(str: string) {
@@ -215,9 +257,10 @@ const decodeOnHover = () => {
   });
 };
 
-const tryToDecode = (input: string) => {
+const base64Decode = (input: string) => {
   const base64Regex =
     /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+
   if (base64Regex.test(input)) {
     try {
       const decodedBase64 = atob(input);
@@ -227,9 +270,24 @@ const tryToDecode = (input: string) => {
     }
   }
 
+  return { encodeMethod: "none", decodedContent: input };
+};
+
+const tryToDecode = (input: string) => {
+  const base64Decoded = base64Decode(input);
+  if (base64Decoded.encodeMethod !== "none") {
+    return base64Decoded;
+  }
+
   if (isUrlEncoded(input)) {
     try {
       const decodedUrl = decodeURIComponent(input);
+
+      const base64Decoded = base64Decode(decodedUrl);
+      if (base64Decoded.encodeMethod !== "none" && input.length > 8) {
+        return { encodeMethod: "url+base64", decodedContent: base64Decoded.decodedContent };
+      }
+
       return { encodeMethod: "url", decodedContent: decodedUrl };
     } catch (error) {
       return { encodeMethod: "none", decodedContent: input };

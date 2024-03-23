@@ -126,15 +126,43 @@ const quickSSRFPage = () => {
     refreshSSRFInstance(table, ssrfInstanceInput);
   });
 
-  refreshSSRFInstance(table, ssrfInstanceInput).then(() =>
-    updateDataInterval(table, tableColumns, true)
-  );
+  updateDataInterval(table, tableColumns, true);
+  eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
+    if (data.newUrl === "#/evenbetter/quick-ssrf") {
+      updateDataInterval(table, tableColumns);
+    }
+  });
 
   return page;
 };
 
+const updateIcon = () => {
+  const icon = document.querySelector(`.c-evenbetter_quick-ssrf .evenbetter_quick-ssrf_button i`);
+  if (!icon) return;
+
+  if (!ssrfInstance) icon.className = "fas fa-plus";
+  else icon.className = "fas fa-sync-alt";
+}
+
 let addedIDs: string[] = [];
-const updateDataInterval = (table: HTMLElement, tableColumns: any, startTimeoutLoop?: boolean) => {
+const updateDataInterval = (
+  table: HTMLElement,
+  tableColumns: any,
+  startTimeoutLoop?: boolean
+) => {
+  updateIcon();
+  if (startTimeoutLoop) {
+    const nextExecutionTime =
+      window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
+
+    setTimeout(
+      () => updateDataInterval(table, tableColumns, true),
+      nextExecutionTime
+    );
+  }
+
+  if (!ssrfInstance) return;
+
   const addRequest = (request: Request) => {
     if (window.location.hash !== "#/evenbetter/quick-ssrf")
       incrementHitsCount();
@@ -177,6 +205,8 @@ const updateDataInterval = (table: HTMLElement, tableColumns: any, startTimeoutL
         });
       break;
     case "interactsh.com":
+      if (ssrfInstance.secretKey == null) return;
+
       poll(
         ssrfInstance.secretKey,
         ssrfInstance.id,
@@ -198,19 +228,6 @@ const updateDataInterval = (table: HTMLElement, tableColumns: any, startTimeoutL
       });
       break;
   }
-
-  if (startTimeoutLoop) {
-    const nextExecutionTime =
-      window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
-
-    setTimeout(() => updateDataInterval(table, tableColumns, true), nextExecutionTime);
-  }
-
-  eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
-    if (data.newUrl === "#/evenbetter/quick-ssrf") {
-      updateDataInterval(table, tableColumns);
-    }
-  });
 };
 
 const incrementHitsCount = () => {
@@ -263,30 +280,53 @@ const refreshSSRFInstance = async (
 
           setSetting("ssrfInstanceTool", selectedTool);
           setSetting("ssrfInstanceHostname", ssrfInstance.url);
+          
+          updateIcon();
+        })
+        .catch((e) => {
+          ssrfInstanceInput.value = "Failed, check console logs.";
+          console.error(e);
         });
     case "interactsh.com":
       ssrfInstanceInput.value = "Creating...";
-      return register().then((data) => {
-        if (data.responseStatusCode !== 200) {
-          openModal({
-            title: "Error",
-            content: "Failed to create interactsh instance",
-          });
+      return register()
+        .then((data) => {
+          if (data.responseStatusCode !== 200) {
+            openModal({
+              title: "Error",
+              content: "Failed to create interactsh instance",
+            });
 
-          return;
-        }
+            return;
+          }
 
-        ssrfInstance = {
-          id: data.correlationId,
-          url: data.hostname,
-          secretKey: data.secretKey,
-          privateKey: data.privateKey,
-        };
-        ssrfInstanceInput.value = ssrfInstance.url;
+          ssrfInstance = {
+            id: data.correlationId,
+            url: data.hostname,
+            secretKey: data.secretKey,
+            privateKey: data.privateKey,
+          };
+          ssrfInstanceInput.value = ssrfInstance.url;
 
-        setSetting("ssrfInstanceTool", selectedTool);
-        setSetting("ssrfInstanceHostname", ssrfInstance.url);
-      });
+          setSetting("ssrfInstanceTool", selectedTool);
+          setSetting("ssrfInstanceHostname", ssrfInstance.url);
+
+          updateIcon();
+        })
+        .catch((e) => {
+          ssrfInstanceInput.value = "Failed, check console logs.";
+          console.error(e);
+          if (
+            e.message.includes("crypto.subtle") &&
+            window.location.href === "#/evenbetter/quick-ssrf"
+          ) {
+            openModal({
+              title: "Error",
+              content:
+                "Interactsh.com is not supported yet on non-local Caido instances :(",
+            });
+          }
+        });
   }
 };
 
