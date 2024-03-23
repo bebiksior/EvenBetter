@@ -8,12 +8,12 @@ import { onScopeTabOpen } from "./extensions/shareScope";
 import { sidebarTweaks } from "./extensions/sidebarTweaks";
 import { CURRENT_VERSION } from "./settings/constants";
 import log from "./utils/Logger";
-import { colorizeHTTPFunctionality } from "./extensions/httpColorize/index";
 import { openModal } from "./utils/Modal";
 import { onContextMenuOpen } from "./events/onContextMenuOpen";
 import { quickMatchAndReplace } from "./extensions/qucikMAR";
 import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
+import { register } from "./extensions/quickSSRFInstance/interactsh";
 
 declare const Caido: any;
 
@@ -30,12 +30,12 @@ const init = () => {
   eventManagerInstance.on("onCaidoLoad", (event: Event) => {
     quickSSRFFunctionality();
     onScopeTabOpen();
-    sidebarTweaks();
-    colorizeHTTPFunctionality();
     quickDecode();
     dropdownTweaks();
+    setTimeout(() => {
+      sidebarTweaks();
+    }, 200)
     setTimeout(() => quickMatchAndReplace(), 500);
-
     setTimeout(() => {
       let newUrl = window.location.hash;
       if (newUrl.includes("?custom-path=")) {

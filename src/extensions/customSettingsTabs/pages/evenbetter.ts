@@ -147,19 +147,19 @@ const createEvenBetterTabHTML = (themes: { [key: string]: Theme }, currentTheme:
           name: "ssrfInstanceFunctionality",
           title: "Quick SSRF Instance",
           description:
-            "Quickly create new ssrf.cvssadvisor.com instance by typing the placeholder.",
+            "Adds a Quick SSRF sidebar page and allows you to quickly create new SSRF instance by typing the placeholder.",
         },
       ],
     },
     {
-      name: "highlightRowsFunctionality",
-      title: "Highlight Rows",
+      name: "quickDecode",
+      title: "Quick Decode",
       items: [
         {
-          name: "highlightRowsFunctionality",
-          title: "Highlight Rows",
+          name: "quickDecode",
+          title: "Quick Decode",
           description:
-            "Right click to highlight rows on the HTTP History page.",
+            "Selecting text on the Replay page will attempt to decode it and show the result at the left bottom corner.",
         },
       ],
     },

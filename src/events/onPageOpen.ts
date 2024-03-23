@@ -23,12 +23,15 @@ export class OnPageOpen implements Event<PageOpenEvent> {
 
         previousUrl = window.location.href;
 
-        if (newPath.includes("?custom-path=")) 
+        if (newPath.includes("?custom-path="))
           newPath = newPath.split("?custom-path=")[1];
 
         if (oldPath.includes("?custom-path="))
           oldPath = oldPath.split("?custom-path=")[1];
 
+        document
+          .querySelector(".c-content")
+          ?.setAttribute("data-page", newPath);
 
         this.trigger({
           newUrl: newPath,
@@ -51,16 +54,12 @@ export class OnPageOpen implements Event<PageOpenEvent> {
       );
     }
 
-    if (data.newUrl == "#/workflows") {
-      let workflows = Array.from(
-        document.querySelectorAll(".c-sidebar-item__content")
-      ).filter((element) => element.textContent == "Workflows");
-      if (workflows.length > 0) {
-        let countElement = workflows[0].parentNode.querySelector(
-          ".c-sidebar-item__count"
-        );
-        countElement.innerHTML = "";
-      }
+    const activeTab = document.querySelector(
+      ".c-sidebar-item[data-is-active='true']"
+    );
+    if (activeTab) {
+      let countElement = activeTab.querySelector(".c-sidebar-item__count");
+      if (countElement) countElement.innerHTML = "";
     }
 
     this.handlers.forEach((handler) => handler(data));

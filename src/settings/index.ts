@@ -8,6 +8,7 @@ export const defaultSettings: { [key: string]: string } = {
   showOutdatedVersionWarning: "true",
   highlightRowsFunctionality: "true",
   quickDecode: "true",
+  ssrfInstanceTool: "ssrf.cvssadvisor.com"
 };
 
 export const getSetting = (settingName: string): string => {

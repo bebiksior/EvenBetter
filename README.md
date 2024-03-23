@@ -1,4 +1,4 @@
-# EvenBetter v2.0
+# EvenBetter v2.1
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -7,21 +7,16 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
-## Changelog v2.0
-- **v2.0**: EvenBetter code has been rewritten in TypeScript, which makes it more maintainable and easier to contribute to :D
-- **v2.0**: **Quick Decode**: new feature that allows you to quickly decode text just by selecting or hovering over it on the Replay page
-- **v2.0**: **Send to Match & Replace**: new context menu button page that allows you to quickly send selected text into the Match & Replace page
-- **v2.0**: Added two new themes: **Neon** and **Deep Dark**
-- **v2.0**: ESC keybind now closes the context menu.
-- **v2.0**: EvenBetter will warn you if you are using old CSS version.
+## Changelog v2.1
+- **Quick SSRF:** Quickly create new SSRF testing instance and view interactions on the new sidebar page. Now supports `ssrf.cvssadvisor.com` and `interactsh.com`
+- **Quick Decode Enhancement:** You can now edit text within Quick Decode on the Replay page and it will automatically update the encoded value.
+- **Bug fixes:** Fixed some issues with Caido v0.34.0
 
-![Caido_FttJPAtYFF](https://github.com/bebiksior/EvenBetter/assets/71410238/df14e464-3de7-4884-b5f9-f8128091964e)
-![Caido_Cy4c6rWgzk](https://github.com/bebiksior/EvenBetter/assets/71410238/fb983ea5-bd55-49f3-8e0d-129283f0b341)
-
-
+![quick_ssrf](https://github.com/bebiksior/EvenBetter/assets/71410238/eac92a1d-b24f-4f50-bc4f-85902f3f3649)
+![quiick_decode](https://github.com/bebiksior/EvenBetter/assets/71410238/5e2a1e59-7de6-4982-99e4-21745404a619)
 
 ## Known issues
-- Creating quick SSRF instance doesn't open new window with the requests history on MacOS
+- Creating interactsh SSRF instance on remote Caido instance will not work, `crypto.subtle` is not available on non-secure origins
 
 ## Even Darker Theme
 
@@ -32,15 +27,10 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 ![image](https://github.com/bebiksior/EvenBetter/assets/71410238/405d095e-338b-4796-b722-555d8eb73e92)
 
 ## PwnFox compatibility
-With Caido version `0.32.0`, passive workflows were introduced, allowing us to integrate PwnFox support within Caido. Dynamic coloring has not been implemented yet which makes it harder to create workflow for PwnFox. With EvenBetter you can download the [PwnFox Support Workflow](https://github.com/bebiksior/EvenBetter/blob/main/workflows/workflow-PwnFox_Support.json) and simply import it on the Workflow page!
+With Caido version `0.32.0`, passive workflows were introduced, allowing us to integrate PwnFox support within Caido. Dynamic coloring has not been implemented yet which makes it harder to create workflow for PwnFox. With EvenBetter you can download the [PwnFox Support Workflow](https://github.com/bebiksior/EvenBetter/workflow/workflow-PwnFox_Support.json) and simply import it on the Workflow page!
 
 ## Share scope with your team
 You can now share your scope presets with your team by exporting and importing them.
-
-
-## ssrf.cvssadvisor.com integration
-Type `$ssrfinstance` in the Replay tab within the request body and it will automatically be replaced with the URL of your new SSRF instance! Also, a window with requests history to this instance will open up (this doesn't work properly on MacOS yet).
-
 
 ## EvenBetter settings tab
 Choose your Caido theme and enable/disable EvenBetter features.

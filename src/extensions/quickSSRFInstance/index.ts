@@ -1,10 +1,8 @@
 import eventManagerInstance from "../../events/EventManager";
 import { PageOpenEvent } from "../../events/onPageOpen";
-import { getSetting, setSetting } from "../../settings";
-
-const SSRF_INSTANCE_API_URL = "https://api.cvssadvisor.com/ssrf/api/instance",
-  SSRF_INSTANCE_URL = "https://ssrf.cvssadvisor.com/instance/",
-  SSRF_TOOL_URL = "https://ssrf.cvssadvisor.com/";
+import { getSetting } from "../../settings";
+import { openModal } from "../../utils/Modal";
+import { registerPage, ssrfInstance } from "./page";
 
 declare const Caido: any;
 
@@ -18,15 +16,7 @@ export const quickSSRFFunctionality = () => {
     }
   });
 
-  /*const ssrfPageContent = quickSSRFPage();
-  Caido.navigation.addPage("/evenbetter/quick-ssrf", {
-    body: ssrfPageContent
-  })
-
-  Caido.sidebar.registerItem("Quick SSRF", "/evenbetter/quick-ssrf", {
-    icon: "fas fa-compass",
-    group: "EvenBetter"
-  });*/
+  registerPage();
 };
 
 let replayInputObserver: MutationObserver | null = null;
@@ -46,7 +36,41 @@ const observeReplayInput = () => {
       const originalTextContent = mutation.target.textContent;
 
       if (originalTextContent.includes(ssrfInstancePlaceholder)) {
-        replaceSSRFInstanceText(mutation, originalTextContent);
+        if (!ssrfInstance) {
+          openModal({
+            title: "SSRF Instance not found",
+            content:
+              "Please create an SSRF instance from the sidebar Quick SSRF page before using this functionality.",
+          });
+          return;
+        }
+
+        const sel = window.getSelection();
+        const node = sel.focusNode;
+        const offset = sel.focusOffset;
+        const pos = getCursorPosition(mutation.target, node, offset, {
+          pos: 0,
+          done: false,
+        });
+        if (offset === 0) pos.pos += 0.5;
+
+        const newTextContent = originalTextContent.replace(
+          getSetting("ssrfInstancePlaceholder"),
+          ssrfInstance.url
+        );
+        mutation.target.textContent = newTextContent;
+
+        sel.removeAllRanges();
+        const range = setCursorPosition(
+          mutation.target,
+          document.createRange(),
+          {
+            pos: pos.pos,
+            done: false,
+          }
+        );
+        range.collapse(true);
+        sel.addRange(range);
       }
     });
   });
@@ -59,34 +83,49 @@ const observeReplayInput = () => {
   replayInputObserver.observe(replayInput, config);
 };
 
-const replaceSSRFInstanceText = (
-  mutation: MutationRecord,
-  originalTextContent: string
-) => {
-  const newTextContent = originalTextContent.replace(
-    getSetting("ssrfInstancePlaceholder"),
-    "$creating_instance"
-  );
-  mutation.target.textContent = newTextContent;
+function getCursorPosition(
+  parent: Node,
+  node: Node,
+  offset: number,
+  stat: { pos: number; done: boolean }
+) {
+  if (stat.done) return stat;
 
-  fetch(SSRF_INSTANCE_API_URL, {
-    method: "POST",
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const updatedText = newTextContent.replace(
-        "$creating_instance",
-        "https://" + data + ".c5.rs"
-      );
-      mutation.target.textContent = updatedText;
+  let currentNode = null;
+  if (parent.childNodes.length == 0) {
+    stat.pos += parent.textContent.length;
+  } else {
+    for (let i = 0; i < parent.childNodes.length && !stat.done; i++) {
+      currentNode = parent.childNodes[i];
+      if (currentNode === node) {
+        stat.pos += offset;
+        stat.done = true;
+        return stat;
+      } else getCursorPosition(currentNode, node, offset, stat);
+    }
+  }
+  return stat;
+}
 
-      window.open(SSRF_INSTANCE_URL + data, "_blank");
-    })
-    .catch(() => {
-      const updatedText = newTextContent.replace(
-        "$creating_instance",
-        "$creating_instance_failed"
-      );
-      mutation.target.textContent = updatedText;
-    });
-};
+function setCursorPosition(
+  parent: Node,
+  range: Range,
+  stat: { pos: number; done: boolean }
+) {
+  if (stat.done) return range;
+
+  if (parent.childNodes.length == 0) {
+    if (parent.textContent.length >= stat.pos) {
+      range.setStart(parent, stat.pos);
+      stat.done = true;
+    } else {
+      stat.pos = stat.pos - parent.textContent.length;
+    }
+  } else {
+    for (let i = 0; i < parent.childNodes.length && !stat.done; i++) {
+      let currentNode = parent.childNodes[i];
+      setCursorPosition(currentNode, range, stat);
+    }
+  }
+  return range;
+}
