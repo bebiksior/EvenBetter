@@ -473,17 +473,6 @@ var createEvenBetterTabHTML = (themes4, currentTheme) => {
       ]
     },
     {
-      name: "quickDecode",
-      title: "Quick Decode",
-      items: [
-        {
-          name: "quickDecode",
-          title: "Quick Decode",
-          description: "Selecting text on the Replay page will attempt to decode it and show the result at the left bottom corner."
-        }
-      ]
-    },
-    {
       name: "versionCheckWarning",
       title: "Version Check Warning",
       items: [
