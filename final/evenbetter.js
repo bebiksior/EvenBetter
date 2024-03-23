@@ -19302,11 +19302,11 @@ var quickSSRFPage = () => {
   refreshIcon.parentElement.addEventListener("click", () => {
     refreshSSRFInstance(table3, ssrfInstanceInput);
   });
-  refreshSSRFInstance(table3, ssrfInstanceInput).then(() => updateDataInterval(table3, tableColumns));
+  refreshSSRFInstance(table3, ssrfInstanceInput).then(() => updateDataInterval(table3, tableColumns, true));
   return page;
 };
 var addedIDs = [];
-var updateDataInterval = (table3, tableColumns) => {
+var updateDataInterval = (table3, tableColumns, startTimeoutLoop) => {
   const addRequest = (request) => {
     if (window.location.hash !== "#/evenbetter/quick-ssrf")
       incrementHitsCount();
@@ -19355,8 +19355,10 @@ var updateDataInterval = (table3, tableColumns) => {
       });
       break;
   }
-  const nextExecutionTime = window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
-  setTimeout(() => updateDataInterval(table3, tableColumns), nextExecutionTime);
+  if (startTimeoutLoop) {
+    const nextExecutionTime = window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
+    setTimeout(() => updateDataInterval(table3, tableColumns, true), nextExecutionTime);
+  }
   EventManager_default.on("onPageOpen", (data) => {
     if (data.newUrl === "#/evenbetter/quick-ssrf") {
       updateDataInterval(table3, tableColumns);

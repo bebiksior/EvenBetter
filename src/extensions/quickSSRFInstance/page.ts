@@ -127,14 +127,14 @@ const quickSSRFPage = () => {
   });
 
   refreshSSRFInstance(table, ssrfInstanceInput).then(() =>
-    updateDataInterval(table, tableColumns)
+    updateDataInterval(table, tableColumns, true)
   );
 
   return page;
 };
 
 let addedIDs: string[] = [];
-const updateDataInterval = (table: HTMLElement, tableColumns: any) => {
+const updateDataInterval = (table: HTMLElement, tableColumns: any, startTimeoutLoop?: boolean) => {
   const addRequest = (request: Request) => {
     if (window.location.hash !== "#/evenbetter/quick-ssrf")
       incrementHitsCount();
@@ -199,9 +199,12 @@ const updateDataInterval = (table: HTMLElement, tableColumns: any) => {
       break;
   }
 
-  const nextExecutionTime =
-    window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
-  setTimeout(() => updateDataInterval(table, tableColumns), nextExecutionTime);
+  if (startTimeoutLoop) {
+    const nextExecutionTime =
+      window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
+
+    setTimeout(() => updateDataInterval(table, tableColumns, true), nextExecutionTime);
+  }
 
   eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
     if (data.newUrl === "#/evenbetter/quick-ssrf") {
