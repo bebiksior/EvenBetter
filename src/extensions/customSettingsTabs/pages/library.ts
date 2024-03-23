@@ -62,7 +62,7 @@ export const evenBetterLibraryTab = () => {
           fetch(url).then((response) => {
             response.json().then((data) => {
               createWorkflow(data);
-              showWorkflowCount();
+              incrementWorkflowCount();
 
               const label = actionsButton.querySelector(
                 ".c-evenbetter_button__label"
@@ -154,7 +154,7 @@ const createEvenBetterLibraryHTML = () => {
   return htmlContent;
 };
 
-const showWorkflowCount = () => {
+const incrementWorkflowCount = () => {
   document.querySelectorAll(".c-sidebar-item__content").forEach((element) => {
     if (element.textContent != "Workflows") return;
 
@@ -169,7 +169,6 @@ const showWorkflowCount = () => {
       countLabel.textContent = String(parseInt(countLabel.textContent) + 1);
     } else {
       let newCountLabel = document.createElement("div");
-      newCountLabel.setAttribute("data-v-d4548a6d", "");
       newCountLabel.classList.add("c-sidebar-item__count-label");
       newCountLabel.textContent = "1";
       countElement.appendChild(newCountLabel);

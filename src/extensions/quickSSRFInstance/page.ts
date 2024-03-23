@@ -1,4 +1,6 @@
 import { addRow, clearTable, Table } from "../../components/table";
+import eventManagerInstance from "../../events/EventManager";
+import { PageOpenEvent } from "../../events/onPageOpen";
 import { getSetting, setSetting } from "../../settings";
 import { openModal } from "../../utils/Modal";
 import { poll, register } from "./interactsh";
@@ -134,6 +136,9 @@ const quickSSRFPage = () => {
 let addedIDs: string[] = [];
 const updateDataInterval = (table: HTMLElement, tableColumns: any) => {
   const addRequest = (request: Request) => {
+    if (window.location.hash !== "#/evenbetter/quick-ssrf")
+      incrementHitsCount();
+
     addRow(
       table,
       tableColumns,
@@ -195,8 +200,36 @@ const updateDataInterval = (table: HTMLElement, tableColumns: any) => {
   }
 
   const nextExecutionTime =
-    window.location.hash === "#/evenbetter/quick-ssrf" ? 1000 : 5000;
+    window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
   setTimeout(() => updateDataInterval(table, tableColumns), nextExecutionTime);
+
+  eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
+    if (data.newUrl === "#/evenbetter/quick-ssrf") {
+      updateDataInterval(table, tableColumns);
+    }
+  });
+};
+
+const incrementHitsCount = () => {
+  document.querySelectorAll(".c-sidebar-item__content").forEach((element) => {
+    if (element.textContent != "Quick SSRF") return;
+
+    let countElement = element.parentNode.querySelector(
+      ".c-sidebar-item__count"
+    );
+    let countLabel = countElement.querySelector(
+      ".c-sidebar-item__count-label"
+    ) as HTMLElement;
+
+    if (countLabel) {
+      countLabel.textContent = String(parseInt(countLabel.textContent) + 1);
+    } else {
+      let newCountLabel = document.createElement("div");
+      newCountLabel.classList.add("c-sidebar-item__count-label");
+      newCountLabel.textContent = "1";
+      countElement.appendChild(newCountLabel);
+    }
+  });
 };
 
 const labelElement = (text: string) => {

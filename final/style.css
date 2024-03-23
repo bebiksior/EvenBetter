@@ -997,3 +997,15 @@
 .c-divider {
   height: 1px !important;
 }
+
+.c-sidebar-item__count {
+  padding-right: var(--c-space-2);
+}
+
+.c-sidebar-item__count-label {
+  border-radius: var(--c-border-radius-1);
+  background-color: var(--c-bg-danger);
+  padding: 0 var(--c-space-1);
+  color: var(--c-fg-onEmphasis);
+  font-size: var(--c-font-size-75);
+}

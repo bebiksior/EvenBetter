@@ -323,12 +323,10 @@ class OnPageOpen {
     if (data.newUrl.startsWith("#/settings/")) {
       EventManager_default.triggerEvent("onSettingsTabOpen", data.newUrl.replace("#/settings/", ""));
     }
-    if (data.newUrl == "#/workflows") {
-      let workflows = Array.from(document.querySelectorAll(".c-sidebar-item__content")).filter((element) => element.textContent == "Workflows");
-      if (workflows.length > 0) {
-        let countElement = workflows[0].parentNode.querySelector(".c-sidebar-item__count");
-        countElement.innerHTML = "";
-      }
+    const activeTab = document.querySelector(".c-sidebar-item[data-is-active='true']");
+    if (activeTab) {
+      let countElement = activeTab.querySelector(".c-sidebar-item__count");
+      countElement.innerHTML = "";
     }
     this.handlers.forEach((handler) => handler(data));
   }
@@ -697,7 +695,7 @@ var evenBetterLibraryTab = () => {
           fetch(url).then((response2) => {
             response2.json().then((data2) => {
               createWorkflow(data2);
-              showWorkflowCount();
+              incrementWorkflowCount();
               const label = actionsButton.querySelector(".c-evenbetter_button__label");
               label.textContent = "Added";
               setTimeout(() => {
@@ -768,7 +766,7 @@ var createEvenBetterLibraryHTML = () => {
     </div>`;
   return htmlContent;
 };
-var showWorkflowCount = () => {
+var incrementWorkflowCount = () => {
   document.querySelectorAll(".c-sidebar-item__content").forEach((element) => {
     if (element.textContent != "Workflows")
       return;
@@ -778,7 +776,6 @@ var showWorkflowCount = () => {
       countLabel.textContent = String(parseInt(countLabel.textContent) + 1);
     } else {
       let newCountLabel = document.createElement("div");
-      newCountLabel.setAttribute("data-v-d4548a6d", "");
       newCountLabel.classList.add("c-sidebar-item__count-label");
       newCountLabel.textContent = "1";
       countElement.appendChild(newCountLabel);
@@ -19311,6 +19308,8 @@ var quickSSRFPage = () => {
 var addedIDs = [];
 var updateDataInterval = (table3, tableColumns) => {
   const addRequest = (request) => {
+    if (window.location.hash !== "#/evenbetter/quick-ssrf")
+      incrementHitsCount();
     addRow(table3, tableColumns, new Map([
       ["ID", labelElement2(request.id)],
       ["Time", labelElement2(new Date(request.timestamp).toLocaleString())],
@@ -19356,8 +19355,29 @@ var updateDataInterval = (table3, tableColumns) => {
       });
       break;
   }
-  const nextExecutionTime = window.location.hash === "#/evenbetter/quick-ssrf" ? 1000 : 5000;
+  const nextExecutionTime = window.location.hash === "#/evenbetter/quick-ssrf" ? 1500 : 8000;
   setTimeout(() => updateDataInterval(table3, tableColumns), nextExecutionTime);
+  EventManager_default.on("onPageOpen", (data) => {
+    if (data.newUrl === "#/evenbetter/quick-ssrf") {
+      updateDataInterval(table3, tableColumns);
+    }
+  });
+};
+var incrementHitsCount = () => {
+  document.querySelectorAll(".c-sidebar-item__content").forEach((element) => {
+    if (element.textContent != "Quick SSRF")
+      return;
+    let countElement = element.parentNode.querySelector(".c-sidebar-item__count");
+    let countLabel = countElement.querySelector(".c-sidebar-item__count-label");
+    if (countLabel) {
+      countLabel.textContent = String(parseInt(countLabel.textContent) + 1);
+    } else {
+      let newCountLabel = document.createElement("div");
+      newCountLabel.classList.add("c-sidebar-item__count-label");
+      newCountLabel.textContent = "1";
+      countElement.appendChild(newCountLabel);
+    }
+  });
 };
 var labelElement2 = (text) => {
   const label = document.createElement("div");
