@@ -20154,9 +20154,11 @@ var init2 = () => {
   EventManager_default.on("onCaidoLoad", (event) => {
     quickSSRFFunctionality();
     onScopeTabOpen();
-    sidebarTweaks();
     quickDecode();
     dropdownTweaks();
+    setTimeout(() => {
+      sidebarTweaks();
+    }, 200);
     setTimeout(() => quickMatchAndReplace(), 500);
     setTimeout(() => {
       let newUrl = window.location.hash;

@@ -30,9 +30,11 @@ const init = () => {
   eventManagerInstance.on("onCaidoLoad", (event: Event) => {
     quickSSRFFunctionality();
     onScopeTabOpen();
-    sidebarTweaks();
     quickDecode();
     dropdownTweaks();
+    setTimeout(() => {
+      sidebarTweaks();
+    }, 200)
     setTimeout(() => quickMatchAndReplace(), 500);
     setTimeout(() => {
       let newUrl = window.location.hash;
