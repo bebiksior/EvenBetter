@@ -12,8 +12,11 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 - **Quick Decode Enhancement:** You can now edit text within Quick Decode on the Replay page and it will automatically update the encoded value.
 - **Bug fixes:** Fixed some issues with Caido v0.34.0
 
+![quick_ssrf](https://github.com/bebiksior/EvenBetter/assets/71410238/eac92a1d-b24f-4f50-bc4f-85902f3f3649)
+![quiick_decode](https://github.com/bebiksior/EvenBetter/assets/71410238/5e2a1e59-7de6-4982-99e4-21745404a619)
+
 ## Known issues
-- Creating interactsh SSRF instance on not local Caido instance will not work, `crypto.subtle` is not available on non-secure origins
+- Creating interactsh SSRF instance on remote Caido instance will not work, `crypto.subtle` is not available on non-secure origins
 
 ## Even Darker Theme
 
