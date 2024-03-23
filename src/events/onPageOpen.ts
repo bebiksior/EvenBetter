@@ -54,12 +54,12 @@ export class OnPageOpen implements Event<PageOpenEvent> {
       );
     }
 
-    const activeTab = document.querySelector(".c-sidebar-item[data-is-active='true']");
+    const activeTab = document.querySelector(
+      ".c-sidebar-item[data-is-active='true']"
+    );
     if (activeTab) {
-      let countElement = activeTab.querySelector(
-        ".c-sidebar-item__count"
-      );
-      countElement.innerHTML = "";
+      let countElement = activeTab.querySelector(".c-sidebar-item__count");
+      if (countElement) countElement.innerHTML = "";
     }
 
     this.handlers.forEach((handler) => handler(data));

@@ -326,7 +326,8 @@ class OnPageOpen {
     const activeTab = document.querySelector(".c-sidebar-item[data-is-active='true']");
     if (activeTab) {
       let countElement = activeTab.querySelector(".c-sidebar-item__count");
-      countElement.innerHTML = "";
+      if (countElement)
+        countElement.innerHTML = "";
     }
     this.handlers.forEach((handler) => handler(data));
   }
