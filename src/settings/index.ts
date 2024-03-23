@@ -23,7 +23,7 @@ export const setSetting = (settingName: string, value: string): void => {
   localStorage.setItem(`evenbetter_${settingName}`, value);
 };
 
-interface UpdateResponse {
+export interface UpdateResponse {
   isLatest: boolean;
   message: string;
 }

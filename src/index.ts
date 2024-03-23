@@ -14,6 +14,7 @@ import { quickMatchAndReplace } from "./extensions/qucikMAR";
 import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
 import { register } from "./extensions/quickSSRFInstance/interactsh";
+import { checkForUpdates, getSetting, UpdateResponse } from "./settings";
 
 declare const Caido: any;
 
@@ -34,19 +35,34 @@ const init = () => {
     dropdownTweaks();
     setTimeout(() => {
       sidebarTweaks();
-    }, 200)
-    setTimeout(() => quickMatchAndReplace(), 500);
-    setTimeout(() => {
-      let newUrl = window.location.hash;
-      if (newUrl.includes("?custom-path=")) {
-        newUrl = newUrl.split("?custom-path=")[1];
-      }
+    }, 200);
 
-      eventManagerInstance.triggerEvent("onPageOpen", {
-        newUrl: newUrl,
-        oldUrl: "",
+    if (getSetting("showOutdatedVersionWarning") === "true") {
+      checkForUpdates().then((res: UpdateResponse) => {
+        if (!res.isLatest) {
+          openModal({
+            title: "Outdated EvenBetter version",
+            content: "You are using an outdated version of EvenBetter. This message can be turned off in the EvenBetter settings.",
+          });
+        }
       });
-    }, (window.location.hash.startsWith("#/settings/") ? 50 : 400));
+    }
+
+    setTimeout(() => quickMatchAndReplace(), 500);
+    setTimeout(
+      () => {
+        let newUrl = window.location.hash;
+        if (newUrl.includes("?custom-path=")) {
+          newUrl = newUrl.split("?custom-path=")[1];
+        }
+
+        eventManagerInstance.triggerEvent("onPageOpen", {
+          newUrl: newUrl,
+          oldUrl: "",
+        });
+      },
+      window.location.hash.startsWith("#/settings/") ? 50 : 400
+    );
 
     const cssVersion = getComputedStyle(document.documentElement)
       .getPropertyValue("--evenbetter-css-version")

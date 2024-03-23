@@ -473,6 +473,17 @@ var createEvenBetterTabHTML = (themes4, currentTheme) => {
       ]
     },
     {
+      name: "quickDecode",
+      title: "Quick Decode",
+      items: [
+        {
+          name: "quickDecode",
+          title: "Quick Decode",
+          description: "Selecting text on the Replay page will attempt to decode it and show the result at the left bottom corner."
+        }
+      ]
+    },
+    {
       name: "versionCheckWarning",
       title: "Version Check Warning",
       items: [
@@ -20159,6 +20170,16 @@ var init2 = () => {
     setTimeout(() => {
       sidebarTweaks();
     }, 200);
+    if (getSetting("showOutdatedVersionWarning") === "true") {
+      checkForUpdates().then((res) => {
+        if (!res.isLatest) {
+          openModal({
+            title: "Outdated EvenBetter version",
+            content: "You are using an outdated version of EvenBetter. This message can be turned off in the EvenBetter settings."
+          });
+        }
+      });
+    }
     setTimeout(() => quickMatchAndReplace(), 500);
     setTimeout(() => {
       let newUrl = window.location.hash;
