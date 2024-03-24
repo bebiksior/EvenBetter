@@ -1,4 +1,5 @@
-# EvenBetter [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20me)](https://twitter.com/bebiksior)
+# EvenBetter [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20me)](https://twitter.com/bebiksior) [![Static Badge](https://img.shields.io/badge/TODO%20List-00000?style=flat&color=%233251ed)](https://github.com/users/bebiksior/projects/2)
+
 `EvenBetter` is a frontend Caido plugin that makes the [Caido](https://github.com/caido) experience even better 😎
 
 Here's what **EvenBetter** implements:
