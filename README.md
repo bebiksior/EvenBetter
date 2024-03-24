@@ -3,8 +3,8 @@
 `EvenBetter` is a frontend Caido plugin that makes the [Caido](https://github.com/caido) experience even better 😎
 
 Here's what **EvenBetter** implements:
-- **Quick SSRF**: deploy SSRF testing instance with a single click
-- **Quick Decode**: quickly decode and edit encoded values within request body on the Replay page
+- **Quick SSRF**: deploy SSRF testing instance with a single click in the new Quick SSRF sidebar page
+- **Quick Decode**: quickly decode and edit encoded values within the request body on the Replay page
 - **Library**: add workflows made by the community into your Caido project with just a single click
 - **EvenBetter Settings**: customize and toggle EvenBetter features
 - **Custom Themes**: change the colors of the Caido UI
