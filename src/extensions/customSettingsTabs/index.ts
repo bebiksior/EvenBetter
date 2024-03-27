@@ -11,8 +11,6 @@ interface SettingsTab {
   content: HTMLElement;
 }
 
-declare const Caido: any;
-
 export const setup = () => {
   eventManagerInstance.on("onSettingsTabOpen", (data: string) => {
     adjustActiveTab(data);
@@ -30,13 +28,13 @@ export const setup = () => {
   customSettingsTabs = [
     {
       name: "EvenBetter",
-      icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-bug"></i></div>',
+      icon: '<i class="c-icon fas fa-bug"></i>',
       id: "evenbetter",
       content: evenBetterSettingsTab(),
     },
     {
       name: "Library",
-      icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>',
+      icon: '<i class="c-icon fas fa-book"></i>',
       id: "library",
       content: evenBetterLibraryTab(),
     },
@@ -47,13 +45,13 @@ const init = () => {
   renderCustomTabs();
 
   grabNavigationItems().forEach((navItem) => {
-    navItem.querySelector(".c-button").addEventListener("click", () => {
+    navItem.addEventListener("click", () => {
       setTabActive(navItem as HTMLElement);
 
       if (navItem.getAttribute("data-is-custom") !== "true") {
-        const content = document.querySelector<HTMLElement>(
+        const content = document.querySelector(
           ".c-settings__content"
-        );
+        ) as HTMLElement;
         if (!content) {
           log.error("Couldn't find settings tab content, aborting...");
           return;
@@ -87,7 +85,7 @@ export const addCustomSettingsTab = (tab: SettingsTab) => {
 
 const grabNavigationItems = () => {
   const settingsTabs = document.querySelectorAll(
-    ".c-settings__navigation .c-underline-nav-item"
+    ".c-settings .p-menubar-root-list .p-menuitem"
   );
   return settingsTabs;
 };
@@ -95,9 +93,9 @@ const grabNavigationItems = () => {
 const getNavItemData: (navItem: Element) => SettingsTab = (
   navItem: Element
 ) => {
-  const name = navItem.querySelector(".c-button__label")?.textContent;
+  const name = navItem.querySelector(".p-menuitem-link span")?.textContent;
   const id = name?.toLowerCase();
-  const icon = navItem.querySelector(".c-button__leading-icon")?.innerHTML;
+  const icon = navItem.querySelector(".p-menuitem-link i")?.outerHTML;
 
   if (name && id && icon) {
     return {
@@ -114,12 +112,12 @@ const getNavItemData: (navItem: Element) => SettingsTab = (
 
 const getNavigationItem = (name: string): Element | null => {
   const settingsTabs = Array.from(
-    document.querySelectorAll(".c-settings__navigation .c-underline-nav-item")
+    document.querySelectorAll(".c-settings .p-menubar-root-list .p-menuitem")
   );
 
   const foundTab = settingsTabs.find((tab) => {
     const tabName = (
-      tab.querySelector(".c-button__label") as HTMLElement
+      tab.querySelector(".p-menuitem-link") as HTMLElement
     )?.textContent?.trim();
     return tabName && tabName.toLowerCase() === name.toLowerCase();
   });
@@ -128,20 +126,37 @@ const getNavigationItem = (name: string): Element | null => {
 };
 
 export const renderCustomTabs = () => {
-  const settingsNavigation = document.querySelector(".c-underline-nav");
+  const settingsNavigation = document.querySelector(
+    ".c-settings .p-menubar-root-list"
+  );
   if (!settingsNavigation) {
     log.error("Couldn't find settings navigation, aborting...");
     return;
   }
 
-  const tabTemplate = settingsNavigation.querySelector(".c-underline-nav-item");
+  const tabTemplate = settingsNavigation.querySelector(".p-menuitem");
   customSettingsTabs.forEach((tab) => {
     if (document.getElementById(tab.id)) return;
 
     const newTab = tabTemplate?.cloneNode(true) as HTMLElement;
-    newTab.setAttribute("data-is-active", "false");
+    newTab.setAttribute("data-p-focused", "false");
+    newTab.querySelector(".c-settings__item").setAttribute("data-is-active", "false");
     newTab.setAttribute("data-is-custom", "true");
     newTab.id = tab.id;
+
+    newTab.addEventListener("mouseenter", () => {
+      grabNavigationItems().forEach((navItem) => {
+        navItem.classList.remove("p-focus");
+      });
+      
+      newTab.classList.add("p-focus");
+    });
+
+    newTab.addEventListener("mouseleave", () => {
+      newTab.classList.remove("p-focus");
+    });
+
+    const menuLink = newTab.querySelector(".p-menuitem-link") as HTMLElement;
 
     const newTabData = getNavItemData(newTab);
     if (newTabData) {
@@ -150,11 +165,11 @@ export const renderCustomTabs = () => {
       newTabData.icon = tab.icon;
       newTabData.content = tab.content;
 
-      newTab.querySelector(".c-button__label").innerHTML = tab.icon + tab.name;
+      menuLink.querySelector("i").outerHTML = tab.icon;
+      menuLink.querySelector("span").textContent = tab.name;
+      menuLink.removeAttribute("href");
 
-      newTab
-        .querySelector(".c-button")
-        .addEventListener("click", () => openCustomTab(tab));
+      newTab.addEventListener("click", () => openCustomTab(tab));
 
       settingsNavigation.appendChild(newTab);
     }
@@ -163,7 +178,7 @@ export const renderCustomTabs = () => {
 
 const openCustomTab = (tab: SettingsTab) => {
   const previousTab = window.location.hash.split("/")[2].split("?")[0];
-  const content = document.querySelector<HTMLElement>(".c-settings__content");
+  const content = document.querySelector(".c-settings__content") as HTMLElement;
   if (!content) {
     log.error("Couldn't find settings tab content, aborting...");
     return;
@@ -194,11 +209,13 @@ const openCustomTab = (tab: SettingsTab) => {
 // Sometimes, caido doesn't show the correct active tab, so we need to adjust it :D
 const adjustActiveTab = (openedSettingsTab: string) => {
   grabNavigationItems().forEach((navItem) => {
-    navItem.setAttribute("data-is-active", "false");
+    navItem.setAttribute("data-p-focused", "false");
+    navItem.querySelector(".c-settings__item").setAttribute("data-is-active", "false");
 
     const navItemData = getNavItemData(navItem);
     if (navItemData && navItemData.id === openedSettingsTab) {
-      navItem.setAttribute("data-is-active", "true");
+      navItem.setAttribute("data-p-focused", "true");
+      navItem.querySelector(".c-settings__item").setAttribute("data-is-active", "true");
 
       log.debug(`Adjusted active tab to ${openedSettingsTab}`);
     }
@@ -208,10 +225,12 @@ const adjustActiveTab = (openedSettingsTab: string) => {
 // This function sets which nav item has this yellow underline that indicates active tab
 export const setTabActive = (tabElement: HTMLElement) => {
   grabNavigationItems().forEach((navItem) => {
-    navItem.setAttribute("data-is-active", "false");
+    navItem.setAttribute("data-p-focused", "false");
+    tabElement.querySelector(".c-settings__item").setAttribute("data-is-active", "false");
   });
 
-  tabElement.setAttribute("data-is-active", "true");
+  tabElement.setAttribute("data-p-focused", "true");
+  tabElement.querySelector(".c-settings__item").setAttribute("data-is-active", "true");
 };
 
 const getCustomSettingsTab = (id: string) => {

@@ -1,4 +1,4 @@
-# EvenBetter v2.1
+# EvenBetter v2.2
 EvenBetter is a simple "plugin" that enhances your Caido experience with a few tweaks ;)
 
 ## Installation
@@ -7,10 +7,9 @@ EvenBetter is a simple "plugin" that enhances your Caido experience with a few t
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
-## Changelog v2.1
-- **Quick SSRF:** Quickly create new SSRF testing instance and view interactions on the new sidebar page. Now supports `ssrf.cvssadvisor.com` and `interactsh.com`
-- **Quick Decode Enhancement:** You can now edit text within Quick Decode on the Replay page and it will automatically update the encoded value.
-- **Bug fixes:** Fixed some issues with Caido v0.34.0
+## Changelog v2.2
+- Fixed issues with Caido v0.34.1
+- Added "Drop all" button to the Intercept page. Thanks [sw33tLie](https://twitter.com/sw33tLie) for the suggestion and code!
   
 ![quick_ssrf](https://github.com/bebiksior/EvenBetter/assets/71410238/4900ac42-2d48-4914-8b54-482fff15ad97)
 ![quiick_decode](https://github.com/bebiksior/EvenBetter/assets/71410238/5e2a1e59-7de6-4982-99e4-21745404a619)

@@ -15,6 +15,7 @@ import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
 import { register } from "./extensions/quickSSRFInstance/interactsh";
 import { checkForUpdates, getSetting, UpdateResponse } from "./settings";
+import { dropAllButtonFeature } from "./extensions/dropAllBtn";
 
 declare const Caido: any;
 
@@ -33,6 +34,7 @@ const init = () => {
     onScopeTabOpen();
     quickDecode();
     dropdownTweaks();
+    dropAllButtonFeature();
     setTimeout(() => {
       sidebarTweaks();
     }, 200);
@@ -55,6 +57,10 @@ const init = () => {
         if (newUrl.includes("?custom-path=")) {
           newUrl = newUrl.split("?custom-path=")[1];
         }
+
+        document
+          .querySelector(".c-content")
+          ?.setAttribute("data-page", newUrl);
 
         eventManagerInstance.triggerEvent("onPageOpen", {
           newUrl: newUrl,
