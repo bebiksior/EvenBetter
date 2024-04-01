@@ -1,0 +1,21 @@
+{
+    "extensions": [
+      {
+        "id": "evenbetter",
+        "name": "Even Better",
+        "description": "Collection of tweaks and improvements for Caido.",
+        "author": "bebiks",
+        "latestVersion": "v2.2",
+        "customJSUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/final/evenbetter.js",
+        "customCSSUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/final/style.css"
+      },
+      {
+        "id": "starterkit",
+        "name": "Example Plugin",
+        "description": "example plugin",
+        "author": "Caido",
+        "latestVersion": "v1.0",
+        "customJSUrl": "https://raw.githubusercontent.com/caido/starterkit-plugin/main/dist/script.js"
+      }
+    ]
+}
