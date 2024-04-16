@@ -1,54 +1,110 @@
 {
-    "workflows": [
-        {
-            "name": "PwnFox Support",
-            "description": "X-PwnFox-Color header support",
-            "version": "1.0",
-            "author": "bebiks",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
-        },
-        {
-            "name": "Query to JSON",
-            "description": "Converts a query to JSON",
-            "version": "1.0",
-            "author": "Hashem_Mo",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Query-to-JSON.json"
-        },
-        {
-            "name": "JSON to Query",
-            "description": "Converts a JSON to query",
-            "version": "1.0",
-            "author": "bebiks",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/JSON-to-Query.json"
-        },
-        {
-            "name": "AI Hacking Suggestions",
-            "description": "PoC for a call to openai's api.",
-            "version": "1.0",
-            "os": "MacOS, Linux",
-            "author": "rez0",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
-        },
-        {
-            "name": "[SQLi] Append single quote",
-            "description": "Appends single quote to every value, supports JSON and query string",
-            "version": "1.0",
-            "author": "bebiks",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/SQLi-test_append-single-quote.json"
-        },
-        {
-            "name": "Clean HTTP Request",
-            "description": "Cleans unnecessary headers and replaces authorization headers with placeholders",
-            "version": "1.0",
-            "author": "bebiks",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
-        },
-        {
-            "name": "Introspection Query",
-            "description": "Useful to ask a GraphQL schema for information about what queries it supports, if enabled.",
-            "version": "1.0",
-            "author": "Vasily",
-            "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Introspection-Query.json"
-        }
-    ]
+  "workflows": [
+    {
+      "name": "PwnFox Support",
+      "description": "X-PwnFox-Color header support",
+      "version": "1.0",
+      "author": "bebiks",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
+    },
+    {
+      "name": "Query to JSON",
+      "description": "Converts a query to JSON",
+      "version": "1.0",
+      "author": "Hashem_Mo",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Query-to-JSON.json"
+    },
+    {
+      "name": "JSON to Query",
+      "description": "Converts a JSON to query",
+      "version": "1.0",
+      "author": "bebiks",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/JSON-to-Query.json"
+    },
+    {
+      "name": "AI Hacking Suggestions",
+      "description": "PoC for a call to openai's api.",
+      "version": "1.0",
+      "os": "MacOS, Linux",
+      "author": "rez0",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Hacking-Suggestions-Example.json"
+    },
+    {
+      "name": "[SQLi] Append single quote",
+      "description": "Appends single quote to every value, supports JSON and query string",
+      "version": "1.0",
+      "author": "bebiks",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/SQLi-test_append-single-quote.json"
+    },
+    {
+      "name": "Clean HTTP Request",
+      "description": "Cleans unnecessary headers and replaces authorization headers with placeholders",
+      "version": "1.0",
+      "author": "bebiks",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Clean-HTTP-Request.json"
+    },
+    {
+      "name": "Introspection Query",
+      "description": "Useful to ask a GraphQL schema for information about what queries it supports, if enabled.",
+      "version": "1.0",
+      "author": "Vasily",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Introspection-Query.json"
+    },
+    {
+      "name": "Generate CSRF Poc",
+      "description": "Generate CSRF PoC from the request.",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/Generate%20CSRF%20PoC/Generate%20CSRF%20PoC.json"
+    },
+    {
+      "name": "Form Data to JSON",
+      "description": "Converts form data to JSON",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/Form%20Data%20To%20JSON/Form%20Data%20To%20JSON.json"
+    },
+    {
+      "name": "JSON to Form Data",
+      "description": "Converts JSON to form data",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20To%20Form%20Data/JSON%20To%20Form%20Data.json"
+    },
+    {
+      "name": "HTML Decode Everything",
+      "description": "Decode all HTML entities including ones not supported by the default HTML decoder",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/HTML%20Decode%20Everything/HTML%20Decode%20Everything.json"
+    },
+    {
+      "name": "HTML Encode Everything",
+      "description": "Encode all characters to HTML entities",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/HTML%20Encode%20Everything/HTML%20Encode%20Everything.json"
+    },
+    {
+      "name": "JSON escape",
+      "description": "Escapes JSON text",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20Escape/JSON%20Escape.json"
+    },
+    {
+      "name": "JSON unescape",
+      "description": "Unescapes JSON text",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20Unescape/JSON%20Unescape.json"
+    },
+    {
+      "name": "JSON to XML",
+      "description": "Converts JSON to XML",
+      "version": "1.0",
+      "author": "Ry0taK",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20to%20XML/JSON%20to%20XML.json"
+    }
+  ]
 }
