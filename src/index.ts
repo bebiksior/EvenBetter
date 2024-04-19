@@ -23,7 +23,7 @@ import { dropAllButtonFeature } from "./extensions/dropAllBtn";
 const init = () => {
   log.info(`EvenBetter ${CURRENT_VERSION} is loading, thanks for using it! 🎉`);
 
-  EvenBetterAPI.hotReloading();
+  //EvenBetterAPI.hotReloading();
   customTabs.setup();
 
   const onSSRFHit = new OnSSRFHit();
