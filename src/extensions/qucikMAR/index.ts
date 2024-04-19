@@ -1,7 +1,8 @@
-import eventManagerInstance from "../../events/EventManager";
+import { Caido } from "@caido/sdk-frontend";
+import EvenBetterAPI from "@bebiks/evenbetter-api";
 
 export const quickMatchAndReplace = () => {
-  eventManagerInstance.on("onContextMenuOpen", (element) => {
+  EvenBetterAPI.eventManager.on("onContextMenuOpen", (element) => {
     if (
       !(
         window.location.hash == "#/replay" ||
@@ -10,20 +11,18 @@ export const quickMatchAndReplace = () => {
     )
       return;
 
-
     const selection = document.getSelection();
     if (selection.toString().trim() == "") return;
 
-    const dropdown = element as HTMLElement;
-    const menu = dropdown.querySelector(".c-menu");
-    const dropdownItems = dropdown.querySelectorAll(".c-item");
+    const menu = (element as HTMLElement).querySelector("ul") as HTMLElement;
+    const dropdownItems = menu.querySelectorAll(".p-menuitem");
 
     const newItem = dropdownItems[0].cloneNode(true) as HTMLElement;
 
     let insertBefore = dropdownItems[0];
     for (let i = 0; i < dropdownItems.length; i++) {
       if (
-        dropdownItems[i].querySelector(".c-item__content").textContent ==
+        dropdownItems[i].querySelector(".c-context-menu__content").textContent ==
         "Send to Automate"
       ) {
         insertBefore = dropdownItems[i];
@@ -31,19 +30,42 @@ export const quickMatchAndReplace = () => {
       }
     }
 
-    newItem.querySelector(".c-item__content").textContent =
+    newItem.querySelector(".c-context-menu__content").textContent =
       "Send to Match & Replace";
-    newItem.querySelector(".c-item__trailing-visual")?.remove();
-    newItem.querySelector(".c-item__leading-visual")?.remove();
+    newItem.querySelector(".c-context-menu__leading-visual")?.remove();
+    newItem.querySelector(".c-context-menu__trailing-visual")?.remove();
+    newItem.classList.remove("p-focus");
 
-    // we can't just do `selection.toString()` in the `click` event because Safari clears it before click event is triggered :(
-    let selectedText = "";
-    document.addEventListener("mousedown", () => {
-      selectedText = selection.toString().trim();
+    newItem.addEventListener("mouseenter", () => {
+      menu.childNodes.forEach((item: Element) => {
+        if (item.nodeName == "#text" || !item.classList || !item.classList.contains("p-focus")) return;
+
+        item.classList.remove("p-focus");
+        item.classList.remove("p-menuitem-active");
+        item.classList.remove("p-highlight");
+
+        const subMenu = item.querySelector("ul");
+        if (subMenu) {
+          subMenu.style.display = "none";
+
+          item.addEventListener("mouseenter", () => {
+            subMenu.style.display = "block";
+            item.classList.add("p-focus");
+            item.classList.add("p-menuitem-active");
+            item.classList.add("p-highlight");
+          }, { once: true });
+        }
+      });
+
+      newItem.classList.add("p-focus");
+    });
+
+    newItem.addEventListener("mouseleave", () => {
+      newItem.classList.remove("p-focus");
     });
 
     newItem.addEventListener("click", () => {
-      const textToUse = selectedText;
+      const textToUse = Caido.window.getActiveEditor().getSelectedText();
 
       window.location.hash = "#/tamper";
       let interval = setInterval(() => {

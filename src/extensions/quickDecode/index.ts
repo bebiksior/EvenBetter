@@ -1,6 +1,8 @@
-import eventManagerInstance from "../../events/EventManager";
-import { PageOpenEvent } from "../../events/onPageOpen";
+import EvenBetterAPI from "@bebiks/evenbetter-api";
 import { getSetting } from "../../settings";
+import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+import quickDecodeCSS from "./quickDecode.css";
+import loadCSS from "@bebiks/evenbetter-api/src/css";
 
 let selectedLineElements: HTMLElement[] = [];
 
@@ -51,6 +53,18 @@ const getLinesContainingSelection = () => {
 
   return selectedLines;
 };
+
+function unicodeEncode(str: string) {
+  var encodedStr = "";
+  for (var i = 0; i < str.length; i++) {
+    var unicode = str.charCodeAt(i).toString(16);
+    while (unicode.length < 4) {
+      unicode = "0" + unicode;
+    }
+    encodedStr += "\\u" + unicode;
+  }
+  return encodedStr;
+}
 
 const attachQuickDecode = () => {
   const sessionListBody = document.querySelector(".c-session-list-body");
@@ -114,6 +128,8 @@ const attachQuickDecode = () => {
       newValue = btoa(newValue);
     } else if (encodeMethod === "url+base64") {
       newValue = encodeURIComponent(btoa(newValue));
+    } else if (encodeMethod === "unicode") {
+      newValue = unicodeEncode(newValue);
     }
 
     if (isPrettifyEnabled()) {
@@ -192,8 +208,7 @@ const attachQuickDecode = () => {
         textError.textContent = "";
         decodedTextBox.setAttribute("contenteditable", "true");
         if (selectedLineElements.length > 1) {
-          textError.textContent =
-            "Modyfing multiple lines is not supported yet";
+          textError.textContent = "Modyfing multiple lines isn't supported yet";
           decodedTextBox.setAttribute("contenteditable", "false");
         }
 
@@ -258,12 +273,20 @@ const decodeOnHover = () => {
 };
 
 const base64Decode = (input: string) => {
+  let modifiedInput = input;
+
+  if (input.length % 4 === 1) {
+    modifiedInput += "=";
+  } else if (input.length % 4 === 2) {
+    modifiedInput += "==";
+  }
+
   const base64Regex =
     /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
-  if (base64Regex.test(input)) {
+  if (base64Regex.test(modifiedInput)) {
     try {
-      const decodedBase64 = atob(input);
+      const decodedBase64 = atob(modifiedInput);
       return { encodeMethod: "base64", decodedContent: decodedBase64 };
     } catch (error) {
       return { encodeMethod: "none", decodedContent: input };
@@ -279,13 +302,29 @@ const tryToDecode = (input: string) => {
     return base64Decoded;
   }
 
+  const unicodeRegex = /\\u([0-9a-fA-F]{4})/g;
+  if (unicodeRegex.test(input)) {
+    try {
+      const decodedUnicode = input.replace(unicodeRegex, (_, code) =>
+        String.fromCharCode(parseInt(code, 16))
+      );
+
+      return { encodeMethod: "unicode", decodedContent: decodedUnicode };
+    } catch (error) {
+      return { encodeMethod: "none", decodedContent: input };
+    }
+  }
+
   if (isUrlEncoded(input)) {
     try {
       const decodedUrl = decodeURIComponent(input);
 
       const base64Decoded = base64Decode(decodedUrl);
       if (base64Decoded.encodeMethod !== "none" && input.length > 8) {
-        return { encodeMethod: "url+base64", decodedContent: base64Decoded.decodedContent };
+        return {
+          encodeMethod: "url+base64",
+          decodedContent: base64Decoded.decodedContent,
+        };
       }
 
       return { encodeMethod: "url", decodedContent: decodedUrl };
@@ -300,15 +339,22 @@ const tryToDecode = (input: string) => {
 export const quickDecode = () => {
   if (getSetting("quickDecode") !== "true") return;
 
-  eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
+  loadCSS({
+    id: "eb-quickdecode",
+    cssText: quickDecodeCSS.toString(),
+  });
+
+  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     if (data.newUrl === "#/replay") {
       attachQuickDecode();
 
       setTimeout(() => {
         const editor = document.querySelector(".cm-editor");
+        if (!editor) return;
+
         editor.addEventListener("input", decodeOnHover);
         decodeOnHover();
-      }, 1000);
+      }, 500);
     }
   });
 };

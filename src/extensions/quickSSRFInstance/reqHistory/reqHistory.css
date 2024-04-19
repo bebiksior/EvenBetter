@@ -1,0 +1,126 @@
+.ssrf-instance-url {
+  color: var(--c-fg-subtle) !important;
+}
+
+.c-evenbetter_quick-ssrf div {
+  -moz-user-select: auto;
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+.c-evenbetter_quick-ssrf {
+  min-width: 620px;
+  overflow: auto;
+  height: 100%;
+  gap: 0.5em;
+  flex-direction: column;
+  display: flex;
+}
+
+.evenbetter__quick-ssrf,
+#quick-ssrf-page {
+  height: 100%;
+}
+
+.c-evenbetter_quick-ssrf h1 {
+  margin: 0;
+}
+
+.c-content[data-page="#/evenbetter/quick-ssrf"] {
+  overflow: auto;
+}
+
+.c-evenbetter_quick-ssrf__description h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.c-evenbetter_quick-ssrf__description p {
+  color: var(--c-fg-subtle);
+  margin: 0;
+}
+
+.c-evenbetter_quick-ssrf .header-description {
+  color: var(--c-fg-subtle);
+}
+
+.c-evenbetter_quick-ssrf .header-title h1 {
+  font-size: 22.5px;
+}
+
+.c-evenbetter_quick-ssrf header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+}
+
+.c-evenbetter_quick-ssrf .c-text-input {
+  width: 13em;
+}
+
+#ssrf-instance-url {
+  border-radius: var(--c-border-radius-2) 0 0 var(--c-border-radius-2) !important;
+}
+
+.evenbetter_quick-ssrf_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+  border: var(--c-border-width-1) solid var(--c-border-default);
+  border-radius: 0 var(--c-border-radius-2) var(--c-border-radius-2) 0;
+  color: var(--c-fg-default);
+  background-color: var(--c-bg-default);
+  max-height: var(--c-space-10);
+  cursor: pointer;
+
+  transition: 0.2s ease background-color, transform;
+}
+
+.evenbetter_quick-ssrf_button:hover {
+  background-color: var(--c-bg-subtle);
+}
+
+.evenbetter_quick-ssrf_button:active {
+  transform: scale(0.95);
+}
+
+.c-evenbetter_quick-ssrf div {
+  -moz-user-select: auto;
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+.c-evenbetter_quick-ssrf__content {
+  background-color: var(--c-bg-subtle);
+  height: 100%;
+  padding: 0;
+}
+
+.http_method {
+  color: var(--c-fg-subtle);
+}
+
+.http_url {
+  color: var(--c-fg-default);
+}
+
+.http_version {
+  color: var(--c-fg-subtle);
+}
+
+.http_header-key {
+  color: var(--c-fg-subtle);
+}
+
+.http_header-value {
+  color: var(--c-fg-default);
+}
+
+.http_body {
+  color: var(--c-fg-default);
+}
+
+

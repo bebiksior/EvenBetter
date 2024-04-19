@@ -1,11 +1,10 @@
-import {
-  checkForUpdates,
-  defaultSettings,
-  getSetting,
-  setSetting,
-} from "../../../settings";
+import { checkForUpdates, getSetting, setSetting } from "../../../settings";
 import { CURRENT_VERSION } from "../../../settings/constants";
-import { Theme, loadTheme, themes } from "../../../themes";
+import { Theme, loadTheme, themes } from "../../../appearance/themes";
+import { fonts, loadFont } from "../../../appearance/fonts";
+import EvenBetterAPI from "@bebiks/evenbetter-api";
+import evenbetterStyles from "./evenbetter.css";
+import loadCSS from "@bebiks/evenbetter-api/src/css";
 
 interface Change {
   name: string;
@@ -13,6 +12,8 @@ interface Change {
 }
 
 export const evenBetterSettingsTab = () => {
+  loadCSS({ id: "evenbetter-settings", cssText: evenbetterStyles.toString() });
+
   const currentTheme = getSetting("theme");
 
   const evenBetterTab = document.createElement("div");
@@ -20,13 +21,27 @@ export const evenBetterSettingsTab = () => {
   evenBetterTab.classList.add("evenbetter-custom-tab");
 
   // Theme selection
-  const select = evenBetterTab.querySelector("select");
+  const select = evenBetterTab.querySelector(
+    "#theme-select"
+  ) as HTMLSelectElement;
   select.addEventListener("change", (event) => {
     const target = event.target as HTMLSelectElement;
     const theme = target.value;
 
     setSetting("theme", theme);
     loadTheme(theme);
+  });
+
+  // Font selection
+  const fontSelect = evenBetterTab.querySelector(
+    "#font-select"
+  ) as HTMLSelectElement;
+  fontSelect.addEventListener("change", (event) => {
+    const target = event.target as HTMLSelectElement;
+    const font = target.value;
+
+    setSetting("font", font);
+    loadFont(font);
   });
 
   // Toggle features
@@ -71,6 +86,7 @@ export const evenBetterSettingsTab = () => {
       setSetting(change.name, change.value);
     });
 
+    localStorage.setItem("previousPath", "#/settings/evenbetter");
     location.reload();
   });
 
@@ -104,6 +120,7 @@ export const evenBetterSettingsTab = () => {
         ssrfInstanceFunctionalityChanges.forEach((change) => {
           setSetting(change.name, change.value);
 
+          localStorage.setItem("previousPath", window.location.hash);
           location.reload();
         });
       });
@@ -121,7 +138,10 @@ export const evenBetterSettingsTab = () => {
   return evenBetterTab;
 };
 
-const createEvenBetterTabHTML = (themes: { [key: string]: Theme }, currentTheme: string) => {
+const createEvenBetterTabHTML = (
+  themes: { [key: string]: Theme },
+  currentTheme: string
+) => {
   const toggleFeatures = [
     {
       name: "sidebarTweaks",
@@ -177,6 +197,23 @@ const createEvenBetterTabHTML = (themes: { [key: string]: Theme }, currentTheme:
     },
   ];
 
+  const checkbox = (id: string) => {
+    const checkbox =
+      EvenBetterAPI.components.createCheckbox() as HTMLInputElement;
+
+    const input = checkbox.querySelector(
+      ".eb-checkbox__input"
+    ) as HTMLInputElement;
+    input.name = id;
+    input.id = id;
+
+    if (getSetting(id) === "true") {
+      input.setAttribute("checked", "true");
+    }
+
+    return checkbox;
+  };
+
   return `
   <div class="even-better__settings" id="evenbetter-settings-content">
     <header>
@@ -194,7 +231,7 @@ const createEvenBetterTabHTML = (themes: { [key: string]: Theme }, currentTheme:
         <div class="settings-box">
           <!-- Settings header -->
           <div class="settings-box__header">
-            <div class="settings-box__header-title">Themes</div>
+            <div class="settings-box__header-title">Appearance</div>
             <div class="settings-box__header-description">
               Change the appearance of your Caido
             </div>
@@ -202,18 +239,32 @@ const createEvenBetterTabHTML = (themes: { [key: string]: Theme }, currentTheme:
 
           <!-- Settings content -->
           <div class="settings-box__content">
-            <select>
-              ${
-                Object.keys(themes)
+            <div class="settings-box__content-item">
+              <div class="settings-box__content-item-title">Theme</div>
+              <select id="theme-select">
+                ${Object.keys(themes)
                   .map(
                     (theme) =>
                       `<option value="${theme}" ${
                         theme === currentTheme ? "selected" : ""
                       }>${themes[theme].name}</option>`
                   )
-                  .join("")
-              }
-            </select>
+                  .join("")}
+              </select>
+            </div>
+            <div class="settings-box__content-item">
+              <div class="settings-box__content-item-title">Font</div>
+              <select id="font-select">
+                ${Object.keys(fonts)
+                  .map(
+                    (font) =>
+                      `<option value="${font}" ${
+                        font === getSetting("font") ? "selected" : ""
+                      }>${fonts[font].name}</option>`
+                  )
+                  .join("")}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -276,9 +327,7 @@ const createEvenBetterTabHTML = (themes: { [key: string]: Theme }, currentTheme:
                       <b>${item.title}:</b> ${item.description}
                     </div>
                     <div>
-                      <input type="checkbox" name="${item.name}" id="${
-                      item.name
-                    }" ${getSetting(item.name) === "true" ? "checked" : ""} />
+                      ${checkbox(item.name).innerHTML}
                     </div>
                   </div>`
                   )

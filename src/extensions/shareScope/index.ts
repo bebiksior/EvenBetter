@@ -1,14 +1,11 @@
-import eventManagerInstance from "../../events/EventManager";
-
-declare const Caido: any;
+import { Caido } from "@caido/sdk-frontend";
+import EvenBetterAPI from "@bebiks/evenbetter-api";
 
 export const onScopeTabOpen = () => {
-  eventManagerInstance.on("onPageOpen", (data: any) => {
+  EvenBetterAPI.eventManager.on("onPageOpen", (data: any) => {
     if (data.newUrl == "#/scope") {
-      setTimeout(() => {
-        addImportButton();
-        observeScopeTab();
-      }, 50);
+      addImportButton();
+      observeScopeTab();
     }
   });
 };
@@ -119,41 +116,21 @@ const attachDownloadButton = () => {
     const id = getActiveScopePreset();
     if (!id) return;
 
-    getScopePreset(id).then((response) => {
-      response.json().then((data) => {
-        const json = JSON.stringify(data.data.scope, null, 2);
-        const blob = new Blob([json], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
+    const scopes = Caido.scopes.getScopes();
+    const scope = scopes.find((s) => s.id === id);
+    if (!scope) return;
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "scope-" + data.data.scope.name + ".json";
-        a.click();
-      });
-    });
+    const json = JSON.stringify(scope, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "scope-" + scope.name + ".json";
+    a.click();
   });
 
   presetCreateHeader.appendChild(downloadButton);
-};
-
-const getScopePreset = (id: any) => {
-  const payload = {
-    operationName: "scope",
-    query: `query scope($id:ID!) {\n scope(id: $id){\n id\n name\n allowlist\n denylist \n }\n }`,
-    variables: {
-      id: `${id}`,
-    },
-  };
-
-  return fetch(document.location.origin + "/graphql", {
-    body: JSON.stringify(payload),
-    method: "POST",
-    headers: {
-      Authorization:
-        "Bearer " +
-        JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken,
-    },
-  });
 };
 
 const getActiveScopePreset = () => {

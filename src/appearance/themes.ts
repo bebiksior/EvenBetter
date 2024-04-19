@@ -17,6 +17,7 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#0b0b0b"
   },
   caido: {
     name: "Caido Default",
@@ -31,6 +32,7 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "rgb(43, 46, 53)"
   },
   gray: {
     name: "Gray",
@@ -40,11 +42,12 @@ const themes: { [key: string]: Theme } = {
     "--c-table-item-row": "#252525",
     "--c-table-item-row-hover": "#303030",
     "--header-cell-width": "1px",
-    "--c-table-even-item-row": "#252525",
+    "--c-table-even-item-row": "#282828",
     "--c-fg-default": "var(--c-white-100)",
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#222222"
   },
   oceanblue: {
     name: "Ocean Blue",
@@ -59,6 +62,7 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#213345"
   },
   solarized: {
     name: "Solarized",
@@ -73,6 +77,8 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "#657b83",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "#073642",
+    "--c-table-background": "#03303c"
+
   },
   black: {
     name: "Black",
@@ -87,6 +93,7 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#000000"
   },
   /*light: {
     name: "Light",
@@ -121,11 +128,12 @@ const themes: { [key: string]: Theme } = {
     "--c-table-item-row": "#2b213a",
     "--c-table-item-row-hover": "#3c2e52",
     "--header-cell-width": "1px",
-    "--c-table-even-item-row": "#2b213a",
+    "--c-table-even-item-row": "#372e45",
     "--c-fg-default": "var(--c-white-100)",
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#2b213a"
   },
   deepdark: {
     name: "Deep Dark",
@@ -140,6 +148,7 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#0b0b0b"
   },
 };
 
