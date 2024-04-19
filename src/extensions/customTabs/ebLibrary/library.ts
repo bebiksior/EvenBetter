@@ -125,28 +125,15 @@ export const evenBetterLibraryTab = () => {
     "fa-search"
   );
 
+  const libraryTable = EvenBetterAPI.components.createTable({
+    columns: libraryColumns,
+    tableHeight: "100%",
+    rowHeight: "33.75px",
+  });
+
   searchInput.querySelector("input").addEventListener("input", (event) => {
     const searchValue = (event.target as HTMLInputElement).value;
-    const table = evenBetterTab.querySelector(".c-evenbetter_table");
-    const rows = table.querySelectorAll(".c-evenbetter_table-item-row");
-
-    rows.forEach((row: HTMLElement) => {
-      const cells = row.querySelectorAll(".c-evenbetter_table-item-cell");
-      let isMatch = false;
-
-      cells.forEach((cell) => {
-        const cellValue = cell.textContent.toLowerCase();
-        if (cellValue.includes(searchValue.toLowerCase())) {
-          isMatch = true;
-        }
-      });
-
-      if (isMatch) {
-        row.style.display = "flex";
-      } else {
-        row.style.display = "none";
-      }
-    });
+    libraryTable.filterRows(searchValue);
   });
   header.appendChild(searchInput);
 
@@ -164,11 +151,6 @@ export const evenBetterLibraryTab = () => {
 
   evenBetterTab.appendChild(bodyContainer);
 
-  const libraryTable = EvenBetterAPI.components.createTable({
-    columns: libraryColumns,
-    tableHeight: "100%",
-    rowHeight: "33.75px",
-  });
 
   fetch(
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflows.json?cache=" +
