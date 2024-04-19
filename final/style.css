@@ -1,15 +1,18 @@
 :root {
   --c-header-cell-border: #101010 !important;
-  --c-bg-default: #050607 !important;
-  --c-bg-subtle: #090a0c !important;
-  --c-table-item-row: #08090a !important;
-  --c-table-item-row-hover: #0f1012 !important;
-  --c-table-even-item-row: #08090a !important;
-  --selection-background: rgba(255, 255, 255, 0.15) !important;
+  --c-bg-default: #202020 !important;
+  --c-bg-subtle: #252525 !important;
+  --c-table-item-row: #252525 !important;
+  --c-table-item-row-hover: #303030 !important;
   --header-cell-width: 1px !important;
+  --c-table-even-item-row: #282828 !important;
+  --c-fg-default: var(--c-white-100) !important;
+  --c-fg-subtle: var(--c-gray-400) !important;
+  --selection-background: rgba(255, 255, 255, 0.15) !important;
   --selected-row-background: var(--c-bg-default) !important;
+  --c-table-background: #222222 !important;
+  
   --evenbetter-css-version: "v2.3";
-  --c-table-background: #0b0b0b;
 }
 
 .c-header-cell {
