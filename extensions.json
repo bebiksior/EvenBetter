@@ -1,0 +1,14 @@
+{
+  "extensions": [
+    {
+      "id": "evenbetter",
+      "name": "Even Better",
+      "description": "Collection of tweaks and improvements for Caido.",
+      "author": "bebiks",
+      "url": "https://github.com/bebiksior/EvenBetter",
+      "versionUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt",
+      "customJSUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/final/evenbetter.js",
+      "customCSSUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/final/style.css"
+    }
+  ]
+}

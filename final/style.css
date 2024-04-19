@@ -8,7 +8,7 @@
   --selection-background: rgba(255, 255, 255, 0.15) !important;
   --header-cell-width: 1px !important;
   --selected-row-background: var(--c-bg-default) !important;
-  --evenbetter-css-version: "v2.1";
+  --evenbetter-css-version: "v2.2";
 }
 
 .c-header-cell {

@@ -1,5 +1,5 @@
 // src/settings/constants.ts
-var CURRENT_VERSION = "v2.1";
+var CURRENT_VERSION = "v2.2";
 var DEBUG_MODE = false;
 var EVENBETTER_VERSION_CHECK_URL = "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/version.txt";
 
@@ -202,16 +202,16 @@ var themes = {
     "--c-table-item-row-hover": "#586e75",
     "--header-cell-width": "1px",
     "--c-table-even-item-row": "#073642",
-    "--c-fg-default": "#93a1a1",
+    "--c-fg-default": "#e3e3e3",
     "--c-fg-subtle": "#657b83",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "#073642"
   },
   black: {
     name: "Black",
-    "--c-header-cell-border": "#000000",
-    "--c-bg-default": "#111111",
-    "--c-bg-subtle": "#070707",
+    "--c-header-cell-border": "#070707",
+    "--c-bg-default": "#000000",
+    "--c-bg-subtle": "#000000",
     "--c-table-item-row": "#050505",
     "--c-table-item-row-hover": "#222222",
     "--header-cell-width": "0px",
@@ -238,8 +238,8 @@ var themes = {
   deepdark: {
     name: "Deep Dark",
     "--c-header-cell-border": "#101010",
-    "--c-bg-default": "#080808",
-    "--c-bg-subtle": "#080808",
+    "--c-bg-default": "#0b0b0b",
+    "--c-bg-subtle": "#050505",
     "--c-table-item-row": "#0f0f0f",
     "--c-table-item-row-hover": "#1a1a1a",
     "--header-cell-width": "1px",
@@ -797,13 +797,13 @@ var setup = () => {
   customSettingsTabs = [
     {
       name: "EvenBetter",
-      icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-bug"></i></div>',
+      icon: '<i class="c-icon fas fa-bug"></i>',
       id: "evenbetter",
       content: evenBetterSettingsTab()
     },
     {
       name: "Library",
-      icon: '<div class="c-button__leading-icon"><i class="c-icon fas fa-book"></i></div>',
+      icon: '<i class="c-icon fas fa-book"></i>',
       id: "library",
       content: evenBetterLibraryTab()
     }
@@ -812,7 +812,7 @@ var setup = () => {
 var init = () => {
   renderCustomTabs();
   grabNavigationItems().forEach((navItem) => {
-    navItem.querySelector(".c-button").addEventListener("click", () => {
+    navItem.addEventListener("click", () => {
       setTabActive(navItem);
       if (navItem.getAttribute("data-is-custom") !== "true") {
         const content = document.querySelector(".c-settings__content");
@@ -833,13 +833,13 @@ var init = () => {
   }
 };
 var grabNavigationItems = () => {
-  const settingsTabs = document.querySelectorAll(".c-settings__navigation .c-underline-nav-item");
+  const settingsTabs = document.querySelectorAll(".c-settings .p-menubar-root-list .p-menuitem");
   return settingsTabs;
 };
 var getNavItemData = (navItem) => {
-  const name = navItem.querySelector(".c-button__label")?.textContent;
+  const name = navItem.querySelector(".p-menuitem-link span")?.textContent;
   const id = name?.toLowerCase();
-  const icon = navItem.querySelector(".c-button__leading-icon")?.innerHTML;
+  const icon = navItem.querySelector(".p-menuitem-link i")?.outerHTML;
   if (name && id && icon) {
     return {
       name,
@@ -852,35 +852,48 @@ var getNavItemData = (navItem) => {
   return null;
 };
 var getNavigationItem = (name) => {
-  const settingsTabs = Array.from(document.querySelectorAll(".c-settings__navigation .c-underline-nav-item"));
+  const settingsTabs = Array.from(document.querySelectorAll(".c-settings .p-menubar-root-list .p-menuitem"));
   const foundTab = settingsTabs.find((tab) => {
-    const tabName = tab.querySelector(".c-button__label")?.textContent?.trim();
+    const tabName = tab.querySelector(".p-menuitem-link")?.textContent?.trim();
     return tabName && tabName.toLowerCase() === name.toLowerCase();
   });
   return foundTab || null;
 };
 var renderCustomTabs = () => {
-  const settingsNavigation = document.querySelector(".c-underline-nav");
+  const settingsNavigation = document.querySelector(".c-settings .p-menubar-root-list");
   if (!settingsNavigation) {
     Logger_default.error("Couldn't find settings navigation, aborting...");
     return;
   }
-  const tabTemplate = settingsNavigation.querySelector(".c-underline-nav-item");
+  const tabTemplate = settingsNavigation.querySelector(".p-menuitem");
   customSettingsTabs.forEach((tab) => {
     if (document.getElementById(tab.id))
       return;
     const newTab = tabTemplate?.cloneNode(true);
-    newTab.setAttribute("data-is-active", "false");
+    newTab.setAttribute("data-p-focused", "false");
+    newTab.querySelector(".c-settings__item").setAttribute("data-is-active", "false");
     newTab.setAttribute("data-is-custom", "true");
     newTab.id = tab.id;
+    newTab.addEventListener("mouseenter", () => {
+      grabNavigationItems().forEach((navItem) => {
+        navItem.classList.remove("p-focus");
+      });
+      newTab.classList.add("p-focus");
+    });
+    newTab.addEventListener("mouseleave", () => {
+      newTab.classList.remove("p-focus");
+    });
+    const menuLink = newTab.querySelector(".p-menuitem-link");
     const newTabData = getNavItemData(newTab);
     if (newTabData) {
       newTabData.name = tab.name;
       newTabData.id = tab.id;
       newTabData.icon = tab.icon;
       newTabData.content = tab.content;
-      newTab.querySelector(".c-button__label").innerHTML = tab.icon + tab.name;
-      newTab.querySelector(".c-button").addEventListener("click", () => openCustomTab(tab));
+      menuLink.querySelector("i").outerHTML = tab.icon;
+      menuLink.querySelector("span").textContent = tab.name;
+      menuLink.removeAttribute("href");
+      newTab.addEventListener("click", () => openCustomTab(tab));
       settingsNavigation.appendChild(newTab);
     }
   });
@@ -909,19 +922,23 @@ var openCustomTab = (tab) => {
 };
 var adjustActiveTab = (openedSettingsTab) => {
   grabNavigationItems().forEach((navItem) => {
-    navItem.setAttribute("data-is-active", "false");
+    navItem.setAttribute("data-p-focused", "false");
+    navItem.querySelector(".c-settings__item").setAttribute("data-is-active", "false");
     const navItemData = getNavItemData(navItem);
     if (navItemData && navItemData.id === openedSettingsTab) {
-      navItem.setAttribute("data-is-active", "true");
+      navItem.setAttribute("data-p-focused", "true");
+      navItem.querySelector(".c-settings__item").setAttribute("data-is-active", "true");
       Logger_default.debug(`Adjusted active tab to ${openedSettingsTab}`);
     }
   });
 };
 var setTabActive = (tabElement) => {
   grabNavigationItems().forEach((navItem) => {
-    navItem.setAttribute("data-is-active", "false");
+    navItem.setAttribute("data-p-focused", "false");
+    tabElement.querySelector(".c-settings__item").setAttribute("data-is-active", "false");
   });
-  tabElement.setAttribute("data-is-active", "true");
+  tabElement.setAttribute("data-p-focused", "true");
+  tabElement.querySelector(".c-settings__item").setAttribute("data-is-active", "true");
 };
 var getCustomSettingsTab = (id) => {
   return customSettingsTabs.find((tab) => tab.id === id);
@@ -20143,6 +20160,92 @@ var dropdownTweaks = () => {
   });
 };
 
+// src/extensions/dropAllBtn/index.ts
+var dropRequest = async (id) => {
+  try {
+    const payload = {
+      operationName: "dropInterceptMessage",
+      query: `mutation dropInterceptMessage(\$id: ID!) {
+          dropInterceptMessage(id: \$id) {
+            droppedId
+          }
+        }`,
+      variables: { id }
+    };
+    const response = await fetch(document.location.origin + "/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error during dropRequest execution:", error);
+  }
+};
+var fetchInterceptEntries = async () => {
+  const queryPayload = {
+    operationName: "interceptRequestMessages",
+    query: `query interceptRequestMessages(\$first: Int!) {\n  interceptMessages(first: \$first, kind: REQUEST) {\n    nodes {\n      ...interceptMessageMeta\n    }\n  }\n}\nfragment interceptMessageMeta on InterceptMessage {\n  __typename\n  ... on InterceptRequestMessage {\n    ...interceptRequestMessageMeta\n  }\n  ... on InterceptResponseMessage {\n    ...interceptResponseMessageMeta\n  }\n}\nfragment interceptRequestMessageMeta on InterceptRequestMessage {\n  __typename\n  id\n  request {\n    ...requestMeta\n  }\n}\nfragment requestMeta on Request {\n  __typename\n  id\n  host\n  port\n  path\n  query\n  method\n  edited\n  isTls\n  length\n  alteration\n  metadata {\n    ...requestMetadataFull\n  }\n  fileExtension\n  source\n  createdAt\n  response {\n    ...responseMeta\n  }\n}\nfragment requestMetadataFull on RequestMetadata {\n  color\n}\nfragment responseMeta on Response {\n  __typename\n  id\n  statusCode\n  roundtripTime\n  length\n  createdAt\n  alteration\n  edited\n}\nfragment interceptResponseMessageMeta on InterceptResponseMessage {\n  __typename\n  id\n  response {\n    ...responseMeta\n  }\n  request {\n    ...requestMeta\n  }\n}`,
+    variables: {
+      first: 1000
+    }
+  };
+  const response = await fetch(document.location.origin + "/graphql", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + JSON.parse(localStorage.getItem("CAIDO_AUTHENTICATION")).accessToken
+    },
+    body: JSON.stringify(queryPayload)
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const jsonResponse = await response.json();
+  return jsonResponse.data.interceptMessages.nodes.map((node) => node.id);
+};
+var dropRequests = async () => {
+  try {
+    const ids = await fetchInterceptEntries();
+    for (let id of ids) {
+      await dropRequest(id);
+    }
+    Logger_default.debug(`Dropped ${ids.length} requests`);
+    setTimeout(refreshInterceptEntries, 25);
+  } catch (error) {
+    console.error("Error executing drop requests based on fetched IDs:", error);
+  }
+};
+var refreshInterceptEntries = () => {
+  document.querySelector(`.c-global-actions__status button`).click();
+  setTimeout(() => {
+    document.querySelector(`.c-global-actions__status button`).click();
+  }, 5);
+};
+var attachNewButton = () => {
+  document.querySelector("#dropAllButton")?.remove();
+  const topbarLeft = document.querySelector(".c-topbar__left");
+  const dropAllButton = Caido.ui.button({
+    variant: "primary",
+    label: "Drop all",
+    size: "small"
+  });
+  dropAllButton.id = "dropAllButton";
+  dropAllButton.addEventListener("click", dropRequests);
+  topbarLeft.appendChild(dropAllButton);
+};
+var dropAllButtonFeature = () => {
+  EventManager_default.on("onPageOpen", (event) => {
+    if (event.newUrl.startsWith("#/forward/"))
+      attachNewButton();
+  });
+};
+
 // src/index.ts
 var init2 = () => {
   Logger_default.info(`EvenBetter ${CURRENT_VERSION} is loading, thanks for using it! \uD83C\uDF89`);
@@ -20156,15 +20259,27 @@ var init2 = () => {
     onScopeTabOpen();
     quickDecode();
     dropdownTweaks();
+    dropAllButtonFeature();
     setTimeout(() => {
       sidebarTweaks();
     }, 200);
+    if (getSetting("showOutdatedVersionWarning") === "true") {
+      checkForUpdates().then((res) => {
+        if (!res.isLatest) {
+          openModal({
+            title: "Outdated EvenBetter version",
+            content: "You are using an outdated version of EvenBetter. This message can be turned off in the EvenBetter settings."
+          });
+        }
+      });
+    }
     setTimeout(() => quickMatchAndReplace(), 500);
     setTimeout(() => {
       let newUrl = window.location.hash;
       if (newUrl.includes("?custom-path=")) {
         newUrl = newUrl.split("?custom-path=")[1];
       }
+      document.querySelector(".c-content")?.setAttribute("data-page", newUrl);
       EventManager_default.triggerEvent("onPageOpen", {
         newUrl,
         oldUrl: ""
