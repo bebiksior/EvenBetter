@@ -11,7 +11,7 @@ const isNumeric = (val: string) : boolean => {
 }
 
 const checkHeaderFormat = (str: string) => {
-  const headerRegex = /([A-Za-z-]+):([^:\s])/g;
+  const headerRegex = /^([A-Za-z-]+):([^:\s])/g;
   const matches = str.match(headerRegex);
 
   if (matches) {
