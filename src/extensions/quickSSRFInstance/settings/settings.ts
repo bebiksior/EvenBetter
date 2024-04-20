@@ -11,14 +11,18 @@ const isNumeric = (val: string) : boolean => {
 }
 
 const checkHeaderFormat = (str: string) => {
-  const headerRegex = /^([A-Za-z-]+):([^:\s])/g;
-  const matches = str.match(headerRegex);
-
-  if (matches) {
-    return matches.length === 0;
-  } else {
-    return true;
+  const lines = str.split("\n");
+  for (const line of lines) {
+    if (!line.includes(":")) return false;
   }
+
+  for (const line of lines) {
+    const firstColonIndex = line.indexOf(":");
+    const nextChar = line[firstColonIndex + 1];
+    if (nextChar !== " ") return false;
+  }
+
+  return true;
 };
 
 export const settingsPage = () => {
