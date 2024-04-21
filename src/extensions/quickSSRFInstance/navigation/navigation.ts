@@ -23,6 +23,8 @@ const syncData = (navigation: HTMLElement) => {
   updateIcon();
 };
 
+
+
 export const navigationBar = () => {
   loadCSS({
     id: "eb-quick-ssrf-navigation-css",
