@@ -7,6 +7,7 @@ import {
 import navigationCSS from "./navigation.css";
 import loadCSS from "@bebiks/evenbetter-api/src/css";
 import { ssrfHitsTable } from "../reqHistory/reqHistory";
+import { Caido } from "@caido/sdk-frontend";
 
 export let selectedInstanceType = SSRFInstanceType.CVSSADVISOR;
 
@@ -34,6 +35,15 @@ export const navigationBar = () => {
     true
   );
 
+  const clearLogs = Caido.ui.button({
+    label: "Clear Logs",
+    variant: "primary",
+    leadingIcon: "fas fa-trash",
+    size: "small",
+  });
+
+  clearLogs.addEventListener("click", () => ssrfHitsTable.clearRows());
+
   const navigationBar = EvenBetterAPI.components.createNavigationBar({
     title: "Quick SSRF",
     items: [
@@ -50,7 +60,7 @@ export const navigationBar = () => {
         onOpen: () => syncData(navigationBar),
       },
     ],
-    customButtons: [switchElement(), ssrfInstanceUrl],
+    customButtons: [clearLogs, switchElement(), ssrfInstanceUrl],
   });
 
   const ssrfInstanceUrlInput = ssrfInstanceUrl.querySelector("input");

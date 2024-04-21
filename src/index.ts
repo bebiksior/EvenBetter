@@ -117,3 +117,5 @@ const reloadPage = () => {
 };
 
 init();
+
+//EvenBetterAPI.hotReloading();
