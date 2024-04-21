@@ -1,15 +1,5 @@
 const HOST = "oast.fun";
 
-class KeyPair {
-  publicKey: CryptoKey;
-  privateKey: CryptoKey;
-
-  constructor(publicKey: CryptoKey, privateKey: CryptoKey) {
-    this.publicKey = publicKey;
-    this.privateKey = privateKey;
-  }
-}
-
 class KeyGenerator {
   publicKey: CryptoKey | null = null;
   privateKey: CryptoKey | null = null;

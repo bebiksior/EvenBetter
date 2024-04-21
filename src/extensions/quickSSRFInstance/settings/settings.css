@@ -1,0 +1,80 @@
+.eb-quickssrf__setting {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.eb-quickssrf__settings--group {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    border-radius: 5px;
+    padding: 1.5em;
+    background-color: var(--c-bg-default);
+}
+
+.eb-quickssrf__setting-label {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--c-fg-subtle);
+    margin-left: 1em;
+}
+
+.eb-quickssrf__setting-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--c-fg-default);
+}
+
+.eb-quickssrf__settings {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+.eb-quickssrf__settings-content {
+    flex-direction: column;
+    display: flex;
+    gap: 1em;
+}
+
+.eb-quickssrf__setting-warning {
+    color: var(--c-bg-danger);
+}
+
+.eb-quickssrf__setting-warning b {
+    color: var(--c-fg-default);
+}
+
+.c-content[data-page="#/evenbetter/quick-ssrf/settings"] .c-evenbetter_quick-ssrf__content {
+    padding: 1em;
+} 
+
+
+.eb-quickssrf__setting-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    color: var(--c-fg-default);
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.eb-quickssrf__setting-input-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--c-fg-default);
+}
+
+.eb-quickssrf__setting-input-description {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--c-fg-subtle);
+}
+
+#eb-quickssrf-save-button[aria-disabled="true"] button {
+    background-color: var(--c-bg-inset);
+    cursor: not-allowed;
+}

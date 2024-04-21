@@ -1,13 +1,14 @@
-import eventManagerInstance from "../../events/EventManager";
-import { PageOpenEvent } from "../../events/onPageOpen";
+import EvenBetterAPI from "@bebiks/evenbetter-api";
 import { getSetting } from "../../settings";
-import { openModal } from "../../utils/Modal";
-import { registerPage, ssrfInstance } from "./page";
-
-declare const Caido: any;
+import { reqHistoryPage } from './reqHistory/reqHistory';
+import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+import { pullSSRFHits as pullSSRFHits, ssrfInstance, SSRFInstanceState } from "./instance";
+import { settingsPage } from "./settings/settings";
+import { Caido } from "@caido/sdk-frontend";
+import { setActiveSidebarItem } from "../../utils/sidebar";
 
 export const quickSSRFFunctionality = () => {
-  eventManagerInstance.on("onPageOpen", (data: PageOpenEvent) => {
+  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     if (
       data.newUrl == "#/replay" &&
       getSetting("ssrfInstanceFunctionality") === "true"
@@ -16,7 +17,41 @@ export const quickSSRFFunctionality = () => {
     }
   });
 
-  registerPage();
+  const requestsHistory = reqHistoryPage();
+  const settings = settingsPage();
+
+  Caido.navigation.addPage("/evenbetter/quick-ssrf", {
+    body: requestsHistory,
+  });
+
+  Caido.navigation.addPage("/evenbetter/quick-ssrf/settings", {
+    body: settings,
+  });
+
+  Caido.sidebar.registerItem("Quick SSRF", "/evenbetter/quick-ssrf", {
+    icon: "fas fa-compass",
+    group: "EvenBetter",
+  });
+
+  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+    setActiveSidebarItem(
+      "Quick SSRF",
+      data.newUrl.startsWith("#/evenbetter/quick-ssrf") ? "true" : "false"
+    );
+  });
+
+  pullInterval();
+};
+
+const pullInterval = () => {
+  const nextExecutionTime =
+    window.location.hash === "#/evenbetter/quick-ssrf" ? 1250 : 8000;
+
+  if (ssrfInstance && ssrfInstance.state === SSRFInstanceState.ACTIVE) pullSSRFHits();
+
+  setTimeout(() => {
+    pullInterval();
+  }, nextExecutionTime);
 };
 
 let replayInputObserver: MutationObserver | null = null;
@@ -37,7 +72,7 @@ const observeReplayInput = () => {
 
       if (originalTextContent.includes(ssrfInstancePlaceholder)) {
         if (!ssrfInstance) {
-          openModal({
+          EvenBetterAPI.modal.openModal({
             title: "SSRF Instance not found",
             content:
               "Please create an SSRF instance from the sidebar Quick SSRF page before using this functionality.",

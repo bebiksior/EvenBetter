@@ -1,0 +1,35 @@
+.evenbetter__qd-body {
+  max-height: 40vh;
+  background-color: var(--c-bg-default);
+  overflow: auto;
+  word-wrap: break-word;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+}
+
+.evenbetter__qd-selected-text-box {
+  white-space: pre-wrap;
+  padding: 0.4em;
+  background: var(--c-bg-default);
+}
+
+.evenbetter__qd-selected-text-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.evenbetter__qd-selected-text-top i {
+  cursor: pointer;
+  transition: 0.2s ease transform;
+}
+
+.evenbetter__qd-selected-text-top i:active {
+  transform: scale(0.9);
+}
+
+.evenbetter__qd-selected-text {
+  padding: 0.6em;
+  margin: 0.5em;
+  background: var(--c-bg-subtle);
+}
