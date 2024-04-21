@@ -9,6 +9,16 @@
       "versionUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/dev/version.txt",
       "customJSUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/dev/final/index.js",
       "customCSSUrl": "https://raw.githubusercontent.com/bebiksior/EvenBetter/dev/final/style.css"
+    },
+    {
+      "id": "primatepack",
+      "name": "The Primate Pack",
+      "description": "A suite of plugins for Caido developed by Monke (@monkehack).",
+      "author": "monke",
+      "url": "https://github.com/projectmonke/PrimatePack",
+      "versionUrl": "https://raw.githubusercontent.com/projectmonke/PrimatePack/main/version.txt",
+      "customJSUrl": "https://raw.githubusercontent.com/projectmonke/PrimatePack/main/index.js",
+      "customCSSUrl": "https://raw.githubusercontent.com/projectmonke/PrimatePack/main/style.css"
     }
   ]
 }
