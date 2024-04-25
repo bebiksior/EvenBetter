@@ -19,6 +19,15 @@
       "versionUrl": "https://raw.githubusercontent.com/projectmonke/PrimatePack/main/version.txt",
       "customJSUrl": "https://raw.githubusercontent.com/projectmonke/PrimatePack/main/index.js",
       "customCSSUrl": "https://raw.githubusercontent.com/projectmonke/PrimatePack/main/style.css"
+    },
+    {
+      "id": "riddle-ai-replay-rename",
+      "name": "AI Replay Rename",
+      "description": "Renames replay tabs using AI (consumes Caido AI tokens)",
+      "author": "Riddle",
+      "url": "https://github.com/Riddle1001/caido-ai-rename-replay",
+      "versionUrl": "https://raw.githubusercontent.com/Riddle1001/caido-ai-rename-replay/master/version.txt",
+      "customJSUrl": "https://raw.githubusercontent.com/Riddle1001/caido-ai-rename-replay/master/main.js"
     }
   ]
 }
