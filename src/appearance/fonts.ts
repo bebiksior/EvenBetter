@@ -15,7 +15,10 @@ export const fonts: { [key: string]: Font } = {
         name: "Comic Sans MS",
         url: "https://fonts.googleapis.com/css2?family=Comic+Sans+MS"
     },
-
+    firaCode: {
+        name: "Fira Code",
+        url: "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..600&display=swap"
+    }
 }
 
 export const loadFont = (fontName: string) => {

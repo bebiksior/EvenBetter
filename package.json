@@ -1,6 +1,6 @@
 {
   "name": "evenbetter",
-  "version": "2.0",
+  "version": "2.31.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@bebiks/evenbetter-api": "^1.1.0",
-    "@caido/sdk-frontend": "^0.35.0",
+    "@caido/sdk-frontend": "^0.36.0",
     "crypto": "^1.0.1",
     "node-rsa": "^1.1.1"
   }

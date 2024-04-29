@@ -30,6 +30,14 @@ Here's what **EvenBetter** implements:
 3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
 4. Done! 🎉
 
+
+## Changelog v2.31
+- Fixed compatibility issues with Caido v0.36.0
+- Added Fira Code font to the font picker
+- Fixed issue: Prevent text formatting in the quick decode box
+- Fixed issue: Missing data in headers when using quickssrf preview
+- Fixed issue: hotReloading sometimes reloads page before saving the changes
+
 ## Changelog v2.3
 
 - [EvenBetter: Extensions](https://github.com/bebiksior/EvenBetterExtensions) is now available! 🎉 Now, EvenBetter should be installed through the new **EvenBetterExtensions** plugin. This will allow us to keep the main **EvenBetter** plugin updated.
