@@ -8,6 +8,13 @@
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
     },
     {
+      "name": "CaidoReflector",
+      "description": "Automatically look for paramater reflections in the HTTP response",
+      "version": "1.0",
+      "author": "bebiks & sw33tlie",
+      "url": "https://raw.githubusercontent.com/bebiksior/CaidoReflector/main/Reflector.json"
+    },
+    {
       "name": "Query to JSON",
       "description": "Converts a query to JSON",
       "version": "1.0",
