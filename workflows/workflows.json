@@ -11,7 +11,7 @@
       "name": "CaidoReflector",
       "description": "Automatically look for paramater reflections in the HTTP response",
       "version": "1.0",
-      "author": "bebiks & sw33tlie",
+      "author": "bebiks/sw33tlie",
       "url": "https://raw.githubusercontent.com/bebiksior/CaidoReflector/main/Reflector.json"
     },
     {
