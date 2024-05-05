@@ -29,6 +29,15 @@
       "versionUrl": "https://raw.githubusercontent.com/Riddle1001/caido-ai-rename-replay/master/version.txt",
       "customJSUrl": "https://raw.githubusercontent.com/Riddle1001/caido-ai-rename-replay/master/dist/bundle.js",
       "customCSSUrl": "https://raw.githubusercontent.com/Riddle1001/caido-ai-rename-replay/master/dist/style.css"
+    },
+    {
+      "id": "riddle-replay-header-refresher",
+      "name": "Refreshes replay headers",
+      "description": "Users can define which headers to refresh, and refresh them at any time.",
+      "author": "Riddle",
+      "url": "https://github.com/Riddle1001/riddle-replay-header-refresher",
+      "versionUrl": "https://raw.githubusercontent.com/Riddle1001/riddle-replay-header-refresher/master/version.txt",
+      "customJSUrl": "https://raw.githubusercontent.com/Riddle1001/riddle-replay-header-refresher/master/dist/bundle.js"
     }
   ]
 }
