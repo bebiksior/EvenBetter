@@ -133,7 +133,11 @@ const requestDumpToHTML = (request: Request) => {
 
     if (isHeaders) {
       if (line.includes(":")) {
-        const [key, value] = line.split(":");
+        const parts = line.split(":");
+        
+        const key = parts[0];
+        const value = parts.slice(1).join(":");
+
         const keyElement = document.createElement("span");
         keyElement.classList.add("http_header-key");
         keyElement.innerHTML = key + ":";

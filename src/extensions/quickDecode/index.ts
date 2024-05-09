@@ -85,7 +85,7 @@ const attachQuickDecode = () => {
       </div>
       <i class="c-icon fas fa-copy"></i>
     </div>
-    <div contenteditable="true" autocomplete="false" class="evenbetter__qd-selected-text-box"></div>
+    <div contenteditable="plaintext-only" autocomplete="false" class="evenbetter__qd-selected-text-box"></div>
     <div style="color: var(--c-fg-subtle);margin-top:5px;" class="evenbetter__qd-selected-text-label evenbetter__qd-selected-text-error">
     </div>
   </div>
@@ -206,7 +206,7 @@ const attachQuickDecode = () => {
         decodedTextBox.innerText = decoded.decodedContent;
 
         textError.textContent = "";
-        decodedTextBox.setAttribute("contenteditable", "true");
+        decodedTextBox.setAttribute("contenteditable", "plaintext-only");
         if (selectedLineElements.length > 1) {
           textError.textContent = "Modyfing multiple lines isn't supported yet";
           decodedTextBox.setAttribute("contenteditable", "false");

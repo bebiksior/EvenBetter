@@ -12,7 +12,7 @@
   --selected-row-background: var(--c-bg-default) !important;
   --c-table-background: #222222 !important;
   
-  --evenbetter-css-version: "v2.3";
+  --evenbetter-css-version: "v2.31";
 }
 
 .c-header-cell {
@@ -184,6 +184,10 @@
   -moz-user-select: auto;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.p-menubar {
+  background-color: var(--c-bg-subtle);
 }
 
 .p-menubar .p-menuitem {

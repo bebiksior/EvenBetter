@@ -4,6 +4,21 @@ export interface Theme {
 }
 
 const themes: { [key: string]: Theme } = {
+  gray: {
+    name: "Gray",
+    "--c-header-cell-border": "#101010",
+    "--c-bg-default": "#202020",
+    "--c-bg-subtle": "#252525",
+    "--c-table-item-row": "#252525",
+    "--c-table-item-row-hover": "#303030",
+    "--header-cell-width": "1px",
+    "--c-table-even-item-row": "#282828",
+    "--c-fg-default": "var(--c-white-100)",
+    "--c-fg-subtle": "var(--c-gray-400)",
+    "--selection-background": "rgba(255, 255, 255, 0.15)",
+    "--selected-row-background": "var(--c-bg-default)",
+    "--c-table-background": "#222222"
+  },
   evendarker: {
     name: "Even Darker",
     "--c-header-cell-border": "#101010",
@@ -33,21 +48,6 @@ const themes: { [key: string]: Theme } = {
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
     "--c-table-background": "rgb(43, 46, 53)"
-  },
-  gray: {
-    name: "Gray",
-    "--c-header-cell-border": "#101010",
-    "--c-bg-default": "#202020",
-    "--c-bg-subtle": "#252525",
-    "--c-table-item-row": "#252525",
-    "--c-table-item-row-hover": "#303030",
-    "--header-cell-width": "1px",
-    "--c-table-even-item-row": "#282828",
-    "--c-fg-default": "var(--c-white-100)",
-    "--c-fg-subtle": "var(--c-gray-400)",
-    "--selection-background": "rgba(255, 255, 255, 0.15)",
-    "--selected-row-background": "var(--c-bg-default)",
-    "--c-table-background": "#222222"
   },
   oceanblue: {
     name: "Ocean Blue",

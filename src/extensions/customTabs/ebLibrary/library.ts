@@ -62,7 +62,7 @@ export const evenBetterLibraryTab = () => {
     { name: "Name", width: "20em" },
     { name: "Description", width: "30em" },
     { name: "Version", width: "7em" },
-    { name: "Author", width: "10em" },
+    { name: "Author", width: "11em" },
     { name: "OS", width: "10em" },
     { name: "Actions", width: "10em" },
   ];
@@ -85,6 +85,10 @@ export const evenBetterLibraryTab = () => {
       {
         title: "Passive",
         url: "#/workflows/passive",
+      },
+      {
+        title: "Active",
+        url: "#/workflows/active",
       },
       {
         title: "Convert",
