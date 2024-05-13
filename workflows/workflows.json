@@ -112,6 +112,20 @@
       "version": "1.0",
       "author": "Ry0taK",
       "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20to%20XML/JSON%20to%20XML.json"
+    },
+    {
+      "name": "AutoChrome Colors",
+      "description": "Autochrome colors support",
+      "version": "1.0",
+      "author": "0xrth",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/passive/Autochrome_colors/autochrome_colors.json"
+    },
+    {
+      "name": "LinkFinder",
+      "description": "Find the paths in the In Scope response",
+      "version": "1.0",
+      "author": "bytehx",
+      "url": "https://raw.githubusercontent.com/caido/workflows/main/passive/Linkfinder/linkfinder.json"
     }
   ]
 }
