@@ -126,6 +126,13 @@
       "version": "1.0",
       "author": "bytehx",
       "url": "https://raw.githubusercontent.com/caido/workflows/main/passive/Linkfinder/linkfinder.json"
+    },
+    {
+      "name": "nowafpls - 8KB",
+      "description": "Bypass WAFs with 8KB Padding.",
+      "version": "1.0",
+      "author": "Rhynorater",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/nowafpls___8KB.json"
     }
   ]
 }
