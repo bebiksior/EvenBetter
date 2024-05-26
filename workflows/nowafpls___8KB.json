@@ -1,0 +1,92 @@
+{
+  "description": "Bypass WAFs with 8KB Padding.",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "convert_start",
+        "definition_id": "caido/convert-start",
+        "display": {
+          "x": -210,
+          "y": -210
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "Convert Start",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "convert_end",
+        "definition_id": "caido/convert-end",
+        "display": {
+          "x": 10,
+          "y": 80
+        },
+        "id": 1,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$javascript.data",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Convert End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "javascript",
+        "definition_id": "caido/code-js",
+        "display": {
+          "x": -70,
+          "y": -50
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "data",
+            "value": {
+              "data": "$convert_start.data",
+              "kind": "ref"
+            }
+          },
+          {
+            "alias": "code",
+            "value": {
+              "data": "export function run(input, sdk) {\n  let newReq = sdk.asString(input);\n  let paddingAmount = 8000;\n  let index = newReq.indexOf(\"\\r\\n\\r\\n\")+4;\n  if (/content-type: ?application\\/json/i.test(newReq)){\n    index = index+1\n    let newReqBefore = newReq.substring(0, index)\n    let newReqAfter = newReq.substring(index)\n    newReq = newReqBefore + '\"a\":\"'+\"a\".repeat(paddingAmount)+'\",'+newReqAfter  \n  } else if(/content-type: ?application\\/x-www-form-urlencoded/i.test(newReq)){\n    let newReqBefore = newReq.substring(0, index)\n    let newReqAfter = newReq.substring(index)\n    newReq = newReqBefore+\"a=\"+\"a\".repeat(paddingAmount)+\"&\"+newReqAfter\n  } else if(/content-type: ?application\\/xml/i.test(newReq)){\n    let newReqBefore = newReq.substring(0, index)\n    let newReqAfter = newReq.substring(index)\n    newReq = newReqBefore + \"<!--\"+\"a\".repeat(paddingAmount)+\"-->\" + newReqAfter\n  }\n  return newReq ? newReq : \"\\r\\n\\r\\nIncorrect Usage: Press CTRL-Z, then select the whole request and try again...\\r\\n\\r\\n\"\n}",
+              "kind": "string"
+            }
+          }
+        ],
+        "name": "Javascript",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "97c51b7a-09c8-42e4-be60-63a8d8eb1f68",
+  "kind": "convert",
+  "name": "nowafpls - 8KB"
+}
