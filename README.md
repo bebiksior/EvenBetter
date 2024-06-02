@@ -31,6 +31,11 @@ Here's what **EvenBetter** implements:
 3. Done! 🎉
 
 
+
+## Changelog v2.4.1
+
+- Fixed reordering of the sidebar pages and removed unnecessary `setTimeout` which should prevent flickering on startup
+
 ## Changelog v2.4
 
 - Moved to the new Caido plugin system! 🎉

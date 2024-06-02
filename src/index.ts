@@ -97,9 +97,7 @@ export const init = (caido: Caido) => {
     collectionsShare();
     showResponse();
     numbersPayload();
-    setTimeout(() => {
-      sidebarTweaks();
-    }, 100);
+    sidebarTweaks();
 
     quickMatchAndReplace();
     setTimeout(
@@ -114,18 +112,6 @@ export const init = (caido: Caido) => {
       },
       window.location.hash.startsWith("#/settings/") ? 10 : 100
     );
-
-    const cssVersion = getComputedStyle(document.documentElement)
-      .getPropertyValue("--evenbetter-css-version")
-      .replace(/['"]+/g, "")
-      .trim();
-
-    if (cssVersion !== CURRENT_VERSION) {
-      evenBetterAPI.modal.openModal({
-        title: "Incompatible CSS version",
-        content: `EvenBetter Custom CSS isn't compatible with the current JS version of EvenBetter. Please update the EvenBetter CSS to the latest version.`,
-      });
-    }
   });
 };
 

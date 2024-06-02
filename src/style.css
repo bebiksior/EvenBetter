@@ -11,8 +11,6 @@
   --selection-background: rgba(255, 255, 255, 0.15) !important;
   --selected-row-background: var(--c-bg-default) !important;
   --c-table-background: #222222 !important;
-  
-  --evenbetter-css-version: "v2.4";
 }  
 
 .c-header-cell {

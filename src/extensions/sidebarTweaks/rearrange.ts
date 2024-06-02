@@ -65,9 +65,16 @@ const moveGroup = (group: Element, direction: "up" | "down") => {
     }
 
     const referenceNode = parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
-    if (!referenceNode) return;
 
-    parentElement.insertBefore(group, referenceNode);
+    if (referenceNode && referenceNode.classList.contains("c-sidebar__toggle-wrapper"))
+      if (direction === "up")
+        parentElement.prepend(group);
+      else
+        parentElement.insertBefore(group, referenceNode.nextSibling);
+    else if (referenceNode)
+      parentElement.insertBefore(group, referenceNode);
+    else
+      parentElement.appendChild(group);
 
     storeSidebarGroupPositions();
   }
