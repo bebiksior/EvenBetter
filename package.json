@@ -10,7 +10,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@bebiks/evenbetter-api": "1.4.0",
+    "@bebiks/evenbetter-api": "2.0.0",
     "@caido/sdk-frontend": "0.37.0"
   },
   "devDependencies": {
