@@ -1,5 +1,6 @@
 import { getSetting } from "../../settings";
 
+let isMoving = false;
 export const addMoveButtonsToSidebar = () => {
   if (getSetting("sidebarRearrangeGroups") !== "true") return;
 
@@ -16,22 +17,70 @@ export const addMoveButtonsToSidebar = () => {
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
 
   sidebarGroups.forEach((group) => {
-    const moveUpButton = group.querySelector(".c-sidebar-group__move-up");
-    const moveDownButton = group.querySelector(".c-sidebar-group__move-down");
+    addArrowsToGroup(group);
+  });
 
-    if (!moveUpButton || !moveDownButton) {
-      return;
-    }
+  const targetNode = document.querySelector(".c-sidebar__body");
 
-    moveUpButton.addEventListener("click", (event) => {
-      moveGroup(group, "up");
-      event.stopPropagation();
-    });
+  if (targetNode) {
+    const targetElement = targetNode as Element;
 
-    moveDownButton.addEventListener("click", (event) => {
-      moveGroup(group, "down");
-      event.stopPropagation();
-    });
+    const config: MutationObserverInit = { childList: true, subtree: true };
+
+    const callback: MutationCallback = (mutationsList, observer) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === "childList") {
+           mutation.addedNodes.forEach((node) => {
+            if (
+              node.nodeType === Node.ELEMENT_NODE &&
+              (node as Element).classList.contains("c-sidebar-group")
+            ) {
+              if (isMoving) return;
+
+              if (
+                (node as Element).querySelector(".c-sidebar-group__rearrange-arrows")
+              )
+                return;
+
+              const title = (node as Element).querySelector(
+                ".c-sidebar-group__title"
+              );
+              if (!title) return;
+
+              const groupName = title.textContent;
+              if (!groupName) return;
+
+              attachMoveButtonsToGroup(title, groupName);
+              addArrowsToGroup(node as Element);
+              restoreGroupPosition(groupName);
+            }
+          });
+        }
+      }
+    };
+
+    const observer = new MutationObserver(callback);
+
+    observer.observe(targetElement, config);
+  }
+};
+
+const addArrowsToGroup = (group: Element) => {
+  const moveUpButton = group.querySelector(".c-sidebar-group__move-up");
+  const moveDownButton = group.querySelector(".c-sidebar-group__move-down");
+
+  if (!moveUpButton || !moveDownButton) {
+    return;
+  }
+
+  moveUpButton.addEventListener("click", (event) => {
+    moveGroup(group, "up");
+    event.stopPropagation();
+  });
+
+  moveDownButton.addEventListener("click", (event) => {
+    moveGroup(group, "down");
+    event.stopPropagation();
   });
 };
 
@@ -59,24 +108,27 @@ const moveGroup = (group: Element, direction: "up" | "down") => {
     (direction === "up" && index > 0) ||
     (direction === "down" && index < parentElement.children.length - 1)
   ) {
+    isMoving = true;
     const newIndex = direction === "up" ? index - 1 : index + 1;
     if (newIndex == 0) {
+      isMoving = false;
       return;
     }
 
-    const referenceNode = parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
+    const referenceNode =
+      parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
 
-    if (referenceNode && referenceNode.classList.contains("c-sidebar__toggle-wrapper"))
-      if (direction === "up")
-        parentElement.prepend(group);
-      else
-        parentElement.insertBefore(group, referenceNode.nextSibling);
-    else if (referenceNode)
-      parentElement.insertBefore(group, referenceNode);
-    else
-      parentElement.appendChild(group);
+    if (
+      referenceNode &&
+      referenceNode.classList.contains("c-sidebar__toggle-wrapper")
+    )
+      if (direction === "up") parentElement.prepend(group);
+      else parentElement.insertBefore(group, referenceNode.nextSibling);
+    else if (referenceNode) parentElement.insertBefore(group, referenceNode);
+    else parentElement.appendChild(group);
 
     storeSidebarGroupPositions();
+    isMoving = false;
   }
 };
 
@@ -88,7 +140,7 @@ const storeSidebarGroupPositions = () => {
 
     const groupName = group.children[0]?.textContent?.trim();
     if (!groupName) return;
-    
+
     const position = Array.from(parentElement.children).indexOf(group);
     localStorage.setItem(`evenbetter_${groupName}_position`, String(position));
   });
@@ -101,13 +153,35 @@ export const restoreSidebarGroupPositions = () => {
   sidebarGroups.forEach((group) => {
     const parentElement = group.parentElement;
     if (!parentElement) return;
-    
+
     const groupName = group.children[0]?.textContent?.trim();
     if (!groupName) return;
 
-    const position = localStorage.getItem(`evenbetter_${groupName}_position`);
+    const position = getGroupStoredPosition(groupName);
     const element = parentElement.children[Number(position)];
-    if (element)
-      parentElement.insertBefore(group, element);
+    if (element) parentElement.insertBefore(group, element);
   });
 };
+
+export const restoreGroupPosition = (groupName: string) => {
+  if (getSetting("sidebarRearrangeGroups") !== "true") return;
+
+  const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
+  sidebarGroups.forEach((group) => {
+    const parentElement = group.parentElement;
+    if (!parentElement) return;
+
+    const name = group.children[0]?.textContent?.trim();
+    if (!name) return;
+
+    if (name === groupName) {
+      const position = getGroupStoredPosition(groupName);
+      const element = parentElement.children[Number(position)];
+      if (element) parentElement.insertBefore(group, element);
+    }
+  });
+}
+
+export const getGroupStoredPosition = (groupName: string) => {
+  return localStorage.getItem(`evenbetter_${groupName}_position`);
+}
