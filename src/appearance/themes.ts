@@ -39,7 +39,7 @@ const themes: { [key: string]: Theme } = {
     "--c-header-cell-border": "#101010",
     "--c-bg-default": "#25272d",
     "--c-bg-subtle": "var(--c-gray-800)",
-    "--c-table-item-row": "#08090a",
+    "--c-table-item-row": "#353942",
     "--c-table-item-row-hover": "#25272d",
     "--header-cell-width": "0px",
     "--c-table-even-item-row": "#353942",
