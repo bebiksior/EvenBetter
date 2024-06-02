@@ -1,18 +1,12 @@
-import EvenBetterAPI from "@bebiks/evenbetter-api";
 import { escapeHTML } from "../../../utils/escapeHtml";
-import { Request } from "../../events/onSSRFHit";
-import reqHistoryCSS from "./reqHistory.css";
-import loadCSS from "@bebiks/evenbetter-api/src/css";
+import { Request } from "../../../events/onSSRFHit";
 import { navigationBar } from "../navigation/navigation";
 import { TableAPI } from "@bebiks/evenbetter-api/src/components/table";
+import "./reqHistory.css";
+import { getEvenBetterAPI } from "../../../utils/evenbetterapi";
 
 export let ssrfHitsTable: TableAPI;
 export const reqHistoryPage = () => {
-  loadCSS({
-    id: "eb-quickssrf-reqhistory",
-    cssText: reqHistoryCSS.toString(),
-  });
-
   const pageContainer = document.createElement("div");
   pageContainer.className = "c-evenbetter_quick-ssrf";
 
@@ -24,19 +18,18 @@ export const reqHistoryPage = () => {
 
   const tableColumns = [
     { name: "ID", width: "9em" },
-    { name: "Time", width: "15em" },
-    { name: "Type", width: "5em" },
+    { name: "Time", width: "10em" },
+    { name: "Type", width: "4em" },
     { name: "Request", width: "40em" },
-    { name: "Source IP", width: "10em" },
+    { name: "Source IP", width: "11em" },
   ];
 
-  const table = EvenBetterAPI.components.createTable({
+  const table = getEvenBetterAPI().components.createTable({
     columns: tableColumns,
-    tableHeight: "100%",
   });
   ssrfHitsTable = table;
 
-  EvenBetterAPI.eventManager.on("onSSRFHit", (request: Request) => {
+  getEvenBetterAPI().eventManager.on("onSSRFHit", (request: Request) => {
     if (!window.location.hash.startsWith("#/evenbetter/quick-ssrf"))
       incrementHitsCount();
 
@@ -52,7 +45,7 @@ export const reqHistoryPage = () => {
         { columnName: "Source IP", value: labelElement(request.ip) },
       ],
       () => {
-        EvenBetterAPI.modal.openModal({
+        getEvenBetterAPI().modal.openModal({
           title: "Request",
           content: requestDumpToHTML(request),
         });
@@ -69,16 +62,25 @@ export const reqHistoryPage = () => {
 const incrementHitsCount = () => {
   document.querySelectorAll(".c-sidebar-item__content").forEach((element) => {
     if (element.textContent != "Quick SSRF") return;
-
-    let countElement = element.parentNode.querySelector(
+    
+    let countElement = element.parentNode?.querySelector(
       ".c-sidebar-item__count"
     );
+    if (!countElement) return;
+
     let countLabel = countElement.querySelector(
       ".c-sidebar-item__count-label"
     ) as HTMLElement;
+    if (!countLabel) return;
 
     if (countLabel) {
-      countLabel.textContent = String(parseInt(countLabel.textContent) + 1);
+      const text = countLabel.textContent;
+      if (!text) return;
+
+      const count = parseInt(text);
+      if (isNaN(count)) return;
+
+      countLabel.textContent = String(count + 1);
     } else {
       let newCountLabel = document.createElement("div");
       newCountLabel.classList.add("c-sidebar-item__count-label");
@@ -90,6 +92,7 @@ const incrementHitsCount = () => {
 
 const labelElement = (text: string) => {
   const label = document.createElement("div");
+  label.style.overflow = "hidden";
   label.innerHTML = escapeHTML(text);
   return label;
 };
@@ -113,6 +116,10 @@ const requestDumpToHTML = (request: Request) => {
       const method = line.split(" ")[0];
       const url = line.split(" ")[1];
       const httpVersion = line.split(" ")[2];
+
+      if (!method || !url || !httpVersion) {
+        return;
+      }
 
       const methodElement = document.createElement("span");
       methodElement.classList.add("http_method");

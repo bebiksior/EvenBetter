@@ -1,0 +1,20 @@
+{
+  "id": "evenbetter",
+  "name": "EvenBetter",
+  "version": "2.4.0",
+  "description": "Collection of tweaks and enhancements for Caido :D",
+  "author": {
+    "name": "bebiks",
+    "email": "bebiks@cvssadvisor.com",
+    "url": "https://github.com/bebiksior/EvenBetter"
+  },
+  "plugins": [
+    {
+      "kind": "frontend",
+      "id": "evenbetter",
+      "name": "EvenBetter",
+      "entrypoint": "frontend/script.js",
+      "style": "frontend/style.css"
+    }
+  ]
+}

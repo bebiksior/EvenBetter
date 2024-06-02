@@ -1,12 +1,12 @@
-import { Caido } from "@caido/sdk-frontend";
-import EvenBetterAPI from "@bebiks/evenbetter-api";
+import { getEvenBetterAPI } from "../../utils/evenbetterapi";
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+import { getCaidoAPI } from "../../utils/caidoapi";
 
 const dropRequests = async () => {
   try {
-    Caido.graphql.interceptRequestMessages({ first: 1000 }).then((response) => {
+    getCaidoAPI().graphql.interceptRequestMessages({ first: 1000 }).then((response) => {
       return response.interceptMessages.nodes.forEach((node) => {
-        Caido.graphql.dropInterceptMesage({ id: node.id });
+        getCaidoAPI().graphql.dropInterceptMesage({ id: node.id });
       });
     });
 
@@ -31,8 +31,9 @@ const attachNewButton = () => {
   document.querySelector("#dropAllButton")?.remove();
 
   const topbarLeft = document.querySelector(".c-topbar__left");
+  if (!topbarLeft) return;
 
-  const dropAllButton = Caido.ui.button({
+  const dropAllButton = getCaidoAPI().ui.button({
     variant: "primary",
     label: "Drop all",
     size: "small",
@@ -44,7 +45,7 @@ const attachNewButton = () => {
 };
 
 export const dropAllButtonFeature = () => {
-  EvenBetterAPI.eventManager.on("onPageOpen", (event: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (event: PageOpenEvent) => {
     if (event.newUrl.startsWith("#/forward/")) attachNewButton();
   });
 };

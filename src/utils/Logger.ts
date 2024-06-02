@@ -6,6 +6,8 @@ export enum LogLevel {
   WARN = "warn",
   DEBUG = "debug",
 }
+
+// @ts-ignore
 window.global = window;
 
 export class Logger {

@@ -26,7 +26,7 @@ export const loadFont = (fontName: string) => {
     if (!font) return;
 
     if (document.getElementById(`evenbetter-custom-font`)) {
-        document.getElementById(`evenbetter-custom-font`).remove();
+        document.getElementById(`evenbetter-custom-font`)?.remove();
     }
 
     if (!font.url) return;

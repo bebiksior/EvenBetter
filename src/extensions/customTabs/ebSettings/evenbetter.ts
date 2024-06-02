@@ -2,9 +2,8 @@ import { checkForUpdates, getSetting, setSetting } from "../../../settings";
 import { CURRENT_VERSION } from "../../../settings/constants";
 import { Theme, loadTheme, themes } from "../../../appearance/themes";
 import { fonts, loadFont } from "../../../appearance/fonts";
-import EvenBetterAPI from "@bebiks/evenbetter-api";
-import evenbetterStyles from "./evenbetter.css";
-import loadCSS from "@bebiks/evenbetter-api/src/css";
+import "./evenbetter.css";
+import { getEvenBetterAPI } from "../../../utils/evenbetterapi";
 
 interface Change {
   name: string;
@@ -12,8 +11,6 @@ interface Change {
 }
 
 export const evenBetterSettingsTab = () => {
-  loadCSS({ id: "evenbetter-settings", cssText: evenbetterStyles.toString() });
-
   const currentTheme = getSetting("theme");
 
   const evenBetterTab = document.createElement("div");
@@ -70,6 +67,8 @@ export const evenBetterSettingsTab = () => {
       const saveButton = evenBetterTab.querySelector(
         ".toggle-features__content button"
       );
+      if (!saveButton) return;
+
       if (hasChanges) {
         saveButton.removeAttribute("disabled");
       } else {
@@ -81,6 +80,8 @@ export const evenBetterSettingsTab = () => {
   const saveButton = evenBetterTab.querySelector(
     ".toggle-features__content button"
   );
+  if (!saveButton) return;
+
   saveButton.addEventListener("click", () => {
     changes.forEach((change) => {
       setSetting(change.name, change.value);
@@ -96,13 +97,15 @@ export const evenBetterSettingsTab = () => {
   );
   if (ssrfInstanceFunctionality) {
     const ssrfInstanceFunctionalityChanges: Change[] = [];
-    ssrfInstanceFunctionality.querySelector("input").value = getSetting(
+
+    const input = ssrfInstanceFunctionality.querySelector("input") as HTMLInputElement;
+    if (!input) return;
+    
+    input.value = getSetting(
       "ssrfInstancePlaceholder"
     );
 
-    ssrfInstanceFunctionality
-      .querySelector("input")
-      .addEventListener("input", (event) => {
+    input.addEventListener("input", (event) => {
         const target = event.target as HTMLInputElement;
         const value = target.value;
         ssrfInstanceFunctionalityChanges.push({
@@ -111,12 +114,15 @@ export const evenBetterSettingsTab = () => {
         });
 
         const saveButton = ssrfInstanceFunctionality.querySelector("button");
+        if (!saveButton) return;
+
         saveButton.removeAttribute("disabled");
       });
 
-    ssrfInstanceFunctionality
-      .querySelector("button")
-      .addEventListener("click", () => {
+    const button = ssrfInstanceFunctionality.querySelector("button");
+    if (!button) return;
+
+    button.addEventListener("click", () => {
         ssrfInstanceFunctionalityChanges.forEach((change) => {
           setSetting(change.name, change.value);
 
@@ -124,6 +130,43 @@ export const evenBetterSettingsTab = () => {
           location.reload();
         });
       });
+  }
+
+  const useOpenAI = evenBetterTab.querySelector(".useopenai");
+  if (useOpenAI) {
+    const saveButton = useOpenAI.querySelector("button");
+    if (!saveButton) return;
+
+    const apiKeyInput = useOpenAI.querySelector("input") as HTMLInputElement;
+    apiKeyInput.value = getSetting("openaiApiKey") || "";
+
+    let originalValue = apiKeyInput.value;
+    apiKeyInput.addEventListener("input", (event) => {
+      const target = event.target as HTMLInputElement;
+      const value = target.value;
+      if (!saveButton) return;
+
+      if (value === originalValue) {
+        saveButton.setAttribute("disabled", "true");
+      } else {
+        saveButton.removeAttribute("disabled");
+      }
+    });
+    
+    saveButton.addEventListener("click", (event) => {
+      const value = apiKeyInput.value;
+
+      setSetting("openaiApiKey", value);
+      originalValue = value;
+      saveButton.setAttribute("disabled", "true");
+
+      getEvenBetterAPI().toast.showToast({
+        message: "OpenAI API key saved!",
+        duration: 2000,
+        position: "bottom",
+        type: "success",
+      });
+    });
   }
 
   checkForUpdates().then(({ isLatest, message }) => {
@@ -199,7 +242,7 @@ const createEvenBetterTabHTML = (
 
   const checkbox = (id: string) => {
     const checkbox =
-      EvenBetterAPI.components.createCheckbox() as HTMLInputElement;
+      getEvenBetterAPI().components.createCheckbox() as HTMLInputElement;
 
     const input = checkbox.querySelector(
       ".eb-checkbox__input"
@@ -247,7 +290,7 @@ const createEvenBetterTabHTML = (
                     (theme) =>
                       `<option value="${theme}" ${
                         theme === currentTheme ? "selected" : ""
-                      }>${themes[theme].name}</option>`
+                      }>${themes[theme]?.name}</option>`
                   )
                   .join("")}
               </select>
@@ -260,14 +303,13 @@ const createEvenBetterTabHTML = (
                     (font) =>
                       `<option value="${font}" ${
                         font === getSetting("font") ? "selected" : ""
-                      }>${fonts[font].name}</option>`
+                      }>${fonts[font]?.name}</option>`
                   )
                   .join("")}
               </select>
             </div>
           </div>
         </div>
-
         ${
           getSetting("ssrfInstanceFunctionality") == "true"
             ? `
@@ -299,6 +341,33 @@ const createEvenBetterTabHTML = (
         </div>`
             : ""
         }
+        <div class="settings-box useopenai">
+          <!-- Settings header -->
+          <div class="settings-box__header">
+            <div class="settings-box__header-title">Use OpenAI API</div>
+            <div class="settings-box__header-description">
+              Use the OpenAI API instead of Caido default assistant API.
+            </div>
+          </div>
+
+          <!-- Settings content -->
+          <div class="settings-box__content">
+            <div class="c-text-input">
+              <div class="c-text-input__outer">
+                <div class="c-text-input__inner">
+                  <input
+                    placeholder="sk-xxxxxxx"
+                    spellcheck="false"
+                    class="c-text-input__input"
+                    type="password"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button disabled>Save</button>
+          </div>
+        </div>
       </div>
 
       <div class="right">
@@ -306,7 +375,7 @@ const createEvenBetterTabHTML = (
           <div class="toggle-features__header">
             <div class="toggle-features__header-title">Toggle features</div>
             <div class="toggle-features__header-description">
-              Enable or disable features of the EvenBetter plugin
+              Enable or disable features of the EvenBetter plugin. Note that there are some smaller features that can't be turned off.
             </div>
           </div>
           <hr />

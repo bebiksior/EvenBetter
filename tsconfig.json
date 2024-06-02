@@ -1,15 +1,24 @@
 {
   "compilerOptions": {
-    "outDir": "./final/",
+    "target": "esnext",
+    "module": "esnext",
+
+    "jsx": "preserve",
     "noImplicitAny": true,
-    "module": "es6",
-    "target": "es5",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "lib": [
-      "dom",
-      "es7",
-      "ES2021"
-   ]
-  }
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "noUnusedLocals": true,
+
+    "useDefineForClassFields": true,
+    "isolatedModules": true,
+
+    "baseUrl": "."
+  },
+  "include": ["./src/**/*.ts"]
 }

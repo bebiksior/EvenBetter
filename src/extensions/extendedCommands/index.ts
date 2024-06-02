@@ -1,4 +1,4 @@
-import { Caido } from "@caido/sdk-frontend";
+import { getCaidoAPI } from "../../utils/caidoapi";
 
 export const extendedCommands = () => {
   const settingsTabs = [
@@ -10,14 +10,14 @@ export const extendedCommands = () => {
   ];
 
   settingsTabs.forEach((tab) => {
-    Caido.commands.register("settings:" + tab, {
+    getCaidoAPI().commands.register("settings:" + tab, {
       name: "Go to Settings: " + tab,
       group: "Navigation",
       run: () => {
-        Caido.navigation.goTo("/settings/" + tab.toLowerCase());
+        getCaidoAPI().navigation.goTo("/settings/" + tab.toLowerCase());
       },
     });
 
-    Caido.commandPalette.register("settings:" + tab);
+    getCaidoAPI().commandPalette.register("settings:" + tab);
   });
 };

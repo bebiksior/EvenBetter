@@ -1,8 +1,8 @@
-import { Caido } from "@caido/sdk-frontend";
-import EvenBetterAPI from "@bebiks/evenbetter-api";
+import { getEvenBetterAPI } from "../../utils/evenbetterapi";
+import { getCaidoAPI } from "../../utils/caidoapi";
 
 export const quickMatchAndReplace = () => {
-  EvenBetterAPI.eventManager.on("onContextMenuOpen", (element) => {
+  getEvenBetterAPI().eventManager.on("onContextMenuOpen", (element) => {
     if (
       !(
         window.location.hash == "#/replay" ||
@@ -12,47 +12,56 @@ export const quickMatchAndReplace = () => {
       return;
 
     const selection = document.getSelection();
-    if (selection.toString().trim() == "") return;
+    if (!selection || selection.toString().trim() == "") return;
 
     const menu = (element as HTMLElement).querySelector("ul") as HTMLElement;
     const dropdownItems = menu.querySelectorAll(".p-menuitem");
+    const firstItem = dropdownItems[0] as HTMLElement;
+    if (!firstItem) return;
 
-    const newItem = dropdownItems[0].cloneNode(true) as HTMLElement;
+    const newItem = firstItem.cloneNode(true) as HTMLElement;
 
     let insertBefore = dropdownItems[0];
     for (let i = 0; i < dropdownItems.length; i++) {
+      const item = dropdownItems[i];
+      if (!item) continue;
+
       if (
-        dropdownItems[i].querySelector(".c-context-menu__content").textContent ==
+        item.querySelector(".c-context-menu__content")?.textContent ==
         "Send to Automate"
       ) {
-        insertBefore = dropdownItems[i];
+        insertBefore = item;
         break;
       }
     }
 
-    newItem.querySelector(".c-context-menu__content").textContent =
-      "Send to Match & Replace";
+    const contextMenuContent = newItem.querySelector(".c-context-menu__content");
+    if (!contextMenuContent) return;
+
+    contextMenuContent.textContent = "Send to Match & Replace";
     newItem.querySelector(".c-context-menu__leading-visual")?.remove();
     newItem.querySelector(".c-context-menu__trailing-visual")?.remove();
     newItem.classList.remove("p-focus");
 
     newItem.addEventListener("mouseenter", () => {
-      menu.childNodes.forEach((item: Element) => {
-        if (item.nodeName == "#text" || !item.classList || !item.classList.contains("p-focus")) return;
+      menu.childNodes.forEach((item: ChildNode) => {
+        const element = item as HTMLElement;
 
-        item.classList.remove("p-focus");
-        item.classList.remove("p-menuitem-active");
-        item.classList.remove("p-highlight");
+        if (element.nodeName == "#text" || !element.classList || !element.classList.contains("p-focus")) return;
 
-        const subMenu = item.querySelector("ul");
+        element.classList.remove("p-focus");
+        element.classList.remove("p-menuitem-active");
+        element.classList.remove("p-highlight");
+
+        const subMenu = element.querySelector("ul");
         if (subMenu) {
           subMenu.style.display = "none";
 
-          item.addEventListener("mouseenter", () => {
+          element.addEventListener("mouseenter", () => {
             subMenu.style.display = "block";
-            item.classList.add("p-focus");
-            item.classList.add("p-menuitem-active");
-            item.classList.add("p-highlight");
+            element.classList.add("p-focus");
+            element.classList.add("p-menuitem-active");
+            element.classList.add("p-highlight");
           }, { once: true });
         }
       });
@@ -65,7 +74,8 @@ export const quickMatchAndReplace = () => {
     });
 
     newItem.addEventListener("click", () => {
-      const textToUse = Caido.window.getActiveEditor().getSelectedText();
+      const textToUse = getCaidoAPI().window.getActiveEditor()?.getSelectedText();
+      if (!textToUse) return;
 
       window.location.hash = "#/tamper";
       let interval = setInterval(() => {
@@ -83,6 +93,7 @@ export const quickMatchAndReplace = () => {
       menu.remove();
     });
 
-    menu.insertBefore(newItem, insertBefore.nextSibling);
+    if (insertBefore)
+      menu.insertBefore(newItem, insertBefore.nextSibling);
   });
 };

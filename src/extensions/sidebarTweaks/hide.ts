@@ -11,6 +11,8 @@ export const addGroupHideFunctionality = () => {
     if (groupName !== "...") {
       title.addEventListener("click", () => {
         const group = title.parentElement;
+        if (!group) return;
+        
         const groupItems = group.querySelector(".c-sidebar-group__items") as HTMLElement;
         const isCollapsed = group.getAttribute("data-is-group-collapsed");
 
@@ -29,8 +31,12 @@ export const addGroupHideFunctionality = () => {
 export const storeSidebarGroupCollapsedStates = () => {
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
-    const groupName = group.children[0].textContent.trim();
+    const groupName = group.children[0]?.textContent?.trim();
+    if (!groupName) return;
+    
     const isCollapsed = group.getAttribute("data-is-group-collapsed");
+    if (isCollapsed === null) return;
+
     localStorage.setItem(`evenbetter_${groupName}_isCollapsed`, isCollapsed);
   });
 };
@@ -40,7 +46,9 @@ export const restoreSidebarGroupCollapsedStates = () => {
 
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
-    const groupName = group.children[0].textContent.trim();
+    const groupName = group.children[0]?.textContent?.trim();
+    if (!groupName) return;
+    
     const isCollapsed = localStorage.getItem(
       `evenbetter_${groupName}_isCollapsed`
     );

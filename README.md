@@ -15,45 +15,37 @@ Here's what **EvenBetter** implements:
 - **Send to Match & Replace**: custom right-click menu button that sends selected text to the Match & Replace page
 - ... more small tweaks that improve overall [Caido](https://github.com/caido) experience
 
+
 ## Installation [Recommended]
 
 1. [Follow installation steps for EvenBetterExtensions](https://github.com/bebiksior/EvenBetterExtensions)
-2. Navigate to `Extensions` sidebar page
+2. Navigate to `Plugins` sidebar page and then to the `Library` tab
 3. Find `EvenBetter` and click `Install`
-4. **Optional**: you can enable auto-updates for EvenBetter by going to the Extensions settings and toggling the `auto-update` feature.
+4. **Optional**: you can enable auto-updates for EvenBetter by going to the Plugins settings and toggling the `auto-update` feature.
 5. Done! 🎉
 
 ## Installation [Old, only EvenBetter, without auto-updates]
 
-1. In Caido, go to **Settings** and then navigate to the **Developer** section
-2. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/index.js and paste it into the `Custom JS`
-3. Copy the entire content from https://github.com/bebiksior/EvenBetter/blob/main/final/style.css and paste it into the `Custom CSS`
-4. Done! 🎉
+1. Go to the [EvenBetter Releases tab](https://github.com/bebiksior/EvenBetter/releases) and download the latest `plugin.zip` file
+2. In your Caido instance, navigate to the `Plugins` page, click `Install package` and select the downloaded `plugin.zip` file
+3. Done! 🎉
 
 
-## Changelog v2.31
-- Fixed compatibility issues with Caido v0.36.0
-- Added Fira Code font to the font picker
-- Fixed issue: Prevent text formatting in the quick decode box
-- Fixed issue: Missing data in headers when using quickssrf preview
-- Fixed issue: hotReloading sometimes reloads page before saving the changes
+## Changelog v2.4
 
-## Changelog v2.3
+- Moved to the new Caido plugin system! 🎉
+- **Response preview:** you can now preview the response in your browser by clicking the eye icon next to the preview HTML and navigating to the copied URL
+- **Collections share:** you can now export and import collections on the Replay page
+- **Match & Replace rules share:** you can now export and import Match & Replace rules on the Match & Replace page
+- **OpenAI gpt-4o instead of Caido Assistant:** you can now use OpenAI GPT-4o instead of Caido Assistant, you have to provide your API key in the EvenBetter settings
+- **Generate numbers:** you can now generate numbers on the Automate page in the "Simple List" type
+- **[BETA] private interactsh instances:** you can now use private interactsh instances on the Quick SSRF page
 
-- [EvenBetter: Extensions](https://github.com/bebiksior/EvenBetterExtensions) is now available! 🎉 Now, EvenBetter should be installed through the new **EvenBetterExtensions** plugin. This will allow us to keep the main **EvenBetter** plugin updated.
-- [EvenBetter: API](https://github.com/bebiksior/EvenBetterAPI) is now available! 🎉 This API simplitifes creating new Caido plugins, check it out!
-- **Font picker**: New feature in the EvenBetter settings that allows you to change the font of the Caido UI.
-- **Custom HTTP response**: New feature on the Quick SSRF page that allows you to customize the HTTP response, only supported with `ssrf.cvssadvisor.com`.
-- **Clear All Findings**: New button in the Findings page that clears all findings
-- **Suggest HTTPQL Command**: New command in the command pallette that uses AI to suggest the HTTPQL query.
-- **Extended Command Pallette**: Added new commands to the command pallette. Such as: `Go to Settings: Developer` or `Go to Settings: Rendering`
-- **Unicode support**: Added support for unicode encoding in the Quick Decode feature.
-- Code improvements and bug fixes.
-- Even more workflows! Added awesome workflows created by @Ry0taK 🎉
 
 ## Known issues
 
 - Creating interactsh SSRF instance on remote Caido instance will not work, `crypto.subtle` is not available on non-secure origins
+
 
 ## Even Darker Theme
 

@@ -1,12 +1,15 @@
+import { getCaidoAPI } from "../../utils/caidoapi";
 import { evenBetterSettingsTab } from "./ebSettings/evenbetter";
-import { Caido } from "@caido/sdk-frontend";
 
 export const setup = () => {
-  Caido.navigation.addPage("/settings/evenbetter", {
-    body: evenBetterSettingsTab(),
+  const settingsBody = evenBetterSettingsTab();
+  if (!settingsBody) return;
+  
+  getCaidoAPI().navigation.addPage("/settings/evenbetter", {
+    body: settingsBody,
   })
 
-  Caido.menu.registerItem({
+  getCaidoAPI().menu.registerItem({
     type: "Settings",
     label: "EvenBetter",
     path: "/settings/evenbetter",
@@ -14,24 +17,24 @@ export const setup = () => {
   });
   
 
-  Caido.commands.register("evenbetter:settings", {
+  getCaidoAPI().commands.register("evenbetter:settings", {
     name: "Go to EvenBetter: Settings",
     group: "EvenBetter: Navigation",
     run: () => {
-      Caido.navigation.goTo("/settings/evenbetter");
+      getCaidoAPI().navigation.goTo("/settings/evenbetter");
     }
   });
 
-  Caido.commandPalette.register("evenbetter:settings");
+  getCaidoAPI().commandPalette.register("evenbetter:settings");
 
 
-  Caido.commands.register("evenbetter:library", {
+  getCaidoAPI().commands.register("evenbetter:library", {
     name: "Go to EvenBetter: Library",
     group: "EvenBetter: Navigation",
     run: () => {
-      Caido.navigation.goTo("/workflows/library");
+      getCaidoAPI().navigation.goTo("/workflows/library");
     }
   });
 
-  Caido.commandPalette.register("evenbetter:library");
+  getCaidoAPI().commandPalette.register("evenbetter:library");
 };

@@ -1,14 +1,14 @@
-import EvenBetterAPI from "@bebiks/evenbetter-api";
+import { getEvenBetterAPI } from "../../utils/evenbetterapi";
 import { getSetting } from "../../settings";
 import { reqHistoryPage } from './reqHistory/reqHistory';
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
 import { pullSSRFHits as pullSSRFHits, ssrfInstance, SSRFInstanceState } from "./instance";
 import { settingsPage } from "./settings/settings";
-import { Caido } from "@caido/sdk-frontend";
 import { setActiveSidebarItem } from "../../utils/sidebar";
+import { getCaidoAPI } from "../../utils/caidoapi";
 
 export const quickSSRFFunctionality = () => {
-  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     if (
       data.newUrl == "#/replay" &&
       getSetting("ssrfInstanceFunctionality") === "true"
@@ -19,21 +19,22 @@ export const quickSSRFFunctionality = () => {
 
   const requestsHistory = reqHistoryPage();
   const settings = settingsPage();
+  if (!requestsHistory || !settings) return;
 
-  Caido.navigation.addPage("/evenbetter/quick-ssrf", {
+  getCaidoAPI().navigation.addPage("/evenbetter/quick-ssrf", {
     body: requestsHistory,
   });
 
-  Caido.navigation.addPage("/evenbetter/quick-ssrf/settings", {
+  getCaidoAPI().navigation.addPage("/evenbetter/quick-ssrf/settings", {
     body: settings,
   });
 
-  Caido.sidebar.registerItem("Quick SSRF", "/evenbetter/quick-ssrf", {
+  getCaidoAPI().sidebar.registerItem("Quick SSRF", "/evenbetter/quick-ssrf", {
     icon: "fas fa-compass",
     group: "EvenBetter",
   });
 
-  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     setActiveSidebarItem(
       "Quick SSRF",
       data.newUrl.startsWith("#/evenbetter/quick-ssrf") ? "true" : "false"
@@ -69,10 +70,11 @@ const observeReplayInput = () => {
   replayInputObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       const originalTextContent = mutation.target.textContent;
+      if (!originalTextContent) return;
 
       if (originalTextContent.includes(ssrfInstancePlaceholder)) {
         if (!ssrfInstance) {
-          EvenBetterAPI.modal.openModal({
+          getEvenBetterAPI().modal.openModal({
             title: "SSRF Instance not found",
             content:
               "Please create an SSRF instance from the sidebar Quick SSRF page before using this functionality.",
@@ -81,7 +83,11 @@ const observeReplayInput = () => {
         }
 
         const sel = window.getSelection();
+        if (!sel) return;
+
         const node = sel.focusNode;
+        if (!node) return;
+
         const offset = sel.focusOffset;
         const pos = getCursorPosition(mutation.target, node, offset, {
           pos: 0,
@@ -128,10 +134,13 @@ function getCursorPosition(
 
   let currentNode = null;
   if (parent.childNodes.length == 0) {
+    if (!parent.textContent) return stat;
     stat.pos += parent.textContent.length;
   } else {
     for (let i = 0; i < parent.childNodes.length && !stat.done; i++) {
       currentNode = parent.childNodes[i];
+      if (!currentNode) continue;
+
       if (currentNode === node) {
         stat.pos += offset;
         stat.done = true;
@@ -150,6 +159,8 @@ function setCursorPosition(
   if (stat.done) return range;
 
   if (parent.childNodes.length == 0) {
+    if (!parent.textContent) return range;
+
     if (parent.textContent.length >= stat.pos) {
       range.setStart(parent, stat.pos);
       stat.done = true;
@@ -159,6 +170,8 @@ function setCursorPosition(
   } else {
     for (let i = 0; i < parent.childNodes.length && !stat.done; i++) {
       let currentNode = parent.childNodes[i];
+      if (!currentNode) continue;
+      
       setCursorPosition(currentNode, range, stat);
     }
   }

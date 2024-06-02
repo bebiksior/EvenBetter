@@ -1,9 +1,9 @@
-import { Caido } from "@caido/sdk-frontend";
-import EvenBetterAPI from "@bebiks/evenbetter-api";
+import { getEvenBetterAPI } from "../../utils/evenbetterapi";
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+import { getCaidoAPI } from "../../utils/caidoapi";
 
 export const deleteAllFindings = () => {
-  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     if (data.newUrl !== "#/findings") return;
 
     attachClearAllButton();
@@ -13,7 +13,7 @@ export const deleteAllFindings = () => {
 const attachClearAllButton = () => {
   if (document.querySelector("#clear-all-findings")) return;
 
-  const clearAllButton = Caido.ui.button({
+  const clearAllButton = getCaidoAPI().ui.button({
     label: "Clear All",
     size: "small",
     variant: "primary",
@@ -22,7 +22,7 @@ const attachClearAllButton = () => {
 
   clearAllButton.id = "clear-all-findings";
   clearAllButton.addEventListener("click", () => {
-    Caido.graphql
+    getCaidoAPI().graphql
       .getFindingsByOffset({
         limit: 100000,
         offset: 0,
@@ -30,13 +30,12 @@ const attachClearAllButton = () => {
         order: { by: "ID", ordering: "DESC" },
       })
       .then((res) => {
-        Caido.graphql.deleteFindings({
+        getCaidoAPI().graphql.deleteFindings({
           ids: res.findingsByOffset.edges.map((finding) => finding.node.id),
         });
       });
   });
 
   document
-    .querySelector(".c-finding-table .c-card__header")
-    .appendChild(clearAllButton);
+    .querySelector(".c-finding-table .c-card__header")?.appendChild(clearAllButton);
 };

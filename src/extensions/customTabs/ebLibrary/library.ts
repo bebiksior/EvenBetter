@@ -1,10 +1,9 @@
-import EvenBetterAPI from "@bebiks/evenbetter-api";
 import { escapeHTML } from "../../../utils/escapeHtml";
-import { Caido } from "@caido/sdk-frontend";
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
-import libraryCSS from "./library.css";
-import loadCSS from "@bebiks/evenbetter-api/src/css";
 import { setActiveSidebarItem } from "../../../utils/sidebar";
+import "./library.css";
+import { getCaidoAPI } from "../../../utils/caidoapi";
+import { getEvenBetterAPI } from "../../../utils/evenbetterapi";
 
 interface Workflow {
   name: string;
@@ -21,26 +20,29 @@ const attachToWorkflowsNavigation = () => {
 
   if (rootList.querySelector("#workflows-library")) return;
 
-  const navigationItem = rootList.children[0].cloneNode(true) as HTMLElement;
+  const navigationItem = rootList.children[0]?.cloneNode(true) as HTMLElement;
   navigationItem.id = "workflows-library";
+  
+  const span = navigationItem.querySelector("span");
+  if (!span) return;
 
-  navigationItem.querySelector("span").textContent = "Library";
-  navigationItem.querySelector("a").setAttribute("href", "#/workflows/library");
+  span.textContent = "Library";
+  navigationItem.querySelector("a")?.setAttribute("href", "#/workflows/library");
   navigationItem
-    .querySelector(".c-workflows__item")
-    .setAttribute("data-is-active", "false");
+    .querySelector(".c-workflows__item")?.setAttribute("data-is-active", "false");
 
   rootList.appendChild(navigationItem);
 };
 
 export const customLibraryTab = () => {
-  loadCSS({ id: "evenbetter-library-css", cssText: libraryCSS.toString() });
+  const libraryBody = evenBetterLibraryTab();
+  if (!libraryBody) return;
 
-  Caido.navigation.addPage("workflows/library", {
-    body: evenBetterLibraryTab(),
+  getCaidoAPI().navigation.addPage("workflows/library", {
+    body: libraryBody,
   });
 
-  EvenBetterAPI.eventManager.on("onPageOpen", (event: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (event: PageOpenEvent) => {
     if (
       event.newUrl.startsWith("#/workflows/") &&
       event.newUrl !== "#/workflows/library"
@@ -49,7 +51,7 @@ export const customLibraryTab = () => {
     }
   });
 
-  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     setActiveSidebarItem(
       "Workflows",
       window.location.hash.startsWith("#/workflows/") ? "true" : "false"
@@ -79,7 +81,7 @@ export const evenBetterLibraryTab = () => {
     </a>
   `;
 
-  const navigationBar = EvenBetterAPI.components.createNavigationBar({
+  const navigationBar = getEvenBetterAPI().components.createNavigationBar({
     title: "Workflows",
     items: [
       {
@@ -110,36 +112,37 @@ export const evenBetterLibraryTab = () => {
   const header = document.createElement("div");
   header.classList.add("c-evenbetter_library-header");
 
-  const newWorkflowButton = Caido.ui.button({
+  const newWorkflowButton = getCaidoAPI().ui.button({
     label: "New workflow",
     leadingIcon: "fas fa-plus",
     variant: "primary",
   });
 
   newWorkflowButton.addEventListener("click", () => {
-    Caido.navigation.goTo("/workflows/convert/new");
+    getCaidoAPI().navigation.goTo("/workflows/convert/new");
   });
 
   header.appendChild(newWorkflowButton);
 
-  const searchInput = EvenBetterAPI.components.createTextInput(
+  const searchInputElement = getEvenBetterAPI().components.createTextInput(
     "fit-content",
     "Search...",
     false,
     "fa-search"
   );
 
-  const libraryTable = EvenBetterAPI.components.createTable({
+  const libraryTable = getEvenBetterAPI().components.createTable({
     columns: libraryColumns,
-    tableHeight: "100%",
-    rowHeight: "33.75px",
   });
 
-  searchInput.querySelector("input").addEventListener("input", (event) => {
+  const searchInput = searchInputElement.querySelector("input");
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", (event) => {
     const searchValue = (event.target as HTMLInputElement).value;
     libraryTable.filterRows(searchValue);
   });
-  header.appendChild(searchInput);
+  header.appendChild(searchInputElement);
 
   const content = document.createElement("div");
   content.classList.add("c-evenbetter_library-content");
@@ -154,7 +157,6 @@ export const evenBetterLibraryTab = () => {
   bodyContainer.appendChild(content);
 
   evenBetterTab.appendChild(bodyContainer);
-
 
   fetch(
     "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflows.json?cache=" +
@@ -185,12 +187,13 @@ export const evenBetterLibraryTab = () => {
         actionsButton.addEventListener("click", (event) => {
           const target = event.target as HTMLButtonElement;
           const url = target
-            .closest(".c-evenbetter_button")
-            .getAttribute("data-plugin-url");
+            .closest(".c-evenbetter_button")?.getAttribute("data-plugin-url");
+          
+          if (!url) return;
 
           fetch(url).then((response) => {
             response.json().then((data) => {
-              Caido.graphql.createWorkflow({
+              getCaidoAPI().graphql.createWorkflow({
                 input: {
                   definition: {
                     ...data,
@@ -202,9 +205,11 @@ export const evenBetterLibraryTab = () => {
               const label = actionsButton.querySelector(
                 ".c-evenbetter_button__label"
               );
+              if (!label) return;
+              
               label.textContent = "Added";
 
-              EvenBetterAPI.toast.showToast({
+              getEvenBetterAPI().toast.showToast({
                 message: "Workflow added successfully!",
                 type: "success",
                 duration: 1500,
@@ -219,22 +224,22 @@ export const evenBetterLibraryTab = () => {
         });
 
         libraryTable.addRow([
-          { columnName: "Name", value: labelElement(escapeHTML(plugin.name)) },
+          { columnName: "Name", value: labelElement(plugin.name) },
           {
             columnName: "Description",
-            value: labelElement(escapeHTML(plugin.description)),
+            value: labelElement(plugin.description),
           },
           {
             columnName: "Version",
-            value: labelElement(escapeHTML(plugin.version)),
+            value: labelElement(plugin.version),
           },
           {
             columnName: "Author",
-            value: labelElement(escapeHTML(plugin.author)),
+            value: labelElement(plugin.author),
           },
           {
             columnName: "OS",
-            value: labelElement(escapeHTML(plugin.os || "All")),
+            value: labelElement(plugin.os || "All"),
           },
           { columnName: "Actions", value: actionsButton },
         ]);

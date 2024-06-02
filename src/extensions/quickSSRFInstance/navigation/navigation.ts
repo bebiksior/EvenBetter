@@ -1,18 +1,19 @@
-import EvenBetterAPI from "@bebiks/evenbetter-api";
 import {
   refreshSSRFInstance,
   ssrfInstance,
   SSRFInstanceType,
 } from "../instance";
-import navigationCSS from "./navigation.css";
-import loadCSS from "@bebiks/evenbetter-api/src/css";
 import { ssrfHitsTable } from "../reqHistory/reqHistory";
-import { Caido } from "@caido/sdk-frontend";
+import "./navigation.css";
+import { getCaidoAPI } from "../../../utils/caidoapi";
+import { getEvenBetterAPI } from "../../../utils/evenbetterapi";
 
 export let selectedInstanceType = SSRFInstanceType.CVSSADVISOR;
 
 const syncData = (navigation: HTMLElement) => {
   const select = navigation.querySelector("select");
+  if (!select) return;
+
   const input = navigation.querySelector(
     ".ssrf-instance-url"
   ) as HTMLInputElement;
@@ -23,21 +24,14 @@ const syncData = (navigation: HTMLElement) => {
   updateIcon();
 };
 
-
-
 export const navigationBar = () => {
-  loadCSS({
-    id: "eb-quick-ssrf-navigation-css",
-    cssText: navigationCSS.toString(),
-  });
-
-  const ssrfInstanceUrl = EvenBetterAPI.components.createTextInput(
+  const ssrfInstanceUrl = getEvenBetterAPI().components.createTextInput(
     "13em",
     "N/A",
     true
   );
 
-  const clearLogs = Caido.ui.button({
+  const clearLogs = getCaidoAPI().ui.button({
     label: "Clear Logs",
     variant: "primary",
     leadingIcon: "fas fa-trash",
@@ -46,7 +40,7 @@ export const navigationBar = () => {
 
   clearLogs.addEventListener("click", () => ssrfHitsTable.clearRows());
 
-  const navigationBar = EvenBetterAPI.components.createNavigationBar({
+  const navigationBar = getEvenBetterAPI().components.createNavigationBar({
     title: "Quick SSRF",
     items: [
       {
@@ -66,9 +60,11 @@ export const navigationBar = () => {
   });
 
   const ssrfInstanceUrlInput = ssrfInstanceUrl.querySelector("input");
+  if (!ssrfInstanceUrlInput) return navigationBar;
+
   ssrfInstanceUrlInput.disabled = true;
   ssrfInstanceUrlInput.classList.add("ssrf-instance-url");
-  EvenBetterAPI.eventManager.on("onSSRFInstanceChange", () => {
+  getEvenBetterAPI().eventManager.on("onSSRFInstanceChange", () => {
     if (ssrfInstance) ssrfInstanceUrlInput.value = ssrfInstance.url;
   });
 

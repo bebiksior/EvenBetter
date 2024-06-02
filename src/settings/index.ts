@@ -13,7 +13,10 @@ export const defaultSettings: { [key: string]: string } = {
 
 export const getSetting = (settingName: string): string => {
   if (localStorage.getItem(`evenbetter_${settingName}`) === null) {
-    return defaultSettings[settingName];
+    const defaultSetting = defaultSettings[settingName];
+    if (defaultSetting !== undefined) {
+      localStorage.setItem(`evenbetter_${settingName}`, defaultSetting);
+    }
   }
 
   return localStorage.getItem(`evenbetter_${settingName}`) || "";
@@ -60,7 +63,7 @@ export const checkForUpdates = async (): Promise<UpdateResponse> => {
     }
   } catch (error) {
     return {
-      isLatest: false,
+      isLatest: true,
       message: "Failed to check for updates",
     };
   }

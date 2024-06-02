@@ -1,13 +1,16 @@
-import EvenBetterAPI from "@bebiks/evenbetter-api";
+import { getEvenBetterAPI } from "../../utils/evenbetterapi";
 import { getSetting } from "../../settings";
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
-import quickDecodeCSS from "./quickDecode.css";
-import loadCSS from "@bebiks/evenbetter-api/src/css";
+import "./quickDecode.css";
 
 let selectedLineElements: HTMLElement[] = [];
 
 const getLinesContainingSelection = () => {
   let selection = window.getSelection();
+  if (!selection) {
+    return [];
+  }
+
   if (selection.rangeCount === 0) {
     return [];
   }
@@ -96,14 +99,18 @@ const attachQuickDecode = () => {
   ) as HTMLElement;
 
   const copyIcon = quickDecode.querySelector(".fa-copy");
+  if (!copyIcon) return;
+
   copyIcon.addEventListener("click", () => {
     const decodedText = decodedTextBox.textContent;
+    if (!decodedText) return;
+
     navigator.clipboard.writeText(decodedText);
   });
 
   let encodeMethod = "none";
 
-  decodedTextBox.addEventListener("input", (event: InputEvent) => {
+  decodedTextBox.addEventListener("input", (event: Event) => {
     const inputElement = event.target as HTMLInputElement;
 
     const previousValue = inputElement.dataset.previousValue || "";
@@ -149,7 +156,10 @@ const attachQuickDecode = () => {
     }
 
     for (let i = 1; i < selectedLineElements.length; i++) {
-      selectedLineElements[i].remove();
+      const line = selectedLineElements[i];
+      if (line) {
+        line.remove()
+      }
     }
 
     inputElement.dataset.previousValue = newValue;
@@ -161,22 +171,29 @@ const attachQuickDecode = () => {
       inputElement.dataset.previousValue = previousValue;
     }
 
-    selectedLineElements[0].textContent = linesContent;
+    const firstElement = selectedLineElements[0];
+    if (!firstElement) return;
+
+    firstElement.textContent = linesContent;
   });
 
   document.addEventListener("selectionchange", (event) => {
     if (
       window.location.hash !== "#/replay" ||
+      !document.activeElement ||
       document.activeElement.classList.contains(
         "evenbetter__qd-selected-text-box"
       )
     )
       return;
 
-    const selectedText = window
-      .getSelection()
+    const selection = window.getSelection();
+    if (!selection) return;
+
+    const selectedText = selection
       .toString()
       .replaceAll("\n", "\r\n");
+
     setTimeout(() => {
       if (
         document.querySelector(".cm-selectionBackground") &&
@@ -187,10 +204,12 @@ const attachQuickDecode = () => {
       const decodedTextLabel = document.querySelector(
         ".evenbetter__qd-selected-text-label"
       );
+      if (!decodedTextLabel) return;
 
       const textError = document.querySelector(
         ".evenbetter__qd-selected-text-error"
       );
+      if (!textError) return;
 
       if (selectedText.trim() !== "") {
         const decoded = tryToDecode(selectedText);
@@ -212,7 +231,7 @@ const attachQuickDecode = () => {
           decodedTextBox.setAttribute("contenteditable", "false");
         }
 
-        if (document.activeElement.closest(`.c-response-body`)) {
+        if (document.activeElement?.closest(`.c-response-body`)) {
           decodedTextBox.setAttribute("contenteditable", "false");
         }
 
@@ -260,6 +279,7 @@ const decodeOnHover = () => {
     line.addEventListener("mouseover", (e) => {
       const target = e.target as HTMLElement;
       const textContent = target.textContent;
+      if (!textContent) return;
 
       if (isUrlEncoded(textContent)) {
         try {
@@ -339,12 +359,7 @@ const tryToDecode = (input: string) => {
 export const quickDecode = () => {
   if (getSetting("quickDecode") !== "true") return;
 
-  loadCSS({
-    id: "eb-quickdecode",
-    cssText: quickDecodeCSS.toString(),
-  });
-
-  EvenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     if (data.newUrl === "#/replay") {
       attachQuickDecode();
 

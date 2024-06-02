@@ -8,40 +8,57 @@ import { quickMatchAndReplace } from "./extensions/qucikMAR";
 import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
 import { getSetting } from "./settings";
-import EvenBetterAPI from "@bebiks/evenbetter-api";
 import { loadTheme } from "./appearance/themes";
-import { Caido } from "@caido/sdk-frontend";
 import { loadFont } from "./appearance/fonts";
 import { customLibraryTab } from "./extensions/customTabs/ebLibrary/library";
-import { OnSSRFHit } from "./extensions/events/onSSRFHit";
+import { OnSSRFHit } from "./events/onSSRFHit";
 import { extendedCommands } from "./extensions/extendedCommands";
 import { deleteAllFindings } from "./extensions/clearAllFindings";
 import { setupSuggestAICommand } from "./extensions/suggestQuery";
-import { OnSSRFInstanceChange } from "./extensions/events/onSSRFInstanceChange";
+import { OnSSRFInstanceChange } from "./events/onSSRFInstanceChange";
 import { dropAllButtonFeature } from "./extensions/dropAllBtn";
+import { collectionsShare } from "./extensions/shareCollections";
+import { showResponse } from "./extensions/showResponse";
+import { numbersPayload } from "./extensions/numbersPayload";
+import { getCaidoAPI, setCaidoAPI } from "./utils/caidoapi";
+import type { Caido } from "@caido/sdk-frontend";
+import "./style.css";
+import { onMARTabOpen } from "./extensions/shareMAR";
+import { EvenBetterAPI } from "@bebiks/evenbetter-api";
+import { setEvenBetterAPI } from "./utils/evenbetterapi";
 
-const init = () => {
+export const init = (caido: Caido) => {
+  setCaidoAPI(caido);
   log.info(`EvenBetter ${CURRENT_VERSION} is loading, thanks for using it! 🎉`);
 
-  //EvenBetterAPI.hotReloading();
+  const evenBetterAPI = new EvenBetterAPI(caido, {
+    manifestID: "evenbetter-extensions",
+    name: "EvenBetter: Extensions",
+  });
+
+  setEvenBetterAPI(evenBetterAPI);
+
   customTabs.setup();
 
   const onSSRFHit = new OnSSRFHit();
   const onSSRFInstanceChange = new OnSSRFInstanceChange();
-  EvenBetterAPI.eventManager.registerEvent("onSSRFHit", onSSRFHit);
-  EvenBetterAPI.eventManager.registerEvent("onSSRFInstanceChange", onSSRFInstanceChange);
+  evenBetterAPI.eventManager.registerEvent("onSSRFHit", onSSRFHit);
+  evenBetterAPI.eventManager.registerEvent(
+    "onSSRFInstanceChange",
+    onSSRFInstanceChange
+  );
 
-  Caido.commands.register("evenbetter:suggesthttpql", {
+  getCaidoAPI().commands.register("evenbetter:suggesthttpql", {
     name: "Suggest HTTPQL query",
     group: "EvenBetter: AI",
     run: () => {},
   });
 
-  Caido.commandPalette.register("evenbetter:suggesthttpql");
+  getCaidoAPI().commandPalette.register("evenbetter:suggesthttpql");
 
   setupSuggestAICommand();
 
-  EvenBetterAPI.eventManager.on("onPageOpen", () => {
+  evenBetterAPI.eventManager.on("onPageOpen", () => {
     localStorage.setItem("previousPath", window.location.hash);
 
     const activeTab = document.querySelector(
@@ -53,16 +70,18 @@ const init = () => {
     }
   });
 
-  EvenBetterAPI.eventManager.on("onSettingsTabOpen", (data: string) => {
+  evenBetterAPI.eventManager.on("onSettingsTabOpen", (data: string) => {
     switch (data) {
       case "developer":
         const jsSaveButton = document.querySelector(".c-custom-js__footer");
+        if (!jsSaveButton) return;
+
         jsSaveButton.removeEventListener("click", reloadPage);
         jsSaveButton.addEventListener("click", reloadPage);
     }
   });
 
-  EvenBetterAPI.eventManager.on("onCaidoLoad", () => {
+  evenBetterAPI.eventManager.on("onCaidoLoad", () => {
     loadTheme(getSetting("theme"));
     loadFont(getSetting("font"));
 
@@ -70,26 +89,26 @@ const init = () => {
     customLibraryTab();
     quickSSRFFunctionality();
     onScopeTabOpen();
+    onMARTabOpen();
     extendedCommands();
     quickDecode();
     dropdownTweaks();
     dropAllButtonFeature();
+    collectionsShare();
+    showResponse();
+    numbersPayload();
     setTimeout(() => {
       sidebarTweaks();
     }, 100);
 
-    quickMatchAndReplace()
+    quickMatchAndReplace();
     setTimeout(
       () => {
-        let newUrl = window.location.hash;
-        if (newUrl.includes("?custom-path=")) {
-          newUrl = newUrl.split("?custom-path=")[1];
-        }
+        const path = window.location.hash;
+        document.querySelector(".c-content")?.setAttribute("data-page", path);
 
-        document.querySelector(".c-content")?.setAttribute("data-page", newUrl);
-
-        EvenBetterAPI.eventManager.triggerEvent("onPageOpen", {
-          newUrl: newUrl,
+        evenBetterAPI.eventManager.triggerEvent("onPageOpen", {
+          newUrl: path,
           oldUrl: "",
         });
       },
@@ -102,7 +121,7 @@ const init = () => {
       .trim();
 
     if (cssVersion !== CURRENT_VERSION) {
-      EvenBetterAPI.modal.openModal({
+      evenBetterAPI.modal.openModal({
         title: "Incompatible CSS version",
         content: `EvenBetter Custom CSS isn't compatible with the current JS version of EvenBetter. Please update the EvenBetter CSS to the latest version.`,
       });
@@ -115,5 +134,3 @@ const reloadPage = () => {
     location.reload();
   }, 250);
 };
-
-init();

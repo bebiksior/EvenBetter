@@ -5,6 +5,7 @@
 }
 
 .eb-quickssrf__settings--group {
+    width: 50%;
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -34,7 +35,7 @@
 }
 
 .eb-quickssrf__settings-content {
-    flex-direction: column;
+    flex-direction: row;
     display: flex;
     gap: 1em;
 }

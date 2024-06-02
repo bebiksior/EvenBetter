@@ -8,7 +8,7 @@ export const addMoveButtonsToSidebar = () => {
   );
   sidebarGroupTitles.forEach((title) => {
     const groupName = title.textContent;
-    if (groupName !== "...") {
+    if (groupName && groupName !== "...") {
       attachMoveButtonsToGroup(title, groupName);
     }
   });
@@ -50,20 +50,24 @@ const attachMoveButtonsToGroup = (element: Element, groupName: string) => {
 };
 
 const moveGroup = (group: Element, direction: "up" | "down") => {
-  const index = Array.from(group.parentElement.children).indexOf(group);
+  const parentElement = group.parentElement;
+  if (!parentElement) return;
+
+  const index = Array.from(parentElement.children).indexOf(group);
 
   if (
     (direction === "up" && index > 0) ||
-    (direction === "down" && index < group.parentElement.children.length - 1)
+    (direction === "down" && index < parentElement.children.length - 1)
   ) {
     const newIndex = direction === "up" ? index - 1 : index + 1;
     if (newIndex == 0) {
       return;
     }
 
-    const referenceNode =
-      group.parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
-    group.parentElement.insertBefore(group, referenceNode);
+    const referenceNode = parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
+    if (!referenceNode) return;
+
+    parentElement.insertBefore(group, referenceNode);
 
     storeSidebarGroupPositions();
   }
@@ -72,8 +76,13 @@ const moveGroup = (group: Element, direction: "up" | "down") => {
 const storeSidebarGroupPositions = () => {
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
-    const groupName = group.children[0].textContent.trim();
-    const position = Array.from(group.parentElement.children).indexOf(group);
+    const parentElement = group.parentElement;
+    if (!parentElement) return;
+
+    const groupName = group.children[0]?.textContent?.trim();
+    if (!groupName) return;
+    
+    const position = Array.from(parentElement.children).indexOf(group);
     localStorage.setItem(`evenbetter_${groupName}_position`, String(position));
   });
 };
@@ -83,13 +92,15 @@ export const restoreSidebarGroupPositions = () => {
 
   const sidebarGroups = document.querySelectorAll(".c-sidebar-group");
   sidebarGroups.forEach((group) => {
-    const groupName = group.children[0].textContent.trim();
+    const parentElement = group.parentElement;
+    if (!parentElement) return;
+    
+    const groupName = group.children[0]?.textContent?.trim();
+    if (!groupName) return;
+
     const position = localStorage.getItem(`evenbetter_${groupName}_position`);
-    if (position) {
-      group.parentElement.insertBefore(
-        group,
-        group.parentElement.children[Number(position)]
-      );
-    }
+    const element = parentElement.children[Number(position)];
+    if (element)
+      parentElement.insertBefore(group, element);
   });
 };

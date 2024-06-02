@@ -12,8 +12,8 @@
   --selected-row-background: var(--c-bg-default) !important;
   --c-table-background: #222222 !important;
   
-  --evenbetter-css-version: "v2.31";
-}
+  --evenbetter-css-version: "v2.4";
+}  
 
 .c-header-cell {
   border: (--header-cell-width) solid var(--c-header-cell-border) !important;
@@ -31,12 +31,24 @@
   background-color: var(--c-table-background) !important;
 }
 
-.c-table__item-row:hover {
-  background-color: var(--c-table-item-row-hover) !important;
+
+.p-row-odd,
+.c-table__item-row[data-is-even=false]{
+  background-color: var(--c-table-item-row) !important;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.c-table__item-row[data-is-even="false"]:not([colorized="true"]) {
-  background-color: var(--c-table-even-item-row);
+.p-row-even,
+.c-table__item-row[data-is-even=true]{
+  background-color: var(--c-table-even-item-row) !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.p-row-odd:hover,
+.p-row-even:hover,
+.c-table__item-row[data-is-even="false"]:hover,
+.c-table__item-row[data-is-even="true"]:hover{
+  background-color: var(--c-table-item-row-hover) !important;
 }
 
 .c-active-rule-list__rules,
@@ -207,4 +219,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-}  
+}
+
+.p-tabview-nav,
+.p-tabview .p-tabview-panels,
+.p-datatable-footer,
+.p-datatable-emptymessage,
+.p-datatable-header {
+  background-color: var(--c-bg-subtle);
+} 
+
+.p-datatable .p-datatable-thead>tr>th {
+  border-color: var(--c-bg-default) !important;
+}
+
+[data-pc-section="headercell"] {
+  background-color: var(--c-table-background);
+} 
+
+/* scroll fix for numbers feature on the plugins page */
+.c-plugins .p-datatable-wrapper {
+  overflow: hidden !important;
+}
+
+/* scroll fix for numbers feature on the automate page */
+[data-page="#/automate"] .c-automate-session__settings,
+[data-page="#/automate"] .p-tabview-panel {
+  overflow: hidden !important;
+}
+
+[data-page="#/automate"] .c-simple-list__list {
+  height: 80% !important;
+}
+
+.p-datatable-row-expansion {
+  background-color: var(--c-bg-default) !important;
+}

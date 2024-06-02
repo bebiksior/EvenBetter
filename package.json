@@ -1,23 +1,26 @@
 {
   "name": "evenbetter",
-  "version": "2.31.0",
-  "description": "",
-  "main": "src/index.js",
-  "scripts": {
-    "build": "bun run build.ts"
-  },
+  "version": "2.4.0",
+  "description": "EvenBetter is a frontend Caido plugin that makes the Caido experience even better 😎",
   "author": "bebiks <bebiks@cvssadvisor.com>",
   "license": "CC0-1.0",
-  "devDependencies": {
-    "@types/bun": "^1.0.12",
-    "bun-style-loader": "^0.4.0",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.3.3"
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "vite build"
   },
   "dependencies": {
-    "@bebiks/evenbetter-api": "^1.1.0",
-    "@caido/sdk-frontend": "^0.36.0",
-    "crypto": "^1.0.1",
-    "node-rsa": "^1.1.1"
+    "@bebiks/evenbetter-api": "1.4.0",
+    "@caido/sdk-frontend": "0.37.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "path": "^0.12.7",
+    "typescript": "5.4.3",
+    "vite": "5.2.7",
+    "vite-plugin-css": "^1.0.4",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-static-copy": "1.0.3",
+    "vite-plugin-zip-pack": "1.2.3"
   }
 }
