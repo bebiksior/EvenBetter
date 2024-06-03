@@ -4,7 +4,7 @@ import { onScopeTabOpen } from "./extensions/shareScope";
 import { sidebarTweaks } from "./extensions/sidebarTweaks";
 import { CURRENT_VERSION } from "./settings/constants";
 import log from "./utils/Logger";
-import { quickMatchAndReplace } from "./extensions/qucikMAR";
+import { quickMatchAndReplace } from "./extensions/quickMAR";
 import { quickDecode } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
 import { getSetting } from "./settings";
@@ -97,7 +97,9 @@ export const init = (caido: Caido) => {
     collectionsShare();
     showResponse();
     numbersPayload();
-    sidebarTweaks();
+    setTimeout(() => {
+      sidebarTweaks();
+    }, 100);
 
     quickMatchAndReplace();
     setTimeout(
@@ -112,6 +114,18 @@ export const init = (caido: Caido) => {
       },
       window.location.hash.startsWith("#/settings/") ? 10 : 100
     );
+
+    const cssVersion = getComputedStyle(document.documentElement)
+      .getPropertyValue("--evenbetter-css-version")
+      .replace(/['"]+/g, "")
+      .trim();
+
+    if (cssVersion !== CURRENT_VERSION) {
+      evenBetterAPI.modal.openModal({
+        title: "Incompatible CSS version",
+        content: `EvenBetter Custom CSS isn't compatible with the current JS version of EvenBetter. Please update the EvenBetter CSS to the latest version.`,
+      });
+    }
   });
 };
 
