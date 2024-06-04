@@ -31,6 +31,9 @@ Here's what **EvenBetter** implements:
 3. Done! 🎉
 
 
+## Changelog v2.4.2
+
+- Merged PR by Rhynorater that fixes bug in Match & Replace and adds default match -> name functionality
 
 ## Changelog v2.4.1
 
