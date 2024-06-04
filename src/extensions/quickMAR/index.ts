@@ -82,13 +82,19 @@ export const quickMatchAndReplace = () => {
         const searchInput = document.querySelector(
           ".c-tamper textarea"
         ) as HTMLInputElement;
-
+        const nameInput = document.querySelector(
+          ".c-rule-form-update__name input"
+        ) as HTMLInputElement;
         if (searchInput) {
-          searchInput.value = textToUse;
-
-          clearInterval(interval);
+          if (searchInput.value.length > 0) {
+            document.querySelector(".c-rule-list-header__new button")?.click()
+          }else{
+            searchInput.value = textToUse;
+            nameInput.value = textToUse;
+            clearInterval(interval);
+          }
         }
-      }, 2);
+      }, 100);
 
       menu.remove();
     });
