@@ -35,7 +35,9 @@ export const quickMatchAndReplace = () => {
       }
     }
 
-    const contextMenuContent = newItem.querySelector(".c-context-menu__content");
+    const contextMenuContent = newItem.querySelector(
+      ".c-context-menu__content"
+    );
     if (!contextMenuContent) return;
 
     contextMenuContent.textContent = "Send to Match & Replace";
@@ -47,7 +49,12 @@ export const quickMatchAndReplace = () => {
       menu.childNodes.forEach((item: ChildNode) => {
         const element = item as HTMLElement;
 
-        if (element.nodeName == "#text" || !element.classList || !element.classList.contains("p-focus")) return;
+        if (
+          element.nodeName == "#text" ||
+          !element.classList ||
+          !element.classList.contains("p-focus")
+        )
+          return;
 
         element.classList.remove("p-focus");
         element.classList.remove("p-menuitem-active");
@@ -57,12 +64,16 @@ export const quickMatchAndReplace = () => {
         if (subMenu) {
           subMenu.style.display = "none";
 
-          element.addEventListener("mouseenter", () => {
-            subMenu.style.display = "block";
-            element.classList.add("p-focus");
-            element.classList.add("p-menuitem-active");
-            element.classList.add("p-highlight");
-          }, { once: true });
+          element.addEventListener(
+            "mouseenter",
+            () => {
+              subMenu.style.display = "block";
+              element.classList.add("p-focus");
+              element.classList.add("p-menuitem-active");
+              element.classList.add("p-highlight");
+            },
+            { once: true }
+          );
         }
       });
 
@@ -73,33 +84,98 @@ export const quickMatchAndReplace = () => {
       newItem.classList.remove("p-focus");
     });
 
-    newItem.addEventListener("click", () => {
-      const textToUse = getCaidoAPI().window.getActiveEditor()?.getSelectedText();
+    newItem.addEventListener("click", async () => {
+      const textToUse = getCaidoAPI()
+        .window.getActiveEditor()
+        ?.getSelectedText();
       if (!textToUse) return;
 
-      window.location.hash = "#/tamper";
-      let interval = setInterval(() => {
-        const searchInput = document.querySelector(
-          ".c-tamper textarea"
-        ) as HTMLInputElement;
-        const nameInput = document.querySelector(
-          ".c-rule-form-update__name input"
-        ) as HTMLInputElement;
-        if (searchInput) {
-          if (searchInput.value.length > 0) {
-            document.querySelector(".c-rule-list-header__new button")?.click()
-          }else{
-            searchInput.value = textToUse;
-            nameInput.value = textToUse;
-            clearInterval(interval);
-          }
-        }
-      }, 100);
+      getCaidoAPI().navigation.goTo("/tamper");
+      await waitForPage();
+
+      const newRuleButton = document.querySelector(
+        ".c-rule-list-header__new button"
+      ) as HTMLButtonElement;
+      if (!newRuleButton) return;
+
+      newRuleButton.click();
+      await waitForFormUpdate();
+
+      const searchInput = document.querySelector(
+        ".c-tamper textarea"
+      ) as HTMLInputElement;
+      const nameInput = document.querySelector(
+        ".c-rule-form-update__name input"
+      ) as HTMLInputElement;
+
+      if (!searchInput || !nameInput) return;
+
+      let firstLine = textToUse.split("\n")[0];
+      if (!firstLine) firstLine = textToUse;
+
+      setValue(searchInput, textToUse);
+      setValue(nameInput, firstLine);
+
+      setTimeout(() => {
+        const saveButton = document.querySelector(
+          ".c-rule-form-update__save button"
+        ) as HTMLButtonElement;
+        if (!saveButton) return;
+
+        saveButton.click();
+      }, 25);
+      
 
       menu.remove();
     });
 
-    if (insertBefore)
-      menu.insertBefore(newItem, insertBefore.nextSibling);
+    if (insertBefore) menu.insertBefore(newItem, insertBefore.nextSibling);
   });
 };
+
+const waitForPage = async () => {
+  const formUpdate = document.querySelector(".c-rule-form-update");
+  const formCreate = document.querySelector(".c-rule-form-create");
+  if (formUpdate || formCreate) {
+    return;
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  return waitForPage();
+};
+
+const waitForFormUpdate = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const formUpdate = document.querySelector(".c-rule-form-update__body");
+  if (formUpdate) {
+    return;
+  }
+
+  return waitForFormUpdate();
+}
+
+function setValue(element: HTMLInputElement, text: string) {
+  const previousFocus = document.activeElement as HTMLElement;
+  element.focus();
+
+  element.value = "";
+
+  for (let i = 0; i < text.length; i++) {
+    element.value += text[i];
+
+    let inputEvent = new Event("input", {
+      bubbles: true,
+      cancelable: true,
+    });
+    element.dispatchEvent(inputEvent);
+  }
+
+  let changeEvent = new Event("change", {
+    bubbles: true,
+    cancelable: true,
+  });
+  element.dispatchEvent(changeEvent);
+
+  previousFocus?.focus();
+}
