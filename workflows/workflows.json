@@ -133,6 +133,13 @@
       "version": "1.0",
       "author": "Rhynorater",
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/nowafpls___8KB.json"
+    },
+    {
+      "name": "Color Top Level IFrame Navigations",
+      "description": "Color Top Level Navigation Workflow",
+      "version": "1.0",
+      "author": "Rhynorater",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Color_Top_Level___IFrame_Navigations.json"
     }
   ]
 }
