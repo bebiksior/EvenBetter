@@ -1,0 +1,265 @@
+{
+  "description": "",
+  "edition": 2,
+  "graph": {
+    "edges": [
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 0
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 2
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 2
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 3
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "true",
+          "node_id": 3
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 4
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 4
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "false",
+          "node_id": 3
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 5
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 5
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 6
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "true",
+          "node_id": 6
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 7
+        }
+      },
+      {
+        "source": {
+          "exec_alias": "exec",
+          "node_id": 7
+        },
+        "target": {
+          "exec_alias": "exec",
+          "node_id": 1
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "alias": "on_intercept_request",
+        "definition_id": "caido/on-intercept-request",
+        "display": {
+          "x": -110,
+          "y": -240
+        },
+        "id": 0,
+        "inputs": [],
+        "name": "On intercept request",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "passive_end",
+        "definition_id": "caido/passive-end",
+        "display": {
+          "x": -130,
+          "y": 330
+        },
+        "id": 1,
+        "inputs": [],
+        "name": "Passive End",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "matches_httpql",
+        "definition_id": "caido/httpql-matches",
+        "display": {
+          "x": -100,
+          "y": -80
+        },
+        "id": 2,
+        "inputs": [
+          {
+            "alias": "query",
+            "value": {
+              "data": "req.raw.cont:\"Sec-Fetch-Mode: navigate\" and req.raw.ncont:\"Sec-Fetch-Dest: iframe\"",
+              "kind": "string"
+            }
+          },
+          {
+            "alias": "request",
+            "value": {
+              "data": "$on_intercept_request.request",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Matches HTTPQL",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "if_else",
+        "definition_id": "caido/if-else",
+        "display": {
+          "x": -30,
+          "y": 50
+        },
+        "id": 3,
+        "inputs": [
+          {
+            "alias": "condition",
+            "value": {
+              "data": "$matches_httpql.matches",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "If/Else",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "set_color",
+        "definition_id": "caido/color-set",
+        "display": {
+          "x": -20,
+          "y": 230
+        },
+        "id": 4,
+        "inputs": [
+          {
+            "alias": "color",
+            "value": {
+              "data": "#D99E4A",
+              "kind": "string"
+            }
+          },
+          {
+            "alias": "request",
+            "value": {
+              "data": "$on_intercept_request.request",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Set Color",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "matches_httpql_1",
+        "definition_id": "caido/httpql-matches",
+        "display": {
+          "x": 250,
+          "y": 100
+        },
+        "id": 5,
+        "inputs": [
+          {
+            "alias": "query",
+            "value": {
+              "data": "req.raw.cont:\"Sec-Fetch-Mode: navigate\" and req.raw.cont:\"Sec-Fetch-Dest: iframe\"",
+              "kind": "string"
+            }
+          },
+          {
+            "alias": "request",
+            "value": {
+              "data": "$on_intercept_request.request",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "Matches HTTPQL 1",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "if_else_1",
+        "definition_id": "caido/if-else",
+        "display": {
+          "x": 350,
+          "y": 230
+        },
+        "id": 6,
+        "inputs": [
+          {
+            "alias": "condition",
+            "value": {
+              "data": "$matches_httpql_1.matches",
+              "kind": "ref"
+            }
+          }
+        ],
+        "name": "If/Else 1",
+        "version": "0.1.0"
+      },
+      {
+        "alias": "set_color_1",
+        "definition_id": "caido/color-set",
+        "display": {
+          "x": 330,
+          "y": 350
+        },
+        "id": 7,
+        "inputs": [
+          {
+            "alias": "request",
+            "value": {
+              "data": "$on_intercept_request.request",
+              "kind": "ref"
+            }
+          },
+          {
+            "alias": "color",
+            "value": {
+              "data": "#192841",
+              "kind": "string"
+            }
+          }
+        ],
+        "name": "Set Color 1",
+        "version": "0.1.0"
+      }
+    ]
+  },
+  "id": "72577b9a-c832-415f-add5-04c2116b22f8",
+  "kind": "passive",
+  "name": "Color Top-Level & IFrame Navigations"
+}
