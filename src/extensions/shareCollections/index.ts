@@ -126,6 +126,9 @@ const attachImportButton = () => {
     leadingIcon: "fas fa-file-import",
   });
 
+  importButton.style.float = "left";
+  importButton.style.marginRight = "1em";
+
   importButton.addEventListener("click", async () => {
     const input = document.createElement("input");
     input.type = "file";
