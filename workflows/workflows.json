@@ -147,6 +147,13 @@
       "version": "1.1",
       "author": "bebiks",
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Next_Actions_Finder.json"
+    },
+    {
+      "name": "bbReportFormatter",
+      "description": "Generate AI-power report! Requires bbRequestFormatter tool installed.",
+      "version": "1.0",
+      "author": "Rhynorater",
+      "url": "https://raw.githubusercontent.com/Rhynorater/bbReportFormatter/main/bbReportFormatter.json"
     }
   ]
 }
