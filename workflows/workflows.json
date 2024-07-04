@@ -144,7 +144,7 @@
     {
       "name": "Next-Actions Finder",
       "description": "Passive workflow that looks for Next-Action IDs",
-      "version": "1.0",
+      "version": "1.1",
       "author": "bebiks",
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Next_Actions_Finder.json"
     }
