@@ -16,7 +16,7 @@ Here's what **EvenBetter** implements:
 - ... more small tweaks that improve overall [Caido](https://github.com/caido) experience
 
 ## Sponsors
-Maintenance of Evenbetter is possible thanks to the following sponsors:
+Maintenance of EvenBetter is possible thanks to the following sponsors:
 
 <!-- sponsors --><!-- sponsors -->
 
