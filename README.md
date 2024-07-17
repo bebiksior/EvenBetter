@@ -18,7 +18,7 @@ Here's what **EvenBetter** implements:
 ## Sponsors
 Maintenance of Evenbetter is possible thanks to the following sponsors:
 
-<!-- sponsors --><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/Rhynorater"><img src="https://github.com/Rhynorater.png" width="60px" alt="Justin Gardner" /></a><!-- sponsors -->
 
 ## Installation [Recommended]
 
