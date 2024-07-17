@@ -15,6 +15,10 @@ Here's what **EvenBetter** implements:
 - **Send to Match & Replace**: custom right-click menu button that sends selected text to the Match & Replace page
 - ... more small tweaks that improve overall [Caido](https://github.com/caido) experience
 
+## Sponsors
+Maintenance of Evenbetter is possible thanks to the following sponsors:
+
+<!-- sponsors --><!-- sponsors -->
 
 ## Installation [Recommended]
 
