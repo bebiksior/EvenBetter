@@ -36,33 +36,35 @@ const createCollection = async (collectionName: string) => {
   });
 };
 
-const getRequestRawContent = async (requestID: string) => {
-  return await getCaidoAPI().graphql.request({
-    id: requestID,
-  });
-};
-
 const downloadCollection = async (collectionID: string) => {
   const collection = await getCollectionByID(collectionID);
   if (!collection) return new Error("Collection not found");
 
+  const replayEntries = [];
+
   const sessions = collection.node.sessions;
   if (sessions && sessions.length > 0) {
     for (const session of sessions) {
-      const request = session.activeEntry?.request;
-      if (!request) continue;
+      const entryID = session.activeEntry?.id;
+      if (!entryID) continue;
 
-      const requestID = request.id;
-      const requestRawContent = await getRequestRawContent(requestID);
-      if (!requestRawContent) return new Error("Request raw content not found");
+      const replayEntry = await getCaidoAPI().graphql.replayEntry({
+        id: entryID,
+      });
 
-      Object.assign(request, { raw: requestRawContent.request?.raw });
+      replayEntries.push({...replayEntry.replayEntry, name: session.name});
     }
   }
 
+  const collectionExport = {
+    name: collection.node.name,
+    replayEntries: replayEntries,
+  };
+
+
   const collectionName = collection.node.name.replaceAll(" ", "_");
 
-  downloadFile("collection_" + collectionName + ".json", JSON.stringify(collection));
+  downloadFile("collection_" + collectionName + ".json", JSON.stringify(collectionExport));
   getEvenBetterAPI().toast.showToast({
     message: "Collection downloaded successfully!",
     duration: 3000,
@@ -72,36 +74,34 @@ const downloadCollection = async (collectionID: string) => {
 };
 
 const importCollection = async (collection: any) => {
-  const collectionName = collection.node.name;
+  const collectionName = collection.name;
   const newCollection = await createCollection(collectionName);
 
   const newCollectionID =
     newCollection.createReplaySessionCollection.collection?.id;
   if (!newCollectionID) return;
 
-  const sessions = collection.node.sessions;
-  if (sessions && sessions.length > 0) {
-    for (const session of sessions) {
-      const request = session.activeEntry.request;
+  const replayEntries = collection.replayEntries;
+  if (replayEntries && replayEntries.length > 0) {
+    for (const replayEntry of replayEntries) {
       const requestRawInput: RequestRawInput = {
         connectionInfo: {
-          host: request.host,
-          port: request.port,
-          isTLS: request.isTls,
+          host: replayEntry.connection.host,
+          port: replayEntry.connection.port,
+          isTLS: replayEntry.connection.isTls,
         },
-        raw: request.raw,
+        raw: replayEntry.raw
       };
 
       const newSession = await createSession(newCollectionID, requestRawInput);
-      if (session.activeEntry.id !== collectionName) {
-        const sesionID = newSession.createReplaySession.session?.id;
-        if (!sesionID) return;
 
-        await getCaidoAPI().graphql.renameReplaySession({
-          id: sesionID,
-          name: session.name,
-        });
-      }
+      const sesionID = newSession.createReplaySession.session?.id;
+      if (!sesionID) return;
+
+      await getCaidoAPI().graphql.renameReplaySession({
+        id: sesionID,
+        name: replayEntry.name,
+      });
     }
   }
 
@@ -148,7 +148,7 @@ const attachImportButton = () => {
 
         setTimeout(() => {
           window.location.reload();
-        }, 50);
+        }, 25);
       };
     });
   });
