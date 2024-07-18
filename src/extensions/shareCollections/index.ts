@@ -5,13 +5,15 @@ import { downloadFile } from "../../utils/files";
 import { getCaidoAPI } from "../../utils/caidoapi";
 
 const getCollectionByID = async (collectionID: string) => {
-  return await getCaidoAPI().graphql.replaySessionCollections().then((data) => {
-    const collections = data.replaySessionCollections.edges;
+  return await getCaidoAPI()
+    .graphql.replaySessionCollections()
+    .then((data) => {
+      const collections = data.replaySessionCollections.edges;
 
-    return collections.find(
-      (collection) => collection.node.id === collectionID
-    );
-  });
+      return collections.find(
+        (collection) => collection.node.id === collectionID
+      );
+    });
 };
 
 const createSession = async (
@@ -52,7 +54,7 @@ const downloadCollection = async (collectionID: string) => {
         id: entryID,
       });
 
-      replayEntries.push({...replayEntry.replayEntry, name: session.name});
+      replayEntries.push({ ...replayEntry.replayEntry, name: session.name });
     }
   }
 
@@ -61,10 +63,12 @@ const downloadCollection = async (collectionID: string) => {
     replayEntries: replayEntries,
   };
 
-
   const collectionName = collection.node.name.replaceAll(" ", "_");
 
-  downloadFile("collection_" + collectionName + ".json", JSON.stringify(collectionExport));
+  downloadFile(
+    "collection_" + collectionName + ".json",
+    JSON.stringify(collectionExport)
+  );
   getEvenBetterAPI().toast.showToast({
     message: "Collection downloaded successfully!",
     duration: 3000,
@@ -90,7 +94,7 @@ const importCollection = async (collection: any) => {
           port: replayEntry.connection.port,
           isTLS: replayEntry.connection.isTls,
         },
-        raw: replayEntry.raw
+        raw: replayEntry.raw,
       };
 
       const newSession = await createSession(newCollectionID, requestRawInput);
@@ -116,6 +120,8 @@ const importCollection = async (collection: any) => {
 };
 
 const attachImportButton = () => {
+  if (document.querySelector("#import-collection")) return;
+
   const topbarLeft = document.querySelector(".c-topbar__left");
   if (!topbarLeft) return;
 
@@ -125,6 +131,8 @@ const attachImportButton = () => {
     size: "small",
     leadingIcon: "fas fa-file-import",
   });
+
+  importButton.id = "import-collection";
 
   importButton.style.float = "left";
   importButton.style.marginRight = "1em";
@@ -195,13 +203,22 @@ const attachExportButton = () => {
 
 let mutationObserver: MutationObserver;
 export const collectionsShare = () => {
+  getEvenBetterAPI().eventManager.on("onProjectChange", () => {
+    if (window.location.hash === "#/replay") {
+      attachImportButton();
+
+      setTimeout(() => {
+        attachExportButton();
+      }, 500);
+    }
+  });
+
   getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
     if (data.newUrl === "#/replay") {
       attachImportButton();
       attachExportButton();
 
-      if (mutationObserver)
-        mutationObserver.disconnect();
+      if (mutationObserver) mutationObserver.disconnect();
 
       mutationObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -213,7 +230,7 @@ export const collectionsShare = () => {
 
       const tree = document.querySelector(".c-session-list-body__tree .c-tree");
       if (!tree) return;
-      
+
       mutationObserver.observe(tree, {
         childList: true,
         subtree: true,
