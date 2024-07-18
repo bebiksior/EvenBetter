@@ -49,9 +49,7 @@ const setHTTPQLQuery = async (response: string) => {
   try {
     getCaidoAPI().navigation.goTo("/intercept");
     const editorInterval = setInterval(() => {
-      const editor = document.querySelector(
-        ".c-topbar__filter .cm-editor .cm-line"
-      );
+      const editor = document.querySelector( ".c-search-query-editor__editor .cm-line");
       if (editor) {
         editor.textContent = response;
         clearInterval(editorInterval);
