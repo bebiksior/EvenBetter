@@ -50,7 +50,7 @@ const downloadCollection = async (collectionID: string) => {
   if (sessions && sessions.length > 0) {
     for (const session of sessions) {
       const request = session.activeEntry?.request;
-      if (!request) return new Error("Request not found");
+      if (!request) continue;
 
       const requestID = request.id;
       const requestRawContent = await getRequestRawContent(requestID);
