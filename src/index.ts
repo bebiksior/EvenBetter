@@ -26,6 +26,7 @@ import "./style.css";
 import { onMARTabOpen } from "./extensions/shareMAR";
 import { EvenBetterAPI } from "@bebiks/evenbetter-api";
 import { setEvenBetterAPI } from "./utils/evenbetterapi";
+import { excludeHostPathFunctionality } from "./extensions/excludeHostPath";
 
 export const init = (caido: Caido) => {
   setCaidoAPI(caido);
@@ -98,6 +99,7 @@ export const init = (caido: Caido) => {
     showResponse();
     numbersPayload();
     sidebarTweaks();
+    excludeHostPathFunctionality();
 
     quickMatchAndReplace();
     setTimeout(

@@ -35,6 +35,11 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 3. Done! 🎉
 
 
+## Changelog v2.4.3
+- Exclude Host / Path context menu options on the HTTP History page
+- Bug fixes within **Collections Share** feature
+- Bug fixes within **Quick M&R** feature
+
 ## Changelog v2.4.2
 
 - Merged PR by Rhynorater that fixes bug in Match & Replace and adds default match -> name functionality

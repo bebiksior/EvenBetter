@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@bebiks/evenbetter-api':
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 2.1.0
+        version: 2.1.0
       '@caido/sdk-frontend':
         specifier: 0.38.0
         version: 0.38.0
@@ -42,8 +42,8 @@ importers:
 
 packages:
 
-  '@bebiks/evenbetter-api@2.0.0':
-    resolution: {integrity: sha512-jrKgHIZ6dD8xQBcK3j5fdXn3t6QlrFNvHTFWuH0NkN7BK03FSM6Xl++xqxD0NHCPNGdOefc9dVA1D358pQbDvw==}
+  '@bebiks/evenbetter-api@2.1.0':
+    resolution: {integrity: sha512-zDWeR1AuZzLXYk8H1DsnrHH9wIqgG73PnEyT7nA3G6q5hTp+IeMM+CPWxp+165XE0VKL/LGCuvVvYyV6jqoPqg==}
 
   '@caido/sdk-frontend@0.37.0':
     resolution: {integrity: sha512-+rhS7IPihH5si5+RBtT+KZiBu0kh0zWKnj6Wxx03tX5NgJv+TpVDWnSDvCxXph5rVh+HExtbVyiYEUKxyZ6nrQ==}
@@ -911,7 +911,7 @@ packages:
 
 snapshots:
 
-  '@bebiks/evenbetter-api@2.0.0':
+  '@bebiks/evenbetter-api@2.1.0':
     dependencies:
       '@caido/sdk-frontend': 0.37.0
 
