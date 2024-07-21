@@ -154,6 +154,20 @@
       "version": "1.0",
       "author": "Rhynorater",
       "url": "https://raw.githubusercontent.com/Rhynorater/bbReportFormatter/main/bbReportFormatter.json"
+    },
+    {
+      "name": "SecretSniffer",
+      "description": "Passive workflow that looks for secrets in the response",
+      "version": "1.0",
+      "author": "deathflash / OsmSec",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/SecretSniffer.json"
+    },
+    {
+      "name": "RequestTinter",
+      "description": "Applies color tints to in-scope HTTP requests, making it easier to identify them based on their method.",
+      "version": "1.0",
+      "author": "deathflash / OsmSec",
+      "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/RequestTinter.json"
     }
   ]
 }
