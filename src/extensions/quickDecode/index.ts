@@ -3,59 +3,32 @@ import { getSetting } from "../../settings";
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
 import "./quickDecode.css";
 
-let selectedLineElements: HTMLElement[] = [];
+export interface CodeMirrorEditor {
+  state: {
+    doc: {
+      lineAt: (pos: number) => {
+        number: number;
+        from: number;
+        text: string;
+      };
+    };
+    selection: {
+      main: {
+        from: number;
+        to: number;
+        head: number;
+      };
+    };
+    sliceDoc: (from: number, to: number) => string;
+  };
+  dispatch: (changes: any) => void;
+}
 
-const getLinesContainingSelection = () => {
-  let selection = window.getSelection();
-  if (!selection) {
-    return [];
-  }
-
-  if (selection.rangeCount === 0) {
-    return [];
-  }
-
-  let range = selection.getRangeAt(0);
-  let startContainer = range.startContainer;
-  let endContainer = range.endContainer;
-
-  while (
-    startContainer &&
-    startContainer.parentElement &&
-    !startContainer.parentElement.classList.contains("cm-line")
-  ) {
-    startContainer = startContainer.parentElement;
-  }
-
-  while (
-    endContainer &&
-    endContainer.parentElement &&
-    !endContainer.parentElement.classList.contains("cm-line")
-  ) {
-    endContainer = endContainer.parentElement;
-  }
-
-  if (
-    !startContainer ||
-    !startContainer.parentElement ||
-    !endContainer ||
-    !endContainer.parentElement
-  ) {
-    return [];
-  }
-
-  let selectedLines: HTMLElement[] = [];
-  let currentContainer = startContainer.parentElement;
-  while (
-    currentContainer &&
-    currentContainer !== endContainer.parentElement.nextSibling
-  ) {
-    selectedLines.push(currentContainer);
-    currentContainer = currentContainer.nextSibling as HTMLElement;
-  }
-
-  return selectedLines;
-};
+interface Selection {
+  from: number;
+  to: number;
+  text: string;
+}
 
 function unicodeEncode(str: string) {
   var encodedStr = "";
@@ -69,307 +42,350 @@ function unicodeEncode(str: string) {
   return encodedStr;
 }
 
-const attachQuickDecode = () => {
-  const sessionListBody = document.querySelector(".c-session-list-body");
-  if (!sessionListBody) return;
+class QuickDecode {
+  private HTMLElement: HTMLDivElement;
+  private textArea: HTMLTextAreaElement;
+  private selectedTextLabelDiv: HTMLDivElement;
+  private encodeMethod: string;
+  private currentText: string;
+  private editor: CodeMirrorEditor;
+  private selectionInterval: NodeJS.Timeout | null = null;
 
-  if (document.querySelector(".evenbetter__qd-body")) return;
+  constructor(editor: CodeMirrorEditor) {
+    this.editor = editor;
+    this.HTMLElement = document.createElement("div");
+    this.HTMLElement.classList.add("evenbetter__qd-body");
+    this.HTMLElement.id = "evenbetter__qd-body";
+    this.HTMLElement.style.display = "none";
 
-  const quickDecode = document.createElement("div");
-  quickDecode.classList.add("evenbetter__qd-body");
-  quickDecode.id = "evenbetter__qd-body";
-  quickDecode.style.display = "none";
 
-  quickDecode.innerHTML = ` 
-  <div class="evenbetter__qd-selected-text">
-    <div class="evenbetter__qd-selected-text-top">
-      <div class="evenbetter__qd-selected-text-label">
-        Decoded text:
-      </div>
-      <i class="c-icon fas fa-copy"></i>
-    </div>
-    <div contenteditable="plaintext-only" autocomplete="false" class="evenbetter__qd-selected-text-box"></div>
-    <div style="color: var(--c-fg-subtle);margin-top:5px;" class="evenbetter__qd-selected-text-label evenbetter__qd-selected-text-error">
-    </div>
-  </div>
-  `;
+    const resizer = document.createElement("div");
+    resizer.id = "evenbetter__qd-resizer";
 
-  const decodedTextBox = quickDecode.querySelector(
-    ".evenbetter__qd-selected-text-box"
-  ) as HTMLElement;
+    let isResizing = false;
+    let startY: number;
 
-  const copyIcon = quickDecode.querySelector(".fa-copy");
-  if (!copyIcon) return;
+    const resize = (e: MouseEvent) => {
+        if (!isResizing) return;
+        const diffY = startY - e.clientY;
+        const newHeight = Math.max(10, this.HTMLElement.offsetHeight + diffY);
+        this.HTMLElement.style.height = `${newHeight}px`;
+        startY = e.clientY; 
+    };
 
-  copyIcon.addEventListener("click", () => {
-    const decodedText = decodedTextBox.textContent;
+    const stopResize = () => {
+        isResizing = false;
+        document.removeEventListener("mousemove", resize);
+        document.removeEventListener("mouseup", stopResize);
+    };
+
+    resizer.addEventListener("mousedown", (e: MouseEvent) => {
+        isResizing = true;
+        startY = e.clientY;
+        
+        document.addEventListener("mousemove", resize);
+        document.addEventListener("mouseup", stopResize);
+    });
+
+    this.HTMLElement.appendChild(resizer);
+
+    const selectedTextDiv = document.createElement("div");
+    selectedTextDiv.classList.add("evenbetter__qd-selected-text");
+
+    const selectedTextTopDiv = document.createElement("div");
+    selectedTextTopDiv.classList.add("evenbetter__qd-selected-text-top");
+
+    this.selectedTextLabelDiv = document.createElement("div");
+    this.selectedTextLabelDiv.classList.add("evenbetter__qd-selected-text-label");
+    this.selectedTextLabelDiv.textContent = "Decoded text:";
+
+    const copyIcon = document.createElement("i");
+    copyIcon.classList.add("c-icon", "fas", "fa-copy");
+
+    selectedTextTopDiv.appendChild(this.selectedTextLabelDiv);
+    selectedTextTopDiv.appendChild(copyIcon);
+
+    this.textArea = document.createElement("textarea");
+    this.textArea.classList.add("evenbetter__qd-selected-text-box");
+    this.textArea.setAttribute("autocomplete", "false");
+    this.textArea.setAttribute("autocorrect", "off");
+    this.textArea.setAttribute("autocapitalize", "off");
+    this.textArea.setAttribute("spellcheck", "false");
+
+    selectedTextDiv.appendChild(selectedTextTopDiv);
+    selectedTextDiv.appendChild(this.textArea);
+
+    this.HTMLElement.appendChild(selectedTextDiv);
+
+    copyIcon.addEventListener("click", this.copyToClipboard.bind(this));
+    this.textArea.addEventListener("input", this.handleInput.bind(this));
+
+    this.encodeMethod = "none";
+    this.currentText = "";
+
+    this.startMonitoringSelection();
+  }
+
+  private copyToClipboard() {
+    const decodedText = this.textArea.textContent;
     if (!decodedText) return;
-
     navigator.clipboard.writeText(decodedText);
-  });
+  }
 
-  let encodeMethod = "none";
+  private handleInput(event: Event) {
+    let newContent = this.textArea.value;
 
-  decodedTextBox.addEventListener("input", (event: Event) => {
-    const inputElement = event.target as HTMLInputElement;
-
-    const previousValue = inputElement.dataset.previousValue || "";
-    let newValue = inputElement.innerText
-      .replace(/[\u2014]/g, "--")
-      .replace(/[\u2022]/g, "*")
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
-      .replace(/\u00A0/g, " ");
-
-    if (newValue === previousValue || newValue.length <= 1) return;
-
-    let linesContent = selectedLineElements
-      .map((line) => line.textContent)
-      .join("\r\n");
-
-    if (linesContent.split(previousValue).length > 2) return;
-
-    if (encodeMethod === "url") {
-      newValue = encodeURIComponent(newValue);
-    } else if (encodeMethod === "base64") {
-      newValue = btoa(newValue);
-    } else if (encodeMethod === "url+base64") {
-      newValue = encodeURIComponent(btoa(newValue));
-    } else if (encodeMethod === "unicode") {
-      newValue = unicodeEncode(newValue);
+    switch (this.encodeMethod) {
+      case "base64":
+        newContent = btoa(newContent);
+        break;
+      case "unicode":
+        newContent = newContent
+          .split("")
+          .map((char) => unicodeEncode(char))
+          .join("");
+        break;
+      case "url":
+        newContent = encodeURIComponent(newContent);
+        break;
+      case "url+base64":
+        newContent = encodeURIComponent(btoa(newContent));
+        break;
+      case "base64+url":
+        newContent = btoa(encodeURIComponent(newContent));
+        break;
     }
+    
+    this.editor.dispatch({
+      changes: [
+        {
+          from: this.editor.state.selection.main.from,
+          to: this.editor.state.selection.main.to,
+          insert: newContent,
+        },
+      ],
+    });
+  }
 
-    if (isPrettifyEnabled()) {
-      let anyLineHasInsertWidget = false;
-      selectedLineElements.forEach((line) => {
-        if (line.querySelector(".c-insert-widget")) {
-          anyLineHasInsertWidget = true;
-        }
-      });
+  public updateText(text: string) {
+    this.textArea.textContent = text;
+    this.textArea.value = text;
+    this.currentText = text;
+  }
 
-      if (anyLineHasInsertWidget) {
-        linesContent = linesContent.replace(
-          /\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/g,
-          ""
-        );
-      }
+  public updateEncodeMethod(encodeMethod?: string) {
+    this.encodeMethod = encodeMethod || "none";
+    if (encodeMethod) {
+      this.selectedTextLabelDiv.textContent = `Decoded text (${encodeMethod}):`;
+    } else {
+      this.selectedTextLabelDiv.textContent = "Decoded text:";
     }
+  }
 
-    for (let i = 1; i < selectedLineElements.length; i++) {
-      const line = selectedLineElements[i];
-      if (line) {
-        line.remove()
-      }
-    }
+  public show() {
+    this.HTMLElement.style.display = "flex";
+  }
 
-    inputElement.dataset.previousValue = newValue;
-    const oldLinesContent = linesContent;
+  public hide() {
+    this.HTMLElement.style.display = "none";
+  }
 
-    linesContent = linesContent.replace(previousValue, newValue);
-    if (linesContent.split(newValue).length > 2) {
-      linesContent = oldLinesContent;
-      inputElement.dataset.previousValue = previousValue;
-    }
+  public getElement() {
+    return this.HTMLElement;
+  }
 
-    const firstElement = selectedLineElements[0];
-    if (!firstElement) return;
+  private getCurrentSelection(): Selection {
+    const { from, to } = this.editor.state.selection.main;
+    return {
+      from,
+      to,
+      text: this.editor.state.sliceDoc(from, to),
+    };
+  }
 
-    firstElement.textContent = linesContent;
-  });
+  private startMonitoringSelection() {
+    const INTERVAL_DELAY = 50;
+    let lastSelection = this.getCurrentSelection();
 
-  document.addEventListener("selectionchange", (event) => {
-    if (
-      window.location.hash !== "#/replay" ||
-      !document.activeElement ||
-      document.activeElement.classList.contains(
-        "evenbetter__qd-selected-text-box"
-      )
-    )
-      return;
+    this.selectionInterval = setInterval(() => {
+      const newSelection = this.getCurrentSelection();
 
-    const selection = window.getSelection();
-    if (!selection) return;
-
-    const selectedText = selection
-      .toString()
-      .replaceAll("\n", "\r\n");
-
-    setTimeout(() => {
       if (
-        document.querySelector(".cm-selectionBackground") &&
-        selectedText === ""
-      )
-        return;
-
-      const decodedTextLabel = document.querySelector(
-        ".evenbetter__qd-selected-text-label"
-      );
-      if (!decodedTextLabel) return;
-
-      const textError = document.querySelector(
-        ".evenbetter__qd-selected-text-error"
-      );
-      if (!textError) return;
-
-      if (selectedText.trim() !== "") {
-        const decoded = tryToDecode(selectedText);
-        encodeMethod = decoded.encodeMethod;
-
-        selectedLineElements = [];
-        getLinesContainingSelection().forEach((line) => {
-          selectedLineElements.push(line);
-        });
-
-        decodedTextBox.dataset.previousValue = selectedText;
-        decodedTextLabel.textContent = `Decoded text (${decoded.encodeMethod}):`;
-        decodedTextBox.innerText = decoded.decodedContent;
-
-        textError.textContent = "";
-        decodedTextBox.setAttribute("contenteditable", "plaintext-only");
-        if (selectedLineElements.length > 1) {
-          textError.textContent = "Modyfing multiple lines isn't supported yet";
-          decodedTextBox.setAttribute("contenteditable", "false");
-        }
-
-        if (document.activeElement?.closest(`.c-response-body`)) {
-          decodedTextBox.setAttribute("contenteditable", "false");
-        }
-
-        quickDecode.style.display = "block";
-
-        document
-          .querySelector(`.c-send-request-button`)
-          ?.addEventListener(`click`, () => {
-            const quickDecodeBody = document.querySelector(
-              ".evenbetter__qd-body"
-            ) as HTMLElement;
-            if (!quickDecodeBody) return;
-
-            quickDecodeBody.style.display = "none";
-          });
-      } else {
-        encodeMethod = "none";
-        quickDecode.style.display = "none";
+        newSelection.from !== lastSelection.from ||
+        newSelection.to !== lastSelection.to
+      ) {
+        lastSelection = newSelection;
+        this.onSelectionChange(newSelection);
       }
-    }, 8);
-  });
+    }, INTERVAL_DELAY);
+  }
 
-  sessionListBody.appendChild(quickDecode);
-};
+  public stopMonitoringSelection() {
+    if (this.selectionInterval) {
+      clearInterval(this.selectionInterval);
+    }
+  }
 
-const isPrettifyEnabled = () => {
-  return (
-    document.querySelector(
-      `.c-request-skeleton__footer .c-pretty-button[data-is-pretty="true"]`
-    ) !== null
-  );
-};
+  private onSelectionChange(selection: Selection) {
+    if (document.activeElement === this.textArea) return;
 
-function isUrlEncoded(str: string) {
-  const urlRegex = /(%[0-9A-Fa-f]{2})+/g;
-  return urlRegex.test(str);
+    const isSelectionEmpty = selection.text === "";
+    if (isSelectionEmpty) {
+      this.hide();
+      return;
+    }
+
+    this.showQuickDecode(selection.text);
+  }
+
+  private showQuickDecode(text: string) {
+    const decoded = this.tryToDecode(text);
+    this.updateText(decoded.decodedContent);
+    this.updateEncodeMethod(decoded.encodeMethod);
+    this.show();
+  }
+
+  private isUrlEncoded(str: string) {
+    const urlRegex = /(%[0-9A-Fa-f]{2})+/g;
+    return urlRegex.test(str);
+  }
+
+  private base64Decode(input: string) {
+    let modifiedInput = input;
+
+    if (input.length % 4 === 1) {
+      modifiedInput += "=";
+    } else if (input.length % 4 === 2) {
+      modifiedInput += "==";
+    }
+
+    const base64Regex =
+      /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+
+    if (base64Regex.test(modifiedInput)) {
+      try {
+        const decodedBase64 = atob(modifiedInput);
+        return { encodeMethod: "base64", decodedContent: decodedBase64 };
+      } catch (error) {
+        return { encodeMethod: "none", decodedContent: input };
+      }
+    }
+
+    return { encodeMethod: "none", decodedContent: input };
+  }
+
+  private tryToDecode(input: string) {
+    const base64Decoded = this.base64Decode(input);
+    if (base64Decoded.encodeMethod !== "none") {
+      if (this.isUrlEncoded(base64Decoded.decodedContent)) {
+        try {
+          const decodedUrl = decodeURIComponent(base64Decoded.decodedContent);
+          return {
+            encodeMethod: "base64+url",
+            decodedContent: decodedUrl,
+          };
+        } catch (error) {
+          return base64Decoded;
+        }
+      }
+
+      return base64Decoded;
+    }
+
+    const unicodeRegex = /\\u([0-9a-fA-F]{4})/g;
+    if (unicodeRegex.test(input)) {
+      try {
+        const decodedUnicode = input.replace(unicodeRegex, (_, code) =>
+          String.fromCharCode(parseInt(code, 16))
+        );
+
+        return { encodeMethod: "unicode", decodedContent: decodedUnicode };
+      } catch (error) {
+        return { encodeMethod: "none", decodedContent: input };
+      }
+    }
+
+    if (this.isUrlEncoded(input)) {
+      try {
+        const decodedUrl = decodeURIComponent(input);
+
+        const base64Decoded = this.base64Decode(decodedUrl);
+        if (base64Decoded.encodeMethod !== "none" && input.length > 8) {
+          return {
+            encodeMethod: "url+base64",
+            decodedContent: base64Decoded.decodedContent,
+          };
+        }
+
+        return { encodeMethod: "url", decodedContent: decodedUrl };
+      } catch (error) {
+        return { encodeMethod: "none", decodedContent: input };
+      }
+    }
+
+    return { encodeMethod: "none", decodedContent: input };
+  }
 }
 
-const decodeOnHover = () => {
-  const codeLines = document.querySelectorAll(".cm-line");
-  codeLines.forEach((line) => {
-    if (line.getAttribute("evenbetter-hover-tooltip")) return;
+class QuickDecodeManager {
+  private quickDecodes: QuickDecode[] = [];
 
-    line.setAttribute("evenbetter-hover-tooltip", "true");
-    line.addEventListener("mouseover", (e) => {
-      const target = e.target as HTMLElement;
-      const textContent = target.textContent;
-      if (!textContent) return;
+  constructor() {}
 
-      if (isUrlEncoded(textContent)) {
-        try {
-          const decodedText = decodeURIComponent(textContent);
-          line.setAttribute("title", decodedText);
-        } catch (error) {}
+  private attachQuickDecode(editor: CodeMirrorEditor) {
+    if (document.getElementById("evenbetter__qd-body")) return;
+
+    const sessionListBody = document.querySelector(".c-session-list-body");
+    if (!sessionListBody) return;
+
+    const quickDecode = new QuickDecode(editor);
+    this.quickDecodes.push(quickDecode);
+    sessionListBody.appendChild(quickDecode.getElement());
+  }
+
+  public init() {
+    const MAX_ATTEMPTS = 80;
+    const INTERVAL_DELAY = 25;
+
+    if (getSetting("quickDecode") !== "true") return;
+
+    getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+      if (data.newUrl === "#/replay") {
+        let attemptCount = 0;
+        const interval = setInterval(() => {
+          attemptCount++;
+          if (attemptCount > MAX_ATTEMPTS) {
+            console.error("Could not find editors");
+            clearInterval(interval);
+            return;
+          }
+
+          const editors = document.querySelectorAll(".cm-editor .cm-content");
+
+          if (!editors) return;
+          clearInterval(interval);
+
+          editors.forEach((editor) => {
+            const codeMirrorEditor = (editor as any)?.cmView
+              ?.view as CodeMirrorEditor;
+
+            this.attachQuickDecode(codeMirrorEditor);
+          });
+        }, INTERVAL_DELAY);
       }
     });
-    line.addEventListener("mouseout", () => line.removeAttribute("title"));
-  });
-};
-
-const base64Decode = (input: string) => {
-  let modifiedInput = input;
-
-  if (input.length % 4 === 1) {
-    modifiedInput += "=";
-  } else if (input.length % 4 === 2) {
-    modifiedInput += "==";
   }
 
-  const base64Regex =
-    /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
-
-  if (base64Regex.test(modifiedInput)) {
-    try {
-      const decodedBase64 = atob(modifiedInput);
-      return { encodeMethod: "base64", decodedContent: decodedBase64 };
-    } catch (error) {
-      return { encodeMethod: "none", decodedContent: input };
-    }
+  public cleanup() {
+    this.quickDecodes.forEach(qd => qd.stopMonitoringSelection());
+    this.quickDecodes = [];
   }
+}
 
-  return { encodeMethod: "none", decodedContent: input };
-};
-
-const tryToDecode = (input: string) => {
-  const base64Decoded = base64Decode(input);
-  if (base64Decoded.encodeMethod !== "none") {
-    return base64Decoded;
+let manager: QuickDecodeManager;
+export const quickDecodeInit = () => {
+  if (!manager) {
+    manager = new QuickDecodeManager();
+    manager.init();
   }
-
-  const unicodeRegex = /\\u([0-9a-fA-F]{4})/g;
-  if (unicodeRegex.test(input)) {
-    try {
-      const decodedUnicode = input.replace(unicodeRegex, (_, code) =>
-        String.fromCharCode(parseInt(code, 16))
-      );
-
-      return { encodeMethod: "unicode", decodedContent: decodedUnicode };
-    } catch (error) {
-      return { encodeMethod: "none", decodedContent: input };
-    }
-  }
-
-  if (isUrlEncoded(input)) {
-    try {
-      const decodedUrl = decodeURIComponent(input);
-
-      const base64Decoded = base64Decode(decodedUrl);
-      if (base64Decoded.encodeMethod !== "none" && input.length > 8) {
-        return {
-          encodeMethod: "url+base64",
-          decodedContent: base64Decoded.decodedContent,
-        };
-      }
-
-      return { encodeMethod: "url", decodedContent: decodedUrl };
-    } catch (error) {
-      return { encodeMethod: "none", decodedContent: input };
-    }
-  }
-
-  return { encodeMethod: "none", decodedContent: input };
-};
-
-export const quickDecode = () => {
-  if (getSetting("quickDecode") !== "true") return;
-
-  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
-    if (data.newUrl === "#/replay") {
-      attachQuickDecode();
-
-      setTimeout(() => {
-        const editor = document.querySelector(".cm-editor");
-        if (!editor) return;
-
-        editor.addEventListener("input", decodeOnHover);
-        decodeOnHover();
-      }, 500);
-    }
-  });
 };

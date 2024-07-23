@@ -5,7 +5,7 @@ import { sidebarTweaks } from "./extensions/sidebarTweaks";
 import { CURRENT_VERSION } from "./settings/constants";
 import log from "./utils/Logger";
 import { quickMatchAndReplace } from "./extensions/quickMAR";
-import { quickDecode } from "./extensions/quickDecode";
+import { quickDecodeInit } from "./extensions/quickDecode";
 import { dropdownTweaks } from "./extensions/dropdownTweaks";
 import { getSetting } from "./settings";
 import { loadTheme } from "./appearance/themes";
@@ -92,7 +92,7 @@ export const init = (caido: Caido) => {
     onScopeTabOpen();
     onMARTabOpen();
     extendedCommands();
-    quickDecode();
+    quickDecodeInit();
     dropdownTweaks();
     dropAllButtonFeature();
     collectionsShare();
