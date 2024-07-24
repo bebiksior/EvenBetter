@@ -1,7 +1,7 @@
 {
   "id": "evenbetter",
   "name": "EvenBetter",
-  "version": "2.4.3",
+  "version": "2.5.0",
   "description": "Collection of tweaks and enhancements for Caido :D",
   "author": {
     "name": "bebiks",
@@ -11,10 +11,20 @@
   "plugins": [
     {
       "kind": "frontend",
-      "id": "evenbetter",
-      "name": "EvenBetter",
+      "id": "evenbetter-frontend",
+      "name": "EvenBetter: Frontend",
       "entrypoint": "frontend/script.js",
-      "style": "frontend/style.css"
+      "style": "frontend/style.css",
+      "backend": {
+        "id": "evenbetter-backend"
+      }
+    },
+    {
+      "kind": "backend",
+      "id": "evenbetter-backend",
+      "name": "EvenBetter: Backend",
+      "runtime": "javascript",
+      "entrypoint": "backend/script.js"
     }
   ]
 }

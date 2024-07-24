@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "lib": ["ESNext"],
 
     "jsx": "preserve",
     "noImplicitAny": true,
@@ -19,6 +20,5 @@
     "isolatedModules": true,
 
     "baseUrl": "."
-  },
-  "include": ["./src/**/*.ts"]
+  }
 }

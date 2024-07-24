@@ -49,12 +49,10 @@ class QuickDecode {
   private textArea: HTMLTextAreaElement;
   private encodeMethodSelect: HTMLSelectElement;
   private encodeMethod: string;
-  private editors: CodeMirrorEditor[];
   private activeEditor: CodeMirrorEditor | undefined = undefined;
-  private selectionInterval: NodeJS.Timeout | null = null;
+  private selectionInterval: number | undefined;
 
-  constructor(editors: CodeMirrorEditor[]) {
-    this.editors = editors;
+  constructor() {
     this.HTMLElement = document.createElement("div");
     this.HTMLElement.classList.add("evenbetter__qd-body");
     this.HTMLElement.id = "evenbetter__qd-body";
@@ -215,9 +213,13 @@ class QuickDecode {
   }
 
   private getActiveEditor() {
-    return this.editors.find((editor) => {
-      return editor.contentDOM.contains(document.activeElement);
-    });
+    const activeElement = document.activeElement;
+    if (!activeElement) return;
+
+    const cmContent = activeElement.closest(".cm-content");
+    if (!cmContent) return;
+
+    return (cmContent as any)?.cmView?.view as CodeMirrorEditor
   }
 
   private getCurrentSelection(): Selection {
@@ -273,6 +275,10 @@ class QuickDecode {
 
   private onSelectionChange(selection: Selection) {
     if (this.isMouseOver(this.HTMLElement)) return;
+
+    const contextMenu = document.querySelector(".p-contextmenu");
+    if (contextMenu)
+      if (this.isMouseOver(contextMenu as HTMLElement)) return;
 
     const isSelectionEmpty = selection.text === "";
     if (isSelectionEmpty) {
@@ -391,18 +397,15 @@ class QuickDecode {
 }
 
 class QuickDecodeManager {
-  private quickDecodes: QuickDecode[] = [];
-
   constructor() {}
 
-  private attachQuickDecode(editors: CodeMirrorEditor[]) {
+  private attachQuickDecode() {
     if (document.getElementById("evenbetter__qd-body")) return;
 
     const sessionListBody = document.querySelector(".c-session-list-body");
     if (!sessionListBody) return;
 
-    const quickDecode = new QuickDecode(editors);
-    this.quickDecodes.push(quickDecode);
+    const quickDecode = new QuickDecode();
     sessionListBody.appendChild(quickDecode.getElement());
   }
 
@@ -423,14 +426,10 @@ class QuickDecodeManager {
         }
 
         const editors = document.querySelectorAll(".cm-editor .cm-content");
-
         if (!editors) return;
-        clearInterval(interval);
 
-        const codeMirrorEditors = Array.from(editors).map(
-          (editor) => (editor as any)?.cmView?.view as CodeMirrorEditor
-        );
-        this.attachQuickDecode(codeMirrorEditors);
+        clearInterval(interval);
+        this.attachQuickDecode();
       }, INTERVAL_DELAY);
     };
 
@@ -442,11 +441,6 @@ class QuickDecodeManager {
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (window.location.hash === "#/replay") attach();
     });
-  }
-
-  public cleanup() {
-    this.quickDecodes.forEach((qd) => qd.stopMonitoringSelection());
-    this.quickDecodes = [];
   }
 }
 

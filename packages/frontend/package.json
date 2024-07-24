@@ -1,0 +1,28 @@
+{
+  "name": "evenbetter-frontend",
+  "version": "2.5.0",
+  "description": "EvenBetter is a frontend Caido plugin that makes the Caido experience even better 😎",
+  "author": "bebiks <bebiks@cvssadvisor.com>",
+  "license": "CC0-1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@bebiks/evenbetter-api": "^2.3.0",
+    "@caido/sdk-frontend": "^0.39.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "path": "^0.12.7",
+    "typescript": "5.4.3",
+    "vite": "5.2.7",
+    "vite-plugin-css": "^1.0.4",
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-static-copy": "1.0.3",
+    "vite-plugin-zip-pack": "1.2.3",
+    "@caido/sdk-backend": "0.39.0",
+    "evenbetter-backend": "workspace:*"
+  }
+}

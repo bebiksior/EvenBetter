@@ -13,6 +13,14 @@
   --c-table-background: #222222 !important;
 }  
 
+.c-intercept-header__body .p-button {
+  background-color: var(--c-bg-default) !important;
+}
+
+.p-togglebutton.p-highlight .p-button:before {
+  background-color: var(--c-bg-default) !important;
+}
+
 .p-dropdown {
   background-color: var(--c-bg-default) !important;
 }

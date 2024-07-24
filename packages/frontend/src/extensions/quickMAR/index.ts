@@ -4,11 +4,13 @@ export const quickMatchAndReplace = () => {
   getCaidoAPI().commands.register("evenbetter:quickmar", {
     name: "Send to Match & Replace",
     run: async (context) => {
-      if (context.type == "RequestContext" || context.type == "ResponseContext") {
+      if (
+        context.type == "RequestContext" ||
+        context.type == "ResponseContext"
+      ) {
         const selection = context.selection;
         sendToMatchAndReplace(selection);
       }
-      
     },
   });
 
@@ -26,6 +28,8 @@ export const quickMatchAndReplace = () => {
 };
 
 const sendToMatchAndReplace = async (selection: string) => {
+  if (!selection) return;
+
   getCaidoAPI().navigation.goTo("/tamper");
   await waitForPage();
 
@@ -49,7 +53,7 @@ const sendToMatchAndReplace = async (selection: string) => {
   let firstLine = selection.split("\n")[0];
   if (!firstLine) firstLine = selection;
 
-  firstLine = firstLine.substring(0, 50) + "...";
+  if (firstLine.length > 50) firstLine = firstLine.substring(0, 50) + "...";
 
   setValue(searchInput, selection);
   setValue(nameInput, firstLine);
