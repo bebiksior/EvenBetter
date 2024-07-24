@@ -148,7 +148,7 @@ const themes: { [key: string]: Theme } = {
     "--c-fg-subtle": "var(--c-gray-400)",
     "--selection-background": "rgba(255, 255, 255, 0.15)",
     "--selected-row-background": "var(--c-bg-default)",
-    "--c-table-background": "#0b0b0b"
+    "--c-table-background": "#0b0b0b",
   },
 };
 
@@ -160,7 +160,10 @@ const loadTheme = (name: string) => {
 
   Object.keys(theme).forEach((key) => {
     if (!key.startsWith("--")) return;
-    document.documentElement.style.setProperty(key, theme[key], "important");
+    const property = theme[key];
+    if (!property) return;
+
+    document.documentElement.style.setProperty(key, property, "important");
   });
 
   if (theme.customCSS) {

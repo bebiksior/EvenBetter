@@ -13,6 +13,10 @@
   --c-table-background: #222222 !important;
 }  
 
+.p-dropdown {
+  background-color: var(--c-bg-default) !important;
+}
+
 .c-header-cell {
   border: (--header-cell-width) solid var(--c-header-cell-border) !important;
 }
