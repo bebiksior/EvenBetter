@@ -132,8 +132,9 @@ class QuickDecode {
     navigator.clipboard.writeText(decodedText);
   }
 
-  private handleInput(event: Event) {
+  private handleInput() {
     let newContent = this.textArea.value;
+    if (newContent.length <= 0) return;
 
     switch (this.encodeMethod) {
       case "base64":
