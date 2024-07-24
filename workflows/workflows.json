@@ -8,7 +8,7 @@
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflow-PwnFox_Support.json"
     },
     {
-      "name": "CaidoReflector",
+      "name": "Reflector",
       "description": "Automatically look for paramater reflections in the HTTP response",
       "version": "1.0",
       "author": "bebiks/sw33tlie",
@@ -58,21 +58,21 @@
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/Introspection-Query.json"
     },
     {
-      "name": "Generate CSRF Poc",
+      "name": "Generate CSRF PoC",
       "description": "Generate CSRF PoC from the request.",
       "version": "1.0",
       "author": "Ry0taK",
       "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/Generate%20CSRF%20PoC/Generate%20CSRF%20PoC.json"
     },
     {
-      "name": "Form Data to JSON",
+      "name": "Form Data To JSON",
       "description": "Converts form data to JSON",
       "version": "1.0",
       "author": "Ry0taK",
       "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/Form%20Data%20To%20JSON/Form%20Data%20To%20JSON.json"
     },
     {
-      "name": "JSON to Form Data",
+      "name": "JSON To Form Data",
       "description": "Converts JSON to form data",
       "version": "1.0",
       "author": "Ry0taK",
@@ -93,14 +93,14 @@
       "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/HTML%20Encode%20Everything/HTML%20Encode%20Everything.json"
     },
     {
-      "name": "JSON escape",
+      "name": "JSON Escape",
       "description": "Escapes JSON text",
       "version": "1.0",
       "author": "Ry0taK",
       "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20Escape/JSON%20Escape.json"
     },
     {
-      "name": "JSON unescape",
+      "name": "JSON Unescape",
       "description": "Unescapes JSON text",
       "version": "1.0",
       "author": "Ry0taK",
@@ -114,14 +114,14 @@
       "url": "https://raw.githubusercontent.com/caido/workflows/main/convert/JSON%20to%20XML/JSON%20to%20XML.json"
     },
     {
-      "name": "AutoChrome Colors",
+      "name": "autochrome_colors",
       "description": "Autochrome colors support",
       "version": "1.0",
       "author": "0xrth",
       "url": "https://raw.githubusercontent.com/caido/workflows/main/passive/Autochrome_colors/autochrome_colors.json"
     },
     {
-      "name": "LinkFinder",
+      "name": "Link Finder",
       "description": "Find the paths in the In Scope response",
       "version": "1.0",
       "author": "bytehx",
@@ -135,7 +135,7 @@
       "url": "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/nowafpls___8KB.json"
     },
     {
-      "name": "Color Top Level IFrame Navigations",
+      "name": "Color Top-Level & IFrame Navigations",
       "description": "Color Top Level Navigation Workflow",
       "version": "1.0",
       "author": "Rhynorater",
