@@ -1,136 +1,73 @@
-import { getEvenBetterAPI } from "../../utils/evenbetterapi";
 import { getCaidoAPI } from "../../utils/caidoapi";
 
 export const quickMatchAndReplace = () => {
-  getEvenBetterAPI().eventManager.on("onContextMenuOpen", (element) => {
-    if (
-      !(
-        window.location.hash == "#/replay" ||
-        window.location.hash == "#/intercept"
-      )
-    )
-      return;
-
-    const selection = document.getSelection();
-    if (!selection || selection.toString().trim() == "") return;
-
-    const menu = (element as HTMLElement).querySelector("ul") as HTMLElement;
-    const dropdownItems = menu.querySelectorAll(".p-menuitem");
-    const firstItem = dropdownItems[0] as HTMLElement;
-    if (!firstItem) return;
-
-    const newItem = firstItem.cloneNode(true) as HTMLElement;
-
-    let insertBefore = dropdownItems[0];
-    for (let i = 0; i < dropdownItems.length; i++) {
-      const item = dropdownItems[i];
-      if (!item) continue;
-
-      if (
-        item.querySelector(".c-context-menu__content")?.textContent ==
-        "Send to Automate"
-      ) {
-        insertBefore = item;
-        break;
+  getCaidoAPI().commands.register("evenbetter:quickmar", {
+    name: "Send to Match & Replace",
+    run: async (context) => {
+      if (context.type == "RequestContext" || context.type == "ResponseContext") {
+        const selection = context.selection;
+        sendToMatchAndReplace(selection);
       }
-    }
-
-    const contextMenuContent = newItem.querySelector(
-      ".c-context-menu__content"
-    );
-    if (!contextMenuContent) return;
-
-    contextMenuContent.textContent = "Send to Match & Replace";
-    newItem.querySelector(".c-context-menu__leading-visual")?.remove();
-    newItem.querySelector(".c-context-menu__trailing-visual")?.remove();
-    newItem.classList.remove("p-focus");
-
-    newItem.addEventListener("mouseenter", () => {
-      menu.childNodes.forEach((item: ChildNode) => {
-        const element = item as HTMLElement;
-
-        if (
-          element.nodeName == "#text" ||
-          !element.classList ||
-          !element.classList.contains("p-focus")
-        )
-          return;
-
-        element.classList.remove("p-focus");
-        element.classList.remove("p-menuitem-active");
-        element.classList.remove("p-highlight");
-
-        const subMenu = element.querySelector("ul");
-        if (subMenu) {
-          subMenu.style.display = "none";
-
-          element.addEventListener(
-            "mouseenter",
-            () => {
-              subMenu.style.display = "block";
-              element.classList.add("p-focus");
-              element.classList.add("p-menuitem-active");
-              element.classList.add("p-highlight");
-            },
-            { once: true }
-          );
-        }
-      });
-
-      newItem.classList.add("p-focus");
-    });
-
-    newItem.addEventListener("mouseleave", () => {
-      newItem.classList.remove("p-focus");
-    });
-
-    newItem.addEventListener("click", async () => {
-      const textToUse = getCaidoAPI()
-        .window.getActiveEditor()
-        ?.getSelectedText();
-      if (!textToUse) return;
-
-      getCaidoAPI().navigation.goTo("/tamper");
-      await waitForPage();
-
-      const newRuleButton = document.querySelector(
-        ".c-rule-list-header__new button"
-      ) as HTMLButtonElement;
-      if (!newRuleButton) return;
-
-      newRuleButton.click();
-      await waitForFormUpdate();
-
-      const searchInput = document.querySelector(
-        ".c-tamper textarea"
-      ) as HTMLInputElement;
-      const nameInput = document.querySelector(
-        ".c-rule-form-update__name input"
-      ) as HTMLInputElement;
-
-      if (!searchInput || !nameInput) return;
-
-      let firstLine = textToUse.split("\n")[0];
-      if (!firstLine) firstLine = textToUse;
-
-      setValue(searchInput, textToUse);
-      setValue(nameInput, firstLine);
-
-      setTimeout(() => {
-        const saveButton = document.querySelector(
-          ".c-rule-form-update__save button"
-        ) as HTMLButtonElement;
-        if (!saveButton) return;
-
-        saveButton.click();
-      }, 25);
       
-
-      menu.remove();
-    });
-
-    if (insertBefore) menu.insertBefore(newItem, insertBefore.nextSibling);
+    },
   });
+
+  getCaidoAPI().menu.registerItem({
+    commandId: "evenbetter:quickmar",
+    leadingIcon: "fas fa-wrench",
+    type: "Request",
+  });
+
+  getCaidoAPI().menu.registerItem({
+    commandId: "evenbetter:quickmar",
+    leadingIcon: "fas fa-wrench",
+    type: "Response",
+  });
+};
+
+const sendToMatchAndReplace = async (selection: string) => {
+  getCaidoAPI().navigation.goTo("/tamper");
+  await waitForPage();
+
+  const newRuleButton = document.querySelector(
+    ".c-rule-list-header__new button"
+  ) as HTMLButtonElement;
+  if (!newRuleButton) return;
+
+  newRuleButton.click();
+  await waitForFormUpdate();
+
+  const searchInput = document.querySelector(
+    ".c-tamper textarea"
+  ) as HTMLInputElement;
+  const nameInput = document.querySelector(
+    ".c-rule-form-update__name input"
+  ) as HTMLInputElement;
+
+  if (!searchInput || !nameInput) return;
+
+  let firstLine = selection.split("\n")[0];
+  if (!firstLine) firstLine = selection;
+
+  firstLine = firstLine.substring(0, 50) + "...";
+
+  setValue(searchInput, selection);
+  setValue(nameInput, firstLine);
+
+  const saveButton = document.querySelector(
+    ".c-rule-form-update__save button"
+  ) as HTMLButtonElement;
+
+  let interval = setInterval(() => {
+    if (saveButton.disabled) return;
+
+    clearInterval(interval);
+    saveButton.click();
+  }, 25);
+
+  setTimeout(() => {
+    if (interval) clearInterval(interval);
+  }, 100);
 };
 
 const waitForPage = async () => {
@@ -153,9 +90,9 @@ const waitForFormUpdate = async () => {
   }
 
   return waitForFormUpdate();
-}
+};
 
-function setValue(element: HTMLInputElement, text: string) {
+const setValue = (element: HTMLInputElement, text: string) => {
   const previousFocus = document.activeElement as HTMLElement;
   element.focus();
 
@@ -178,4 +115,4 @@ function setValue(element: HTMLInputElement, text: string) {
   element.dispatchEvent(changeEvent);
 
   previousFocus?.focus();
-}
+};
