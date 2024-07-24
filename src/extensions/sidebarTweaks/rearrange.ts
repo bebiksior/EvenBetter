@@ -108,27 +108,29 @@ const moveGroup = (group: Element, direction: "up" | "down") => {
     (direction === "up" && index > 0) ||
     (direction === "down" && index < parentElement.children.length - 1)
   ) {
-    isMoving = true;
     const newIndex = direction === "up" ? index - 1 : index + 1;
-    if (newIndex == 0) {
-      isMoving = false;
-      return;
-    }
 
-    const referenceNode =
+    let referenceNode =
       parentElement.children[newIndex + (direction === "up" ? 0 : 1)];
 
     if (
       referenceNode &&
       referenceNode.classList.contains("c-sidebar__toggle-wrapper")
-    )
-      if (direction === "up") parentElement.prepend(group);
+    ) {
+      if (direction === "up" && !referenceNode.classList.contains("c-sidebar-group")) {
+        referenceNode = parentElement.children[newIndex - 1];
+        if (!referenceNode) return;
+      }
+      
+      if (direction === "up") parentElement.append(referenceNode);
       else parentElement.insertBefore(group, referenceNode.nextSibling);
-    else if (referenceNode) parentElement.insertBefore(group, referenceNode);
-    else parentElement.appendChild(group);
+    } else if (referenceNode) {
+      parentElement.insertBefore(group, referenceNode);
+    } else {
+      parentElement.appendChild(group);
+    }
 
     storeSidebarGroupPositions();
-    isMoving = false;
   }
 };
 
@@ -176,6 +178,8 @@ export const restoreGroupPosition = (groupName: string) => {
 
     if (name === groupName) {
       const position = getGroupStoredPosition(groupName);
+      if(position === null) return;
+      
       const element = parentElement.children[Number(position)];
       if (element) parentElement.insertBefore(group, element);
     }
