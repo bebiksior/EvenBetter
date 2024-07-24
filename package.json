@@ -1,6 +1,6 @@
 {
   "name": "evenbetter",
-  "version": "2.5.0",
+  "version": "2.4.3",
   "description": "EvenBetter is a frontend Caido plugin that makes the Caido experience even better 😎",
   "author": "bebiks <bebiks@cvssadvisor.com>",
   "license": "CC0-1.0",
@@ -10,8 +10,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@bebiks/evenbetter-api": "2.2.0",
-    "@caido/sdk-frontend": "0.39.0"
+    "@bebiks/evenbetter-api": "2.1.0",
+    "@caido/sdk-frontend": "0.38.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
