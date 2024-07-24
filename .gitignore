@@ -4,3 +4,4 @@ test
 .DS_Store
 bun.lockb
 dist
+pnpm-lock.yaml
