@@ -160,6 +160,8 @@ export const restoreSidebarGroupPositions = () => {
     if (!groupName) return;
 
     const position = getGroupStoredPosition(groupName);
+    if (position == null) return;
+    
     const element = parentElement.children[Number(position)];
     if (element) parentElement.insertBefore(group, element);
   });
@@ -178,7 +180,7 @@ export const restoreGroupPosition = (groupName: string) => {
 
     if (name === groupName) {
       const position = getGroupStoredPosition(groupName);
-      if(position === null) return;
+      if(position == null) return;
       
       const element = parentElement.children[Number(position)];
       if (element) parentElement.insertBefore(group, element);
