@@ -35,28 +35,9 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 3. Done! 🎉
 
 
-## Changelog v2.4.3
-- Exclude Host / Path context menu options on the HTTP History page
-- Bug fixes within **Collections Share** feature
-- Bug fixes within **Quick M&R** feature
-
-## Changelog v2.4.2
-
-- Merged PR by Rhynorater that fixes bug in Match & Replace and adds default match -> name functionality
-
-## Changelog v2.4.1
-
-- Fixed reordering of the sidebar pages and removed unnecessary `setTimeout` which should prevent flickering on startup
-
-## Changelog v2.4
-
-- Moved to the new Caido plugin system! 🎉
-- **Response preview:** you can now preview the response in your browser by clicking the eye icon next to the preview HTML and navigating to the copied URL
-- **Collections share:** you can now export and import collections on the Replay page
-- **Match & Replace rules share:** you can now export and import Match & Replace rules on the Match & Replace page
-- **OpenAI gpt-4o instead of Caido Assistant:** you can now use OpenAI GPT-4o instead of Caido Assistant, you have to provide your API key in the EvenBetter settings
-- **Generate numbers:** you can now generate numbers on the Automate page in the "Simple List" type
-- **[BETA] private interactsh instances:** you can now use private interactsh instances on the Quick SSRF page
+## Changelog v2.5.0
+- **Quick Decode Rework**: it's now much less buggy and allows you to change the encoding type
+- **Workflow Library Improvements**: improved UI, added "Add All" button, and arrow that allows you to expand the workflow info
 
 
 ## Known issues
