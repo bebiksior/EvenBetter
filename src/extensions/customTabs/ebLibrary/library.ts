@@ -14,6 +14,83 @@ interface Workflow {
   url: string;
 }
 
+class WorkflowManager {
+  private workflows: Workflow[] = [];
+  private installedWorkflows: string[] = [];
+
+  constructor() {}
+
+  async fetchWorkflows(): Promise<void> {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflows.json?cache=" +
+        new Date().getTime()
+    );
+    const data = await response.json();
+    this.workflows = data.workflows;
+  }
+
+  async loadInstalledWorkflows(): Promise<void> {
+    this.installedWorkflows = [];
+    const workflowsResponse = await getCaidoAPI().graphql.workflows();
+    workflowsResponse.workflows.forEach((workflow) =>
+      this.installedWorkflows.push(workflow.name)
+    );
+    this.updateAddButtons();
+  }
+
+  getWorkflows(): Workflow[] {
+    return this.workflows;
+  }
+
+  isWorkflowInstalled(workflowName: string): boolean {
+    return this.installedWorkflows.includes(workflowName);
+  }
+
+  async addWorkflow(workflow: Workflow): Promise<void> {
+    const rawWorkflow = await fetch(workflow.url).then((response) =>
+      response.json()
+    );
+
+    await getCaidoAPI().graphql.createWorkflow({
+      input: {
+        definition: {
+          ...rawWorkflow,
+        },
+        global: false,
+      },
+    });
+
+    this.installedWorkflows.push(workflow.name);
+    this.updateAddButtons();
+  }
+
+  private updateAddButtons(): void {
+    const addButtons = document.querySelectorAll(
+      ".c-evenbetter_button__input"
+    ) as NodeListOf<HTMLButtonElement>;
+    addButtons.forEach((button) => {
+      const label = button.querySelector(".c-evenbetter_button__label");
+      if (!label) return;
+
+      const workflowName = button
+        .closest("tr")
+        ?.querySelector("td:nth-child(2)")?.textContent;
+      if (workflowName && this.isWorkflowInstalled(workflowName)) {
+        label.textContent = "Added";
+        label.parentElement?.setAttribute("added", "true");
+
+        button.disabled = true;
+      } else {
+        label.parentElement?.setAttribute("added", "false");
+        label.textContent = "Add";
+        button.disabled = false;
+      }
+    });
+  }
+}
+
+let workflowManager: WorkflowManager;
+
 const attachToWorkflowsNavigation = () => {
   const rootList = document.querySelector(".p-menubar-root-list");
   if (!rootList) return;
@@ -37,29 +114,34 @@ const attachToWorkflowsNavigation = () => {
   rootList.appendChild(navigationItem);
 };
 
-export const customLibraryTab = () => {
-  const libraryBody = evenBetterLibraryTab();
+export const customLibraryTab = async () => {
+  const libraryBody = await evenBetterLibraryTab();
   if (!libraryBody) return;
 
   getCaidoAPI().navigation.addPage("workflows/library", {
     body: libraryBody,
   });
 
-  getEvenBetterAPI().eventManager.on("onPageOpen", (event: PageOpenEvent) => {
-    if (
-      event.newUrl.startsWith("#/workflows/") &&
-      event.newUrl !== "#/workflows/library"
-    ) {
-      attachToWorkflowsNavigation();
-    }
-  });
+  getEvenBetterAPI().eventManager.on(
+    "onPageOpen",
+    async (event: PageOpenEvent) => {
+      setActiveSidebarItem(
+        "Workflows",
+        window.location.hash.startsWith("#/workflows/") ? "true" : "false"
+      );
 
-  getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
-    setActiveSidebarItem(
-      "Workflows",
-      window.location.hash.startsWith("#/workflows/") ? "true" : "false"
-    );
-  });
+      if (
+        event.newUrl.startsWith("#/workflows/") &&
+        event.newUrl !== "#/workflows/library"
+      ) {
+        attachToWorkflowsNavigation();
+      }
+
+      if (event.newUrl === "#/workflows/library") {
+        await workflowManager.loadInstalledWorkflows();
+      }
+    }
+  );
 };
 
 const EXPANDED_SVG = `<button class="p-row-toggler p-link" type="button" aria-expanded="true" aria-controls="pv_id_10_0_expansion" aria-label="Row Expanded" data-pc-section="rowtoggler" data-pc-group-section="rowactionbutton"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="p-icon p-row-toggler-icon" aria-hidden="true" data-pc-section="rowtogglericon"><path d="M7.01744 10.398C6.91269 10.3985 6.8089 10.378 6.71215 10.3379C6.61541 10.2977 6.52766 10.2386 6.45405 10.1641L1.13907 4.84913C1.03306 4.69404 0.985221 4.5065 1.00399 4.31958C1.02276 4.13266 1.10693 3.95838 1.24166 3.82747C1.37639 3.69655 1.55301 3.61742 1.74039 3.60402C1.92777 3.59062 2.11386 3.64382 2.26584 3.75424L7.01744 8.47394L11.769 3.75424C11.9189 3.65709 12.097 3.61306 12.2748 3.62921C12.4527 3.64535 12.6199 3.72073 12.7498 3.84328C12.8797 3.96582 12.9647 4.12842 12.9912 4.30502C13.0177 4.48162 12.9841 4.662 12.8958 4.81724L7.58083 10.1322C7.50996 10.2125 7.42344 10.2775 7.32656 10.3232C7.22968 10.3689 7.12449 10.3944 7.01744 10.398Z" fill="currentColor"></path></svg></button>`;
@@ -161,7 +243,10 @@ const workflowExpandElement = (workflow: Workflow) => {
   return tr;
 };
 
-export const evenBetterLibraryTab = () => {
+export const evenBetterLibraryTab = async () => {
+  workflowManager = new WorkflowManager();
+  await workflowManager.fetchWorkflows();
+
   const libraryColumns = [
     { name: "", width: "3em" },
     { name: "Name", width: "20em" },
@@ -251,14 +336,31 @@ export const evenBetterLibraryTab = () => {
     size: "small",
   });
 
-  addAllButton.addEventListener("click", () => {
-    const buttons = document.querySelectorAll(
-      ".c-evenbetter_button__input"
-    ) as NodeListOf<HTMLButtonElement>;
-
-    buttons.forEach((button) => {
-      button.click();
-    });
+  addAllButton.addEventListener("click", async () => {
+    let added = 0;
+    const workflows = workflowManager.getWorkflows();
+    const promises = [];
+  
+    for (const workflow of workflows) {
+      if (!workflowManager.isWorkflowInstalled(workflow.name)) {
+        const promise = workflowManager.addWorkflow(workflow).then(() => added++);
+        promises.push(promise);
+      }
+    }
+  
+    await Promise.all(promises);
+  
+    if (added === 0) {
+      getCaidoAPI().window.showToast(`No workflows to add!`, {
+        variant: "warning",
+        duration: 1500,
+      });
+    } else {
+      getCaidoAPI().window.showToast(`Added ${added} workflows successfully!`, {
+        variant: "success",
+        duration: 1500,
+      });
+    }
   });
 
   const leftDiv = document.createElement("div");
@@ -287,61 +389,52 @@ export const evenBetterLibraryTab = () => {
 
   evenBetterTab.appendChild(bodyContainer);
 
-  fetchWorkflows().then((workflows) => {
-    workflows.forEach((workflow) => {
-      const addButton = generateAddButton(workflow);
+  workflowManager.getWorkflows().forEach((workflow) => {
+    const addButton = generateAddButton(workflow);
 
-      addButton.addEventListener("click", async (event) => {
-        const target = event.target as HTMLButtonElement;
-        const url = target
-          .closest(".c-evenbetter_button")
-          ?.getAttribute("data-workflow-url");
+    addButton.addEventListener("click", async (event) => {
+      const target = event.target as HTMLButtonElement;
+      const url = target
+        .closest(".c-evenbetter_button")
+        ?.getAttribute("data-workflow-url");
 
-        if (!url) return;
+      if (!url) return;
 
-        await addWorkflow(workflow);
+      await workflowManager.addWorkflow(workflow);
+      await workflowManager.loadInstalledWorkflows();
 
-        const label = addButton.querySelector(
-          ".c-evenbetter_button__label"
-        );
-        if (!label) return;
+      const label = addButton.querySelector(".c-evenbetter_button__label");
+      if (!label) return;
 
-        label.textContent = "Added";
-
-        getEvenBetterAPI().toast.showToast({
-          message: "Workflow added successfully!",
-          type: "success",
-          duration: 1500,
-          position: "bottom",
-        });
-
-        setTimeout(() => {
-          label.textContent = "Add";
-        }, 1000);
+      getEvenBetterAPI().toast.showToast({
+        message: "Workflow added successfully!",
+        type: "success",
+        duration: 1500,
+        position: "bottom",
       });
-
-      libraryTable.addRow([
-        { columnName: "", value: expandArrowElement(workflow) },
-        { columnName: "Name", value: workflow.name },
-        {
-          columnName: "Description",
-          value: workflow.description,
-        },
-        {
-          columnName: "Version",
-          value: workflow.version,
-        },
-        {
-          columnName: "Author",
-          value: workflow.author,
-        },
-        {
-          columnName: "OS",
-          value: workflow.os || "All",
-        },
-        { columnName: "Actions", value: addButton },
-      ]);
     });
+
+    libraryTable.addRow([
+      { columnName: "", value: expandArrowElement(workflow) },
+      { columnName: "Name", value: workflow.name },
+      {
+        columnName: "Description",
+        value: workflow.description,
+      },
+      {
+        columnName: "Version",
+        value: workflow.version,
+      },
+      {
+        columnName: "Author",
+        value: workflow.author,
+      },
+      {
+        columnName: "OS",
+        value: workflow.os || "All",
+      },
+      { columnName: "Actions", value: addButton },
+    ]);
   });
 
   evenBetterLibrary.appendChild(libraryTable.getHTMLElement());
@@ -371,28 +464,4 @@ const generateAddButton = (workflow: Workflow) => {
           </div>`;
 
   return actionsButton;
-};
-
-const fetchWorkflows = async (): Promise<Workflow[]> => {
-  const response = await fetch(
-    "https://raw.githubusercontent.com/bebiksior/EvenBetter/main/workflows/workflows.json?cache=" +
-      new Date().getTime()
-  );
-  const data = await response.json();
-  return data.workflows;
-};
-
-const addWorkflow = async (workflow: Workflow) => {
-  const rawWorkflow = await fetch(workflow.url).then((response) =>
-    response.json()
-  );
-
-  getCaidoAPI().graphql.createWorkflow({
-    input: {
-      definition: {
-        ...rawWorkflow,
-      },
-      global: false,
-    },
-  });
 };

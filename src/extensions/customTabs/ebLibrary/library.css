@@ -82,6 +82,11 @@
   color: var(--c-gray-900) !important;
 }
 
+[data-outline=true][data-variant=secondary] .c-evenbetter_button__input[added=true] {
+  border: var(--c-border-width-2) solid #737373;
+  color: #737373;
+}
+
 [data-block="true"] .c-evenbetter_button__input {
   width: 100%;
 }
