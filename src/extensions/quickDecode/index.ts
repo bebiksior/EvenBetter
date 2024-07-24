@@ -5,6 +5,7 @@ import "./quickDecode.css";
 
 export interface CodeMirrorEditor {
   state: {
+    readOnly: boolean;
     doc: {
       lineAt: (pos: number) => {
         number: number;
@@ -21,6 +22,7 @@ export interface CodeMirrorEditor {
     };
     sliceDoc: (from: number, to: number) => string;
   };
+  contentDOM: HTMLElement;
   dispatch: (changes: any) => void;
 }
 
@@ -45,19 +47,18 @@ function unicodeEncode(str: string) {
 class QuickDecode {
   private HTMLElement: HTMLDivElement;
   private textArea: HTMLTextAreaElement;
-  private selectedTextLabelDiv: HTMLDivElement;
+  private encodeMethodSelect: HTMLSelectElement;
   private encodeMethod: string;
-  private currentText: string;
-  private editor: CodeMirrorEditor;
+  private editors: CodeMirrorEditor[];
+  private activeEditor: CodeMirrorEditor | undefined = undefined;
   private selectionInterval: NodeJS.Timeout | null = null;
 
-  constructor(editor: CodeMirrorEditor) {
-    this.editor = editor;
+  constructor(editors: CodeMirrorEditor[]) {
+    this.editors = editors;
     this.HTMLElement = document.createElement("div");
     this.HTMLElement.classList.add("evenbetter__qd-body");
     this.HTMLElement.id = "evenbetter__qd-body";
     this.HTMLElement.style.display = "none";
-
 
     const resizer = document.createElement("div");
     resizer.id = "evenbetter__qd-resizer";
@@ -66,25 +67,25 @@ class QuickDecode {
     let startY: number;
 
     const resize = (e: MouseEvent) => {
-        if (!isResizing) return;
-        const diffY = startY - e.clientY;
-        const newHeight = Math.max(10, this.HTMLElement.offsetHeight + diffY);
-        this.HTMLElement.style.height = `${newHeight}px`;
-        startY = e.clientY; 
+      if (!isResizing) return;
+      const diffY = startY - e.clientY;
+      const newHeight = Math.max(10, this.HTMLElement.offsetHeight + diffY);
+      this.HTMLElement.style.height = `${newHeight}px`;
+      startY = e.clientY;
     };
 
     const stopResize = () => {
-        isResizing = false;
-        document.removeEventListener("mousemove", resize);
-        document.removeEventListener("mouseup", stopResize);
+      isResizing = false;
+      document.removeEventListener("mousemove", resize);
+      document.removeEventListener("mouseup", stopResize);
     };
 
     resizer.addEventListener("mousedown", (e: MouseEvent) => {
-        isResizing = true;
-        startY = e.clientY;
-        
-        document.addEventListener("mousemove", resize);
-        document.addEventListener("mouseup", stopResize);
+      isResizing = true;
+      startY = e.clientY;
+
+      document.addEventListener("mousemove", resize);
+      document.addEventListener("mouseup", stopResize);
     });
 
     this.HTMLElement.appendChild(resizer);
@@ -95,14 +96,32 @@ class QuickDecode {
     const selectedTextTopDiv = document.createElement("div");
     selectedTextTopDiv.classList.add("evenbetter__qd-selected-text-top");
 
-    this.selectedTextLabelDiv = document.createElement("div");
-    this.selectedTextLabelDiv.classList.add("evenbetter__qd-selected-text-label");
-    this.selectedTextLabelDiv.textContent = "Decoded text:";
+    const encodingMethodSelect =
+      getEvenBetterAPI().components.createSelectInput([
+        { value: "none", label: "None" },
+        { value: "base64", label: "Base64" },
+        { value: "unicode", label: "Unicode" },
+        { value: "url", label: "URL" },
+        { value: "url+base64", label: "URL + Base64" },
+        { value: "base64+url", label: "Base64 + URL" },
+      ]);
+
+    encodingMethodSelect.style.width = "150px";
+    encodingMethodSelect.style.height = "25px";
+    encodingMethodSelect.style.borderRadius = "5px !important";
+
+    encodingMethodSelect.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      this.encodeMethod = target.value;
+      this.handleInput();
+    });
+
+    this.encodeMethodSelect = encodingMethodSelect;
 
     const copyIcon = document.createElement("i");
     copyIcon.classList.add("c-icon", "fas", "fa-copy");
 
-    selectedTextTopDiv.appendChild(this.selectedTextLabelDiv);
+    selectedTextTopDiv.appendChild(encodingMethodSelect);
     selectedTextTopDiv.appendChild(copyIcon);
 
     this.textArea = document.createElement("textarea");
@@ -121,7 +140,6 @@ class QuickDecode {
     this.textArea.addEventListener("input", this.handleInput.bind(this));
 
     this.encodeMethod = "none";
-    this.currentText = "";
 
     this.startMonitoringSelection();
   }
@@ -135,6 +153,8 @@ class QuickDecode {
   private handleInput() {
     let newContent = this.textArea.value;
     if (newContent.length <= 0) return;
+
+    if (!this.activeEditor || this.activeEditor.state.readOnly) return;
 
     switch (this.encodeMethod) {
       case "base64":
@@ -156,12 +176,12 @@ class QuickDecode {
         newContent = btoa(encodeURIComponent(newContent));
         break;
     }
-    
-    this.editor.dispatch({
+
+    this.activeEditor.dispatch({
       changes: [
         {
-          from: this.editor.state.selection.main.from,
-          to: this.editor.state.selection.main.to,
+          from: this.activeEditor.state.selection.main.from,
+          to: this.activeEditor.state.selection.main.to,
           insert: newContent,
         },
       ],
@@ -171,15 +191,14 @@ class QuickDecode {
   public updateText(text: string) {
     this.textArea.textContent = text;
     this.textArea.value = text;
-    this.currentText = text;
   }
 
   public updateEncodeMethod(encodeMethod?: string) {
     this.encodeMethod = encodeMethod || "none";
     if (encodeMethod) {
-      this.selectedTextLabelDiv.textContent = `Decoded text (${encodeMethod}):`;
+      this.encodeMethodSelect.value = encodeMethod;
     } else {
-      this.selectedTextLabelDiv.textContent = "Decoded text:";
+      this.encodeMethodSelect.value = "none";
     }
   }
 
@@ -195,12 +214,27 @@ class QuickDecode {
     return this.HTMLElement;
   }
 
+  private getActiveEditor() {
+    return this.editors.find((editor) => {
+      return editor.contentDOM.contains(document.activeElement);
+    });
+  }
+
   private getCurrentSelection(): Selection {
-    const { from, to } = this.editor.state.selection.main;
+    const activeEditor = this.getActiveEditor();
+    if (!activeEditor) {
+      return {
+        from: 0,
+        to: 0,
+        text: "",
+      };
+    }
+
+    const { from, to } = activeEditor.state.selection.main;
     return {
       from,
       to,
-      text: this.editor.state.sliceDoc(from, to),
+      text: activeEditor.state.sliceDoc(from, to),
     };
   }
 
@@ -227,14 +261,31 @@ class QuickDecode {
     }
   }
 
+  private isMouseOver(element: HTMLElement) {
+    if (!element) return false;
+    const hoverElements = document.querySelectorAll(":hover");
+    for (let i = 0; i < hoverElements.length; i++) {
+      if (hoverElements[i] === element) return true;
+    }
+
+    return false;
+  }
+
   private onSelectionChange(selection: Selection) {
-    if (document.activeElement === this.textArea) return;
+    if (this.isMouseOver(this.HTMLElement)) return;
 
     const isSelectionEmpty = selection.text === "";
     if (isSelectionEmpty) {
       this.hide();
       return;
     }
+
+    this.activeEditor = this.getActiveEditor();
+
+    if (this.activeEditor?.state.readOnly)
+      this.setReadOnly(true);
+    else 
+      this.setReadOnly(false);
 
     this.showQuickDecode(selection.text);
   }
@@ -244,6 +295,17 @@ class QuickDecode {
     this.updateText(decoded.decodedContent);
     this.updateEncodeMethod(decoded.encodeMethod);
     this.show();
+  }
+
+  private setReadOnly(readOnly: boolean) {
+    if (readOnly) {
+      this.textArea.disabled = true;
+      this.encodeMethodSelect.disabled = true;
+      this.encodeMethodSelect.value = "none";
+    } else {
+      this.textArea.disabled = false;
+      this.encodeMethodSelect.disabled = false;
+    }
   }
 
   private isUrlEncoded(str: string) {
@@ -333,13 +395,13 @@ class QuickDecodeManager {
 
   constructor() {}
 
-  private attachQuickDecode(editor: CodeMirrorEditor) {
+  private attachQuickDecode(editors: CodeMirrorEditor[]) {
     if (document.getElementById("evenbetter__qd-body")) return;
 
     const sessionListBody = document.querySelector(".c-session-list-body");
     if (!sessionListBody) return;
 
-    const quickDecode = new QuickDecode(editor);
+    const quickDecode = new QuickDecode(editors);
     this.quickDecodes.push(quickDecode);
     sessionListBody.appendChild(quickDecode.getElement());
   }
@@ -350,35 +412,40 @@ class QuickDecodeManager {
 
     if (getSetting("quickDecode") !== "true") return;
 
-    getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
-      if (data.newUrl === "#/replay") {
-        let attemptCount = 0;
-        const interval = setInterval(() => {
-          attemptCount++;
-          if (attemptCount > MAX_ATTEMPTS) {
-            console.error("Could not find editors");
-            clearInterval(interval);
-            return;
-          }
-
-          const editors = document.querySelectorAll(".cm-editor .cm-content");
-
-          if (!editors) return;
+    const attach = () => {
+      let attemptCount = 0;
+      const interval = setInterval(() => {
+        attemptCount++;
+        if (attemptCount > MAX_ATTEMPTS) {
+          console.error("Could not find editors");
           clearInterval(interval);
+          return;
+        }
 
-          editors.forEach((editor) => {
-            const codeMirrorEditor = (editor as any)?.cmView
-              ?.view as CodeMirrorEditor;
+        const editors = document.querySelectorAll(".cm-editor .cm-content");
 
-            this.attachQuickDecode(codeMirrorEditor);
-          });
-        }, INTERVAL_DELAY);
-      }
+        if (!editors) return;
+        clearInterval(interval);
+
+        const codeMirrorEditors = Array.from(editors).map(
+          (editor) => (editor as any)?.cmView?.view as CodeMirrorEditor
+        );
+        this.attachQuickDecode(codeMirrorEditors);
+      }, INTERVAL_DELAY);
+    };
+
+    getEvenBetterAPI().eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+      if (data.newUrl === "#/replay") attach();
+    });
+
+    getEvenBetterAPI().eventManager.on("onProjectChange", async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (window.location.hash === "#/replay") attach();
     });
   }
 
   public cleanup() {
-    this.quickDecodes.forEach(qd => qd.stopMonitoringSelection());
+    this.quickDecodes.forEach((qd) => qd.stopMonitoringSelection());
     this.quickDecodes = [];
   }
 }
