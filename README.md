@@ -18,7 +18,7 @@ Here's what **EvenBetter** implements:
 ## Sponsors
 Maintenance of EvenBetter is possible thanks to the following sponsors:
 
-<!-- sponsors --><a href="https://github.com/Rhynorater"><img src="https://github.com/Rhynorater.png" width="60px" alt="Justin Gardner" /></a><a href="https://github.com/projectmonke"><img src="https://github.com/projectmonke.png" width="60px" alt="Project Monke" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/Rhynorater"><img src="https:&#x2F;&#x2F;avatars.githubusercontent.com&#x2F;u&#x2F;2998191?u&#x3D;146356f1a24905faa5470e0b4ba6e1ebe0a3db42&amp;v&#x3D;4" width="60px" alt="Justin Gardner" /></a><a href="https://github.com/projectmonke"><img src="https:&#x2F;&#x2F;avatars.githubusercontent.com&#x2F;u&#x2F;132834912?u&#x3D;682428a21d3200611d5a9b34ba2d7687b52d1412&amp;v&#x3D;4" width="60px" alt="Project Monke" /></a><!-- sponsors -->
 
 ## Installation [Recommended]
 
