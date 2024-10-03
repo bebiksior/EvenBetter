@@ -91,7 +91,8 @@ export class FeatureFlagsStore {
     } catch (error: any) {
       if (
         error.code === "ENOENT" ||
-        error.message.includes("No such file or directory")
+        error.message.includes("No such file or directory") ||
+        error.message.includes("The system cannot find the file")
       ) {
         this.sdk.console.log(
           "Flags file not found. Creating a new flags file."
