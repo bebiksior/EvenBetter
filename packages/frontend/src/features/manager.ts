@@ -54,7 +54,6 @@ function initializeFeatures(
   });
 }
 
-// Load flags and run initializeFeatures on them. Then create onevent subscription to handle flag toggles.
 export const initialize = async (
   sdk: CaidoSDK,
   evenBetterAPI: EvenBetterAPI
