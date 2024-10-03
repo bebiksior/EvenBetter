@@ -6,3 +6,4 @@ import "./exclude-host-path";
 import "./quick-mar";
 import "./sidebar-tweaks";
 import "./share-scope";
+import "./share-mar";

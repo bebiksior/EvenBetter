@@ -1,5 +1,6 @@
 import { createFeature } from "@/features/manager";
 import { CaidoSDK } from "@/types";
+import { downloadFile } from "@/utils/file-utils";
 import { EvenBetterAPI } from "@bebiks/evenbetter-api";
 
 let scopeTabObserver: MutationObserver | null = null;
@@ -157,17 +158,6 @@ const attachDownloadButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   });
 
   presetCreateHeader?.appendChild(downloadButton);
-};
-
-const downloadFile = (name: string, content: string) => {
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(
-    new Blob([content], { type: "application/json" })
-  );
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
 };
 
 const getActiveScopePreset = () => {
