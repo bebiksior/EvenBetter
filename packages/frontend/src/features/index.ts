@@ -7,3 +7,4 @@ import "./quick-mar";
 import "./sidebar-tweaks";
 import "./share-scope";
 import "./share-mar";
+import "./share-replay-collections";

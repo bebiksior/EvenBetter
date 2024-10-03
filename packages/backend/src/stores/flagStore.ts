@@ -47,6 +47,12 @@ export class FeatureFlagsStore {
         kind: "frontend",
       },
       {
+        tag: "share-replay-collections",
+        description: "Export & import replay collections",
+        enabled: true,
+        kind: "frontend",
+      },
+      {
         tag: "share-mar",
         description: "Import & export Match and Replace rules",
         enabled: true,
