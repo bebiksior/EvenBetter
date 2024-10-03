@@ -1,6 +1,6 @@
 import { CaidoBackendSDK } from "@/types";
 import * as path from "path";
-import { mkdir } from "fs/promises";
+import { mkdir, stat } from "fs/promises";
 
 export async function ensureDir(
   sdk: CaidoBackendSDK,
@@ -29,4 +29,13 @@ export function fixWindowsPath(inputPath: string): string {
     return inputPath.replace(/^([a-zA-Z]:)(.*)$/, "$1\\$2");
   }
   return inputPath;
+}
+
+export async function exists(f: string): Promise<boolean> {
+  try {
+    await stat(f);
+    return true;
+  } catch {
+    return false;
+  }
 }

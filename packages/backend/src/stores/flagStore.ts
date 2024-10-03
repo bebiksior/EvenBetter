@@ -6,7 +6,7 @@ import {
 } from "@/features/manager";
 import * as path from "path";
 import { readFile, writeFile } from "fs/promises";
-import { getFlagsPath } from "@/utils/files";
+import { exists, getFlagsPath } from "@/utils/files";
 
 interface StoredFlag {
   tag: FeatureFlagTag;
@@ -92,6 +92,14 @@ export class FeatureFlagsStore {
 
   public async readFlags() {
     const flagsPath = await getFlagsPath(this.sdk);
+    const fileExists = await exists(flagsPath);
+    
+    if (!fileExists) {
+      this.sdk.console.log("Flags file not found. Creating a new flags file.");
+      const flagsPath = await this.saveFlagsToFile(this.flags);
+      this.sdk.console.log("Flags file created at " + path.resolve(flagsPath));
+    }
+
     try {
       const storedFlags: StoredFlag[] = JSON.parse(
         await readFile(flagsPath, "utf-8")
@@ -103,27 +111,7 @@ export class FeatureFlagsStore {
         }
       });
     } catch (error: any) {
-      if (
-        error.code === "ENOENT" ||
-        error.message.includes("No such file or directory") ||
-        error.message.includes("The system cannot find the file")
-      ) {
-        this.sdk.console.log(
-          "Flags file not found. Creating a new flags file."
-        );
-        const flagsPath = await this.saveFlagsToFile(this.flags);
-        this.sdk.console.log(
-          "Flags file created at " + path.resolve(flagsPath)
-        );
-      } else if (error instanceof SyntaxError) {
-        this.sdk.console.error("Error parsing flags file:" + error);
-        throw new Error(
-          "Failed to parse flags file. Please check the file format."
-        );
-      } else {
-        this.sdk.console.error("Unexpected error reading flags:" + error);
-        throw error;
-      }
+      this.sdk.console.error("Unexpected error reading flags:" + error);
     }
   }
 
