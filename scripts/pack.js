@@ -40,7 +40,7 @@ const zip = new JSZip();
 
 addDirToZip(DIST, zip);
 
-const zipPath = path.join(DIST, "plugin.zip");
+const zipPath = path.join(DIST, "plugin_package.zip");
 zip
   .generateAsync({
     type: "nodebuffer",

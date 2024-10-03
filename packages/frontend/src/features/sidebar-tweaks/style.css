@@ -1,0 +1,34 @@
+.c-sidebar-group__move-up:hover,
+.c-sidebar-group__move-down:hover {
+  cursor: pointer;
+}
+
+.c-sidebar-group__move-up,
+.c-sidebar-group__move-down {
+  opacity: 0.5;
+  z-index: 5;
+}
+
+/* Hide arrows by default */
+.c-sidebar-group__rearrange-arrows {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Show arrows on hover over the sidebar group title */
+.c-sidebar-group__title:hover .c-sidebar-group__rearrange-arrows {
+  opacity: 1;
+}
+
+.c-sidebar-group__move-up path,
+.c-sidebar-group__move-down path {
+  transition: 0.2s ease stroke;
+  stroke: var(--c-fg-subtle);
+}
+
+.c-sidebar-group__move-up:hover path,
+.c-sidebar-group__move-down:hover path {
+  stroke: #f5f5f5;
+}

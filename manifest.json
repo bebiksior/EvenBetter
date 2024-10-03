@@ -1,12 +1,12 @@
 {
   "id": "evenbetter",
   "name": "EvenBetter",
-  "version": "2.5.0",
-  "description": "Collection of tweaks and enhancements for Caido :D",
+  "version": "3.0.0",
+  "description": "Collection of tweaks and improvements for Caido",
   "author": {
     "name": "bebiks",
     "email": "bebiks@cvssadvisor.com",
-    "url": "https://github.com/bebiksior/EvenBetter"
+    "url": "https://github.com/bebiksior/evenbetter"
   },
   "plugins": [
     {

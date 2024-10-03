@@ -1,15 +1,21 @@
 {
-  "name": "evenbetter-backend",
-  "version": "2.5.0",
-  "description": "EvenBetter backend",
+  "name": "backend",
+  "version": "3.0.0",
+  "description": "EvenBetter",
   "author": "bebiks <bebiks@cvssadvisor.com>",
   "license": "CC0-1.0",
   "type": "module",
   "types": "src/index.ts",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "shared": "workspace:*"
   },
   "devDependencies": {
-    "@caido/sdk-backend": "^0.39.0"
+    "shared": "workspace:*",
+    "@caido/sdk-backend": "0.41.0",
+    "@types/node": "^22.7.4"
   }
 }
