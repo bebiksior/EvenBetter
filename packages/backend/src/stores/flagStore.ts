@@ -47,6 +47,12 @@ export class FeatureFlagsStore {
         kind: "frontend",
       },
       {
+        tag: "share-mar",
+        description: "Import & export Match and Replace rules",
+        enabled: true,
+        kind: "frontend",
+      },
+      {
         tag: "exclude-host-path",
         description:
           "Exclude Host/Path context menu buttons on the HTTP History page",
@@ -81,9 +87,11 @@ export class FeatureFlagsStore {
   public async readFlags() {
     const flagsPath = await getFlagsPath(this.sdk);
     try {
-      const storedFlags: StoredFlag[] = JSON.parse(await readFile(flagsPath, "utf-8"));
-      storedFlags.forEach(storedFlag => {
-        const flag = this.flags.find(f => f.tag === storedFlag.tag);
+      const storedFlags: StoredFlag[] = JSON.parse(
+        await readFile(flagsPath, "utf-8")
+      );
+      storedFlags.forEach((storedFlag) => {
+        const flag = this.flags.find((f) => f.tag === storedFlag.tag);
         if (flag) {
           flag.enabled = storedFlag.enabled;
         }
@@ -115,9 +123,9 @@ export class FeatureFlagsStore {
 
   private async saveFlagsToFile(flags: FeatureFlag[]): Promise<string> {
     const flagsPath = await getFlagsPath(this.sdk);
-    const storedFlags: StoredFlag[] = flags.map(flag => ({
+    const storedFlags: StoredFlag[] = flags.map((flag) => ({
       tag: flag.tag,
-      enabled: flag.enabled
+      enabled: flag.enabled,
     }));
     await writeFile(flagsPath, JSON.stringify(storedFlags, null, 2));
     return flagsPath;
