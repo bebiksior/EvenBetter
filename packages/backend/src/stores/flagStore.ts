@@ -93,7 +93,7 @@ export class FeatureFlagsStore {
   public async readFlags() {
     const flagsPath = await getFlagsPath(this.sdk);
     const fileExists = await exists(flagsPath);
-    
+
     if (!fileExists) {
       this.sdk.console.log("Flags file not found. Creating a new flags file.");
       const flagsPath = await this.saveFlagsToFile(this.flags);

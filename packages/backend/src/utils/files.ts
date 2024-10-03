@@ -7,28 +7,28 @@ export async function ensureDir(
   directory: string
 ): Promise<boolean> {
   try {
-    const dir = fixWindowsPath(path.join(sdk.meta.path(), directory));
+    const dir = pathJoin(sdk.meta.path(), directory);
     await mkdir(dir, { recursive: true });
     return true;
   } catch (e) {
     return false;
   }
 }
+// This is a temporary fix. In Caido v0.41.0 there's issue with path.join
+export function pathJoin(dir: string, file: string): string {
+  const isWindowsPath = /^[a-zA-Z]:\\/.test(dir);
+  const separator = isWindowsPath ? "\\" : "/";
+  dir = dir.replace(/[\\/]+$/, "");
+  file = file.replace(/^[\\/]+/, "");
+  return `${dir}${separator}${file}`;
+}
 
 export async function getSettingsPath(sdk: CaidoBackendSDK): Promise<string> {
-  return fixWindowsPath(path.join(sdk.meta.path(), "settings.json"));
+  return pathJoin(sdk.meta.path(), "settings.json");
 }
 
 export async function getFlagsPath(sdk: CaidoBackendSDK): Promise<string> {
-  return fixWindowsPath(path.join(sdk.meta.path(), "flags.json"));
-}
-
-// This is a temporary fix for Windows paths.
-export function fixWindowsPath(inputPath: string): string {
-  if (/^[a-zA-Z]:[^\\/]/.test(inputPath)) {
-    return inputPath.replace(/^([a-zA-Z]:)(.*)$/, "$1\\$2");
-  }
-  return inputPath;
+  return pathJoin(sdk.meta.path(), "flags.json");
 }
 
 export async function exists(f: string): Promise<boolean> {
