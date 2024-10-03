@@ -53,8 +53,8 @@ export const Settings = () => {
   };
 
   return (
-    <StyledSplitter vertical defaultSizes={[50, 50]}>
-      <StyledBox className="p-5">
+    <StyledSplitter vertical defaultSizes={[45, 55]}>
+      <StyledBox className="p-5 overflow-y-auto">
         <Typography variant="h6" gutterBottom fontWeight="bold">
           Settings
         </Typography>
@@ -90,12 +90,13 @@ export const Settings = () => {
           Note: Custom Themes are coming soon as a separate plugin.
         </Typography>
       </StyledBox>
-      <StyledBox className="p-5">
+      <StyledBox className="p-5 overflow-y-auto">
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            mb: 1,
           }}
         >
           <Typography

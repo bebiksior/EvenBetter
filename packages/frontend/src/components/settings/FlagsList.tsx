@@ -53,7 +53,7 @@ export const FlagsList = () => {
   };
 
   return (
-    <StyledBox>
+    <StyledBox className="overflow-y-auto">
       <Typography variant="h6" className="p-5" fontWeight="bold">
         Features
       </Typography>
