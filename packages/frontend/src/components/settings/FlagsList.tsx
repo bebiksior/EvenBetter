@@ -13,11 +13,14 @@ import {
   DialogContentText,
   Button,
   DialogActions,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { useFlags, useSetFlag } from "@/state/flagStore";
 import { useState } from "react";
 import { useSDK } from "@/context/SDKContext";
 import { FeatureFlagTag } from "shared";
+import InfoIcon from '@mui/icons-material/Info';
 
 export const FlagsList = () => {
   const sdk = useSDK();
@@ -70,7 +73,24 @@ export const FlagsList = () => {
         <TableBody>
           {flags.map((flag) => (
             <TableRow key={flag.tag}>
-              <TableCell>{flag.tag}</TableCell>
+              <TableCell>{flag.tag}
+                {flag.knownIssues && flag.knownIssues.length > 0 && (
+                  <Tooltip title={
+                    <div>
+                      <Typography variant="subtitle2">Known Issues:</Typography>
+                      <ul>
+                        {flag.knownIssues.length > 0 ? flag.knownIssues.map((issue, index) => (
+                          <li key={index} className="text-sm">{issue}</li>
+                        )) : "None"}
+                      </ul>
+                    </div>
+                  } arrow >
+                    <IconButton size="small">
+                      <InfoIcon color="info" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </TableCell>
               <TableCell>{flag.description}</TableCell>
               <TableCell>{flag.kind}</TableCell>
               <TableCell>{flag.requiresReload ? "Yes" : "No"}</TableCell>

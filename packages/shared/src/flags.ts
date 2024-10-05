@@ -1,5 +1,4 @@
 export type FeatureFlagTag =
-  | "sidebar-tweaks"
   | "exclude-host-path"
   | "backend-test"
   | "quick-decode"
@@ -7,6 +6,7 @@ export type FeatureFlagTag =
   | "share-scope"
   | "share-mar"
   | "share-replay-collections"
+  | "hide-sidebar-groups"
   | "quick-mar";
 
 export type FeatureFlagKind = "backend" | "frontend";
@@ -17,4 +17,5 @@ export type FeatureFlag = {
   enabled: boolean;
   kind: FeatureFlagKind;
   requiresReload?: boolean;
+  knownIssues?: string[];
 };

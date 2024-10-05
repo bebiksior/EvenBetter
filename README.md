@@ -7,7 +7,7 @@ Here's what **EvenBetter** implements:
 - **Quick Decode**: quickly decode and edit encoded values within the request body on the Replay page
 - **Font picker**: feature in the EvenBetter settings that allows you to change the font of the Caido UI.
 - **EvenBetter Settings**: customize and toggle EvenBetter features
-- **Sidebar Tweaks**: rearrange and hide sidebar pages
+- **Sidebar Tweaks**: hide sidebar pages
 - **Scope Share**: export/import scope presets
 - **Send to Match & Replace**: custom right-click menu button that sends selected text to the Match & Replace page
 - ... more small tweaks that improve overall [Caido](https://github.com/caido) experience

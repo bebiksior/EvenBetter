@@ -74,11 +74,14 @@ export class FeatureFlagsStore {
         requiresReload: true,
       },
       {
-        tag: "sidebar-tweaks",
-        description: "Rearrange or hide sidebar items",
+        tag: "hide-sidebar-groups",
+        description: "Hide sidebar groups",
         enabled: true,
         kind: "frontend",
         requiresReload: true,
+        knownIssues: [
+          "If your sidebar is collapsed, and you reload a page, the groups will be expanded. It fixes when you expand the sidebar. This is because hide-sidebar-groups relies on title of sidebar groups and when sidebar is collapsed, title is \"...\" and it's not possible to get the title of the group.",
+        ],
       },
     ];
   }

@@ -21,7 +21,7 @@ const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
         sendToMatchAndReplace(selection, sdk);
       }
     },
-  }); 
+  });
 
   sdk.menu.registerItem({
     commandId: "evenbetter:quickmar",

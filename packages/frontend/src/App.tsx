@@ -34,7 +34,7 @@ export const App = ({ sdk, evenBetterAPI }: AppProps) => {
 
 const Content = () => {
   return (
-    <StyledSplitter>
+    <StyledSplitter defaultSizes={[40, 60]}>
       <Settings />
       <FlagsList />
     </StyledSplitter>
