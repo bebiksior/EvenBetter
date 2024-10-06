@@ -1,0 +1,15 @@
+{
+  "extends": ["config:recommended"],
+  "timezone": "America/New_York",
+  "schedule": ["before 4am"],
+  "labels": ["dependency"],
+  "rebaseWhen": "conflicted",
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@caido/"],
+      "groupName": "Caido packages",
+      "automerge": false
+    }
+  ],
+  "enabledManagers": ["npm"]
+}

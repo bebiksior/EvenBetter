@@ -1,28 +1,36 @@
 {
-  "name": "evenbetter-frontend",
-  "version": "2.5.0",
-  "description": "EvenBetter is a frontend Caido plugin that makes the Caido experience even better 😎",
+  "name": "frontend",
+  "version": "3.0.0",
+  "description": "EvenBetter",
   "author": "bebiks <bebiks@cvssadvisor.com>",
   "license": "CC0-1.0",
   "type": "module",
-  "main": "src/index.ts",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@bebiks/evenbetter-api": "^2.3.0",
-    "@caido/sdk-frontend": "^0.39.0"
+    "@bebiks/evenbetter-api": "^2.4.0",
+    "@caido/sdk-frontend": "0.41.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.1",
+    "@mui/material": "^6.1.1",
+    "@tanstack/react-query": "^5.59.0",
+    "@types/react": "^18.3.10",
+    "@types/react-dom": "^18.3.0",
+    "allotment": "^1.20.2",
+    "caido-material-ui": "^1.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.14.12",
-    "path": "^0.12.7",
-    "typescript": "5.4.3",
-    "vite": "5.2.7",
-    "vite-plugin-css": "^1.0.4",
-    "vite-plugin-node-polyfills": "^0.22.0",
-    "vite-plugin-static-copy": "1.0.3",
-    "vite-plugin-zip-pack": "1.2.3",
-    "@caido/sdk-backend": "0.39.0",
-    "evenbetter-backend": "workspace:*"
+    "@caido/sdk-backend": "0.41.0",
+    "@types/node": "^22.7.4",
+    "@vitejs/plugin-react": "^4.3.1",
+    "backend": "workspace:*",
+    "shared": "workspace:*",
+    "tailwindcss": "^3.4.13",
+    "vite": "5.4.8"
   }
 }
