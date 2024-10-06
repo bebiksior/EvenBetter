@@ -87,7 +87,10 @@ export const Settings = () => {
         </Button>
 
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          Note: Custom Themes are coming soon as a separate plugin.
+          Note: Custom Themes is available as a separate plugin called{" "}
+          <Link href="https://github.com/bebiksior/CaidoThemes">
+            CaidoThemes
+          </Link>
         </Typography>
       </StyledBox>
       <StyledBox className="p-5 overflow-y-auto">
@@ -152,7 +155,7 @@ export const Settings = () => {
         <Typography variant="body1">
           I've recently reworked the entire EvenBetter codebase and will be
           slowly updating it with new features. As part of this update, I've
-          decided to separate the <b>Quick SSRF</b> & <b>Custom Themes</b>{" "}
+          decided to separate the <b>Quick SSRF</b> & <b>Workflows Library</b>{" "}
           features into their own plugins. These will be released in the next few
           months.
         </Typography>

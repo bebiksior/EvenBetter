@@ -34,7 +34,7 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 - Refactored the entire plugin
 - Fully migrated to new SDK
 - Every EvenBetter feature can be now toggled in the new EvenBetter settings page
-- Decided to separate Quick SSRF and Custom Themes features into two different plugins. These will be released in the next few months.
+- Decided to separate Quick SSRF, Custom Themes and Workflows Library features into two different plugins. These will be released in the next few months.
 
 ## Contribution
 
