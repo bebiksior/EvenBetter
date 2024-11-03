@@ -42,6 +42,10 @@
   transform: scale(0.9);
 }
 
+.evenbetter__qd-selected-text-top-select {
+  background-color: var(--c-bg-default);
+}
+
 .evenbetter__qd-selected-text {
   padding: 0.6em;
   margin: 0.5em;
