@@ -15,7 +15,7 @@ Here's what **EvenBetter** implements:
 ## Sponsors
 Maintenance of EvenBetter is possible thanks to the following sponsors:
 
-<!-- sponsors --><a href="https://github.com/Rhynorater"><img src="https:&#x2F;&#x2F;github.com&#x2F;Rhynorater.png" width="60px" alt="User avatar: Justin Gardner" /></a><a href="https://github.com/projectmonke"><img src="https:&#x2F;&#x2F;github.com&#x2F;projectmonke.png" width="60px" alt="User avatar: Monke" /></a><a href="https://github.com/caido-community"><img src="https:&#x2F;&#x2F;github.com&#x2F;caido-community.png" width="60px" alt="User avatar: Caido Community" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/Rhynorater"><img src="https:&#x2F;&#x2F;github.com&#x2F;Rhynorater.png" width="60px" alt="User avatar: Justin Gardner" /></a><a href="https://github.com/projectmonke"><img src="https:&#x2F;&#x2F;github.com&#x2F;projectmonke.png" width="60px" alt="User avatar: Monke" /></a><a href="https://github.com/caido-community"><img src="https:&#x2F;&#x2F;github.com&#x2F;caido-community.png" width="60px" alt="User avatar: Caido Community" /></a><a href="https://github.com/sw33tLie"><img src="https:&#x2F;&#x2F;github.com&#x2F;sw33tLie.png" width="60px" alt="User avatar: " /></a><!-- sponsors -->
 
 ## Installation [Recommended]
 
