@@ -14,7 +14,7 @@
       "id": "evenbetter-frontend",
       "name": "EvenBetter: Frontend",
       "entrypoint": "frontend/script.js",
-      "style": "frontend/style.css",
+      "style": "frontend/frontend.css",
       "backend": {
         "id": "evenbetter-backend"
       }
