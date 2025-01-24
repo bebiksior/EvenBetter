@@ -18,7 +18,8 @@ const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
           return;
         }
 
-        sendToMatchAndReplace(selection, sdk);
+        const type = context.type == "RequestContext" ? "request" : "response";
+        sendToMatchAndReplace(selection, sdk, type);
       }
     },
   });
@@ -36,99 +37,53 @@ const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   });
 };
 
-const sendToMatchAndReplace = async (selection: string, sdk: CaidoSDK) => {
+const sendToMatchAndReplace = async (
+  selection: string,
+  sdk: CaidoSDK,
+  type: "request" | "response",
+) => {
   if (!selection) return;
 
   sdk.navigation.goTo("/tamper");
-  await waitForPage();
 
-  const newRuleButton = document.querySelector(
-    ".c-rule-list-header__new button"
-  ) as HTMLButtonElement;
-  if (!newRuleButton) return;
+  const collections = sdk.matchReplace.getCollections();
 
-  newRuleButton.click();
-  await waitForFormUpdate();
-
-  const searchInput = document.querySelector(
-    ".c-tamper textarea"
-  ) as HTMLInputElement;
-  const nameInput = document.querySelector(
-    ".c-rule-form-update__name input"
-  ) as HTMLInputElement;
-
-  if (!searchInput || !nameInput) return;
-
-  let firstLine = selection.split("\r\n")[0];
-  if (!firstLine) firstLine = selection;
-
-  if (firstLine.length > 50) firstLine = firstLine.substring(0, 50) + "...";
-
-  selection = selection.replace(/\r\n/g, "\n");
-  setValue(searchInput, selection);
-  setValue(nameInput, firstLine);
-
-  const saveButton = document.querySelector(
-    ".c-rule-form-update__save button"
-  ) as HTMLButtonElement;
-
-  let interval = setInterval(() => {
-    if (saveButton.disabled) return;
-
-    clearInterval(interval);
-    saveButton.click();
-  }, 25);
-
-  setTimeout(() => {
-    if (interval) clearInterval(interval);
-  }, 100);
-};
-
-const waitForPage = async () => {
-  const formUpdate = document.querySelector(".c-rule-form-update");
-  const formCreate = document.querySelector(".c-rule-form-create");
-  if (formUpdate || formCreate) {
-    return;
-  }
-
-  await new Promise((resolve) => setTimeout(resolve, 100));
-  return waitForPage();
-};
-
-const waitForFormUpdate = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  const formUpdate = document.querySelector(".c-rule-form-update__body");
-  if (formUpdate) {
-    return;
-  }
-
-  return waitForFormUpdate();
-};
-
-const setValue = (element: HTMLInputElement, text: string) => {
-  const previousFocus = document.activeElement as HTMLElement;
-  element.focus();
-
-  element.value = "";
-
-  for (let i = 0; i < text.length; i++) {
-    element.value += text[i];
-
-    let inputEvent = new Event("input", {
-      bubbles: true,
-      cancelable: true,
+  let collectionID: string;
+  if (collections.length === 0) {
+    const newCollection = await sdk.matchReplace.createCollection({
+      name: "EvenBetter Collection",
     });
-    element.dispatchEvent(inputEvent);
+
+    collectionID = newCollection.id;
+  } else {
+    const firstCollection = collections[0];
+    if (!firstCollection) return;
+
+    collectionID = firstCollection.id;
   }
 
-  let changeEvent = new Event("change", {
-    bubbles: true,
-    cancelable: true,
-  });
-  element.dispatchEvent(changeEvent);
+  let name = selection;
+  if (selection.length > 30) {
+    name = selection.substring(0, 30) + "...";
+  }
 
-  previousFocus?.focus();
+  sdk.matchReplace
+    .createRule({
+      name,
+      isEnabled: true,
+      matchTerm: selection,
+      replaceTerm: "",
+      isRegex: false,
+      query: "",
+      strategy: type === "request" ? "REQUEST_BODY" : "RESPONSE_BODY",
+      collectionId: collectionID,
+    })
+    .catch((err) => {
+      console.error(err);
+      sdk.window.showToast("Error occured while creating M&R rule.", {
+        variant: "error",
+      });
+    });
 };
 
 export const quickMatchAndReplace = createFeature("quick-mar", {
