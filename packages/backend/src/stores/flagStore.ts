@@ -80,8 +80,16 @@ export class FeatureFlagsStore {
         kind: "frontend",
         requiresReload: true,
         knownIssues: [
-          "If your sidebar is collapsed, and you reload a page, the groups will be expanded. It fixes when you expand the sidebar. This is because hide-sidebar-groups relies on title of sidebar groups and when sidebar is collapsed, title is \"...\" and it's not possible to get the title of the group.",
+          'If your sidebar is collapsed, and you reload a page, the groups will be expanded. It fixes when you expand the sidebar. This is because hide-sidebar-groups relies on title of sidebar groups and when sidebar is collapsed, title is "..." and it\'s not possible to get the title of the group.',
         ],
+      },
+      {
+        tag: "colorize-by-method",
+        description:
+          "Colorize session tabs by their HTTP methods in the Replay page",
+        enabled: true,
+        requiresReload: true,
+        kind: "frontend",
       },
     ];
   }
@@ -105,7 +113,7 @@ export class FeatureFlagsStore {
 
     try {
       const storedFlags: StoredFlag[] = JSON.parse(
-        await readFile(flagsPath, "utf-8")
+        await readFile(flagsPath, "utf-8"),
       );
       storedFlags.forEach((storedFlag) => {
         const flag = this.flags.find((f) => f.tag === storedFlag.tag);

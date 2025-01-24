@@ -1,0 +1,27 @@
+[http-method="GET"] {
+  border-bottom: 2px solid #2196f3 !important;
+}
+
+[http-method="POST"] {
+  border-bottom: 2px solid #4caf50 !important;
+}
+
+[http-method="PUT"] {
+  border-bottom: 2px solid #ff9800 !important;
+}
+
+[http-method="PATCH"] {
+  border-bottom: 2px solid #ffeb3b !important;
+}
+
+[http-method="DELETE"] {
+  border-bottom: 2px solid #f44336 !important;
+}
+
+[http-method="HEAD"] {
+  border-bottom: 2px solid #9c27b0 !important;
+}
+
+[http-method="UNKNOWN"] {
+  border-bottom: 2px solid gray !important;
+}

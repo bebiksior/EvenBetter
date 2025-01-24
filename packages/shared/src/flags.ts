@@ -7,6 +7,7 @@ export type FeatureFlagTag =
   | "share-mar"
   | "share-replay-collections"
   | "hide-sidebar-groups"
+  | "colorize-by-method"
   | "quick-mar";
 
 export type FeatureFlagKind = "backend" | "frontend";
