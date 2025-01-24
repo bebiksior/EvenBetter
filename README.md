@@ -29,6 +29,10 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 2. In your Caido instance, navigate to the `Plugins` page, click `Install` and select the downloaded `plugin_package.zip` file
 3. Done! 🎉
 
+## Changelog v3.0.2
+- Fixed issues with latest Caido versions (v0.45.1)
+- Added `colorize-by-method` feature
+
 ## Changelog v3.0.1
 - Fixed issues with latest Caido versions (v0.43.1, v0.43.0)
 
