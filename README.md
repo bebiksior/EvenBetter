@@ -15,7 +15,7 @@ Here's what **EvenBetter** implements:
 ## Sponsors
 Maintenance of EvenBetter is possible thanks to the following sponsors:
 
-<!-- sponsors --><a href="https://github.com/projectmonke"><img src="https:&#x2F;&#x2F;github.com&#x2F;projectmonke.png" width="60px" alt="User avatar: Monke" /></a><a href="https://github.com/CRITSoftware"><img src="https:&#x2F;&#x2F;github.com&#x2F;CRITSoftware.png" width="60px" alt="User avatar: CRIT Software" /></a><a href="https://github.com/L0WK3Y-IAAN"><img src="https:&#x2F;&#x2F;github.com&#x2F;L0WK3Y-IAAN.png" width="60px" alt="User avatar: L0WK3Y" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/projectmonke"><img src="https:&#x2F;&#x2F;github.com&#x2F;projectmonke.png" width="60px" alt="User avatar: Monke" /></a><a href="https://github.com/CRITSoftware"><img src="https:&#x2F;&#x2F;github.com&#x2F;CRITSoftware.png" width="60px" alt="User avatar: CRIT Software" /></a><!-- sponsors -->
 
 ## Installation [Recommended]
 
