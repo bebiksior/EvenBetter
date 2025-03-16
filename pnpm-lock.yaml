@@ -40,11 +40,11 @@ importers:
   packages/frontend:
     dependencies:
       '@bebiks/evenbetter-api':
-        specifier: ^2.4.0
-        version: 2.4.0(@codemirror/view@6.34.1)
+        specifier: ^2.4.1
+        version: 2.4.1(@codemirror/view@6.34.1)
       '@caido/sdk-frontend':
-        specifier: 0.45.1
-        version: 0.45.1(@codemirror/view@6.34.1)
+        specifier: 0.46.1-beta.1
+        version: 0.46.1-beta.1(@codemirror/view@6.34.1)
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@19.0.8)(react@19.0.0)
@@ -240,8 +240,8 @@ packages:
     resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
     engines: {node: '>=6.9.0'}
 
-  '@bebiks/evenbetter-api@2.4.0':
-    resolution: {integrity: sha512-QWSG6a8qx2Eq5TT0GBQpvUU0El7e0BKi41llFejgVMwsQ6n5oVDIdkh2RdKLD/3f+Pty+K+4FNkdn+VmL8Neag==}
+  '@bebiks/evenbetter-api@2.4.1':
+    resolution: {integrity: sha512-i4LIhly6PGpoeUvU0UoxMWYb+ACtG58NMIwPO1cnRkvjKmopeZ2Gg5iZoGTRIJjUFB+b2l+L3KYvF9DjMjcFcw==}
 
   '@caido/plugin-manifest@0.2.0':
     resolution: {integrity: sha512-IRN+f4H+fkwQ9AcYVHbaGgHf96fEGgCAl4frgkK+dYbu8rI+Z8SW7UAcU5eH7v5FJRcZdmS5sHVjVUjEU0hhCg==}
@@ -257,8 +257,8 @@ packages:
     peerDependencies:
       '@codemirror/view': ^6.0.0
 
-  '@caido/sdk-frontend@0.45.1':
-    resolution: {integrity: sha512-bV1q2U7FhNC1Nkzo8jxNbJcLRcAsk7AxwBwdo2jWFGelh9fu1a4iZ9Ij0UI6GqBWnUW/HCGLOkPzOKiCH8oJ3A==}
+  '@caido/sdk-frontend@0.46.1-beta.1':
+    resolution: {integrity: sha512-2sk0kMVlV787B/bZQTDFy+ObaW0jhT2Dq+Oa8+Cl+uBKfY37z8IMlAJTHMRF4yISUJZlvWulmBaw9zIvji/Wwg==}
     peerDependencies:
       '@codemirror/view': ^6.0.0
 
@@ -2098,7 +2098,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@bebiks/evenbetter-api@2.4.0(@codemirror/view@6.34.1)':
+  '@bebiks/evenbetter-api@2.4.1(@codemirror/view@6.34.1)':
     dependencies:
       '@caido/sdk-frontend': 0.41.0(@codemirror/view@6.34.1)
     transitivePeerDependencies:
@@ -2119,7 +2119,7 @@ snapshots:
     dependencies:
       '@codemirror/view': 6.34.1
 
-  '@caido/sdk-frontend@0.45.1(@codemirror/view@6.34.1)':
+  '@caido/sdk-frontend@0.46.1-beta.1(@codemirror/view@6.34.1)':
     dependencies:
       '@codemirror/view': 6.34.1
 

@@ -1,7 +1,7 @@
 import { CaidoSDK } from "@/types";
 import { createFeature } from "@/features/manager";
 import { EvenBetterAPI } from "@bebiks/evenbetter-api";
-import { downloadFile } from "@/utils/file-utils";
+import { downloadFile, importFile } from "@/utils/file-utils";
 
 let shareMARElements: HTMLElement[] = [];
 let cancelFunction: () => void;
@@ -19,11 +19,6 @@ export const shareMAR = createFeature("share-mar", {
         }
       }
     );
-
-    if (window.location.hash === "#/tamper") {
-      addImportButton(sdk);
-      observeMARTab(sdk);
-    }
   },
   onFlagDisabled: () => {
     cleanupMARElements();
@@ -111,49 +106,30 @@ const addImportButton = (sdk: CaidoSDK) => {
 };
 
 const handleImportButtonClick = (sdk: CaidoSDK) => {
-  const input = document.createElement("input");
-  shareMARElements.push(input);
+  importFile(".json", (content: string) => {
+    try {
+      const data = JSON.parse(content);
 
-  input.type = "file";
-  input.accept = ".json";
-  input.style.display = "none";
-  input.addEventListener("change", (event) => {
-    handleFileSelection(event, sdk);
+      getFirstCollectionID(sdk).then(firstCollectionID => {
+        if (!firstCollectionID) return;
+
+        const transformedSection = transformSection(data.section);
+
+        sdk.graphql.createTamperRule({
+          input: {
+            collectionId: firstCollectionID,
+            name: data.name,
+            condition: data.condition,
+            section: transformedSection,
+          },
+        }).then(() => {
+          location.reload();
+        });
+      });
+    } catch (error) {
+      console.error("Failed to import rule:", error);
+    }
   });
-
-  document.body.prepend(input);
-  input.click();
-  input.remove();
-};
-const handleFileSelection = (event: Event, sdk: CaidoSDK) => {
-  const target = event.target as HTMLInputElement;
-  if (!target.files || !target.files.length) return;
-
-  const file = target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const target = e.target as FileReader;
-    const data = JSON.parse(target.result as string);
-
-    const firstCollectionID = await getFirstCollectionID(sdk);
-    if (!firstCollectionID) return;
-
-    const transformedSection = transformSection(data.section);
-
-    await sdk.graphql.createTamperRule({
-      input: {
-        collectionId: firstCollectionID,
-        name: data.name,
-        condition: data.condition,
-        section: transformedSection,
-      },
-    });
-
-    location.reload();
-  };
-  reader.readAsText(file);
 };
 
 const transformSection = (section: any): any => {

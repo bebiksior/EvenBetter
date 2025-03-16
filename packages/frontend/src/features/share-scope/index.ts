@@ -1,6 +1,6 @@
 import { createFeature } from "@/features/manager";
 import { CaidoSDK } from "@/types";
-import { downloadFile } from "@/utils/file-utils";
+import { downloadFile, importFile } from "@/utils/file-utils";
 import { EvenBetterAPI } from "@bebiks/evenbetter-api";
 
 let scopeTabObserver: MutationObserver | null = null;
@@ -52,35 +52,15 @@ const addImportButton = (sdk: CaidoSDK) => {
 
   importButton.id = "scope-presents-import";
   importButton.addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.style.display = "none";
-    input.addEventListener("change", (event) => {
-      const target = event.target as HTMLInputElement;
-      if (!target.files || !target.files.length) return;
+    importFile(".json", (content: string) => {
+      const data = JSON.parse(content);
 
-      const file = target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const target = e.target as FileReader;
-        const data = JSON.parse(target.result as string);
-
-        sdk.scopes.createScope({
-          name: data.name,
-          allowlist: data.allowlist,
-          denylist: data.denylist,
-        });
-      };
-      reader.readAsText(file);
+      sdk.scopes.createScope({
+        name: data.name,
+        allowlist: data.allowlist,
+        denylist: data.denylist,
+      });
     });
-
-    document.body.prepend(input);
-
-    input.click();
-    input.remove();
   });
 
   actions.style.gap = "0.8rem";

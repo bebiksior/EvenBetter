@@ -1,6 +1,6 @@
 import { createFeature } from "@/features/manager";
 import { CaidoSDK } from "@/types";
-import { downloadFile } from "@/utils/file-utils";
+import { downloadFile, importFile } from "@/utils/file-utils";
 import { EvenBetterAPI } from "@bebiks/evenbetter-api";
 import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
 import { RequestRawInput } from "@caido/sdk-frontend/src/types/__generated__/graphql-sdk";
@@ -217,29 +217,24 @@ const attachImportButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
 
   importButton.style.float = "left";
   importButton.style.marginRight = "1em";
-
   importButton.addEventListener("click", async () => {
-    const input = document.createElement("input");
-    shareReplayCollectionsElements.push(input);
-    input.type = "file";
-    input.accept = ".json";
-    input.click();
-
-    input.addEventListener("change", async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.readAsText(file);
-
-      reader.onload = async () => {
-        const collection = JSON.parse(reader.result as string);
+    importFile(".json", async (content: string) => {
+      try {
+        const collection = JSON.parse(content);
         await importCollection(collection, sdk, evenBetterAPI);
 
         setTimeout(() => {
           window.location.reload();
         }, 25);
-      };
+      } catch (error) {
+        console.error("Failed to import collection:", error);
+        evenBetterAPI.toast.showToast({
+          message: "Failed to import collection",
+          duration: 3000,
+          position: "bottom",
+          type: "error",
+        });
+      }
     });
   });
 
