@@ -70,12 +70,21 @@ const sendToMatchAndReplace = async (
   sdk.matchReplace
     .createRule({
       name,
-      isEnabled: true,
-      matchTerm: selection,
-      replaceTerm: "",
-      isRegex: false,
       query: "",
-      strategy: type === "request" ? "REQUEST_BODY" : "RESPONSE_BODY",
+      section: {
+        kind: type === "request" ? "SectionRequestBody" : "SectionResponseBody",
+        operation: {
+          kind: "OperationBodyRaw",
+          matcher: {
+            kind: "MatcherRawValue",
+            value: selection
+          },
+          replacer: {
+            kind: "ReplacerTerm",
+            term: ""
+          }
+        }
+      },
       collectionId: collectionID,
     })
     .catch((err) => {
