@@ -87,9 +87,12 @@ export class FeatureFlagsStore {
         tag: "colorize-by-method",
         description:
           "Colorize session tabs by their HTTP methods in the Replay page",
-        enabled: true,
+        enabled: false,
         requiresReload: true,
         kind: "frontend",
+        knownIssues: [
+          "It's a bit unstable, so it's disabled by default. Working on a fix. If you want to try it, you can enable it by setting the flag to true.",
+        ],
       },
     ];
   }
