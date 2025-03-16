@@ -10,8 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@bebiks/evenbetter-api": "^2.4.0",
-    "@caido/sdk-frontend": "0.45.1",
+    "@bebiks/evenbetter-api": "^2.4.1",
+    "@caido/sdk-frontend": "0.46.1-beta.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.1",

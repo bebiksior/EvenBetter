@@ -10,40 +10,45 @@ export const shareMAR = createFeature("share-mar", {
   onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
     cancelFunction = evenBetterAPI.eventManager.on(
       "onPageOpen",
-      (data: any) => {
-        if (data.newUrl == "#/tamper") {
+      (data: { newUrl: string }) => {
+        if (data.newUrl === "#/tamper") {
           addImportButton(sdk);
           observeMARTab(sdk);
         } else {
-          if (marTabObserver) {
-            marTabObserver.disconnect();
-            marTabObserver = null;
-          }
+          cleanupObserver();
         }
       }
     );
+
+    if (window.location.hash === "#/tamper") {
+      addImportButton(sdk);
+      observeMARTab(sdk);
+    }
   },
-  onFlagDisabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+  onFlagDisabled: () => {
     cleanupMARElements();
   },
 });
+
+const cleanupObserver = () => {
+  if (marTabObserver) {
+    marTabObserver.disconnect();
+    marTabObserver = null;
+  }
+};
 
 const cleanupMARElements = () => {
   if (cancelFunction) {
     cancelFunction();
   }
 
-  if (marTabObserver) {
-    marTabObserver.disconnect();
-    marTabObserver = null;
-  }
+  cleanupObserver();
 
   shareMARElements.forEach((element) => {
     element.remove();
   });
   shareMARElements = [];
 
-  // Remove added styles
   const ruleListHeader = document.querySelector(
     ".c-rule-list-header__new"
   ) as HTMLElement;
@@ -60,7 +65,6 @@ const cleanupMARElements = () => {
     parent.style.removeProperty("padding");
   }
 
-  // Remove added elements
   document.querySelector("#scope-presents-import")?.remove();
   document.querySelector("#rules-download")?.remove();
 };
@@ -69,9 +73,8 @@ const addImportButton = (sdk: CaidoSDK) => {
   const ruleListHeader = document.querySelector(
     ".c-rule-list-header__new"
   ) as HTMLElement;
-  if (!ruleListHeader) return;
-
-  if (document.querySelector("#scope-presents-import")) return;
+  if (!ruleListHeader || document.querySelector("#scope-presents-import"))
+    return;
 
   ruleListHeader.style.display = "flex";
   ruleListHeader.style.gap = "0.5em";
@@ -101,89 +104,281 @@ const addImportButton = (sdk: CaidoSDK) => {
 
   importButton.id = "scope-presents-import";
   importButton.addEventListener("click", () => {
-    const input = document.createElement("input");
-    shareMARElements.push(input);
-
-    input.type = "file";
-    input.accept = ".json";
-    input.style.display = "none";
-    input.addEventListener("change", (event) => {
-      const target = event.target as HTMLInputElement;
-      if (!target.files || !target.files.length) return;
-
-      const file = target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const target = e.target as FileReader;
-        const data = JSON.parse(target.result as string);
-
-        const firstCollectionID = await getFirstCollcetionID(sdk);
-        if (!firstCollectionID) return;
-
-        sdk.graphql.createTamperRule({
-          input: {
-            collectionId: firstCollectionID,
-            name: data.name,
-            condition: data.condition,
-            isEnabled: data.isEnabled,
-            isRegex: data.isRegex,
-            matchTerm: data.matchTerm,
-            replaceTerm: data.replaceTerm,
-            strategy: data.strategy,
-          },
-        });
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 20);
-      };
-      reader.readAsText(file);
-    });
-
-    document.body.prepend(input);
-
-    input.click();
-    input.remove();
+    handleImportButtonClick(sdk);
   });
 
   ruleListHeader.appendChild(importButton);
 };
 
-const getFirstCollcetionID = (sdk: CaidoSDK) => {
+const handleImportButtonClick = (sdk: CaidoSDK) => {
+  const input = document.createElement("input");
+  shareMARElements.push(input);
+
+  input.type = "file";
+  input.accept = ".json";
+  input.style.display = "none";
+  input.addEventListener("change", (event) => {
+    handleFileSelection(event, sdk);
+  });
+
+  document.body.prepend(input);
+  input.click();
+  input.remove();
+};
+const handleFileSelection = (event: Event, sdk: CaidoSDK) => {
+  const target = event.target as HTMLInputElement;
+  if (!target.files || !target.files.length) return;
+
+  const file = target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const target = e.target as FileReader;
+    const data = JSON.parse(target.result as string);
+
+    const firstCollectionID = await getFirstCollectionID(sdk);
+    if (!firstCollectionID) return;
+
+    const transformedSection = transformSection(data.section);
+
+    await sdk.graphql.createTamperRule({
+      input: {
+        collectionId: firstCollectionID,
+        name: data.name,
+        condition: data.condition,
+        section: transformedSection,
+      },
+    });
+
+    location.reload();
+  };
+  reader.readAsText(file);
+};
+
+const transformSection = (section: any): any => {
+  if (!section || !section.__typename) return section;
+
+  switch (section.__typename) {
+    case "TamperSectionRequestBody":
+      return {
+        requestBody: {
+          operation: {
+            raw: {
+              matcher: transformMatcher(section.operation.matcher),
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    case "TamperSectionRequestFirstLine":
+      return {
+        requestFirstLine: {
+          operation: {
+            raw: {
+              matcher: transformMatcher(section.operation.matcher),
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    case "TamperSectionRequestHeader":
+      return {
+        requestHeader: {
+          operation: transformHeaderOperation(section.operation)
+        }
+      };
+    case "TamperSectionRequestMethod":
+      return {
+        requestMethod: {
+          operation: {
+            update: {
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    case "TamperSectionRequestPath":
+      return {
+        requestPath: {
+          operation: {
+            raw: {
+              matcher: transformMatcher(section.operation.matcher),
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    case "TamperSectionRequestQuery":
+      return {
+        requestQuery: {
+          operation: transformQueryOperation(section.operation)
+        }
+      };
+    case "TamperSectionResponseBody":
+      return {
+        responseBody: {
+          operation: {
+            raw: {
+              matcher: transformMatcher(section.operation.matcher),
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    case "TamperSectionResponseFirstLine":
+      return {
+        responseFirstLine: {
+          operation: {
+            raw: {
+              matcher: transformMatcher(section.operation.matcher),
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    case "TamperSectionResponseHeader":
+      return {
+        responseHeader: {
+          operation: transformHeaderOperation(section.operation)
+        }
+      };
+    case "TamperSectionResponseStatusCode":
+      return {
+        responseStatusCode: {
+          operation: {
+            update: {
+              replacer: transformReplacer(section.operation.replacer)
+            }
+          }
+        }
+      };
+    default:
+      return section;
+  }
+};
+
+const transformMatcher = (matcher: any): any => {
+  if (!matcher || !matcher.__typename) return matcher;
+
+  switch (matcher.__typename) {
+    case "TamperMatcherFull":
+      return { full: { full: true } };
+    case "TamperMatcherRegex":
+      return { regex: { regex: matcher.regex } };
+    case "TamperMatcherValue":
+      return { value: { value: matcher.value } };
+    default:
+      return matcher;
+  }
+};
+
+const transformReplacer = (replacer: any): any => {
+  if (!replacer || !replacer.__typename) return replacer;
+
+  switch (replacer.__typename) {
+    case "TamperReplacerTerm":
+      return { term: { term: replacer.term } };
+    case "TamperReplacerWorkflow":
+      return { workflow: { id: replacer.id } };
+    default:
+      return replacer;
+  }
+};
+
+const transformHeaderOperation = (operation: any): any => {
+  if (!operation || !operation.__typename) return operation;
+
+  switch (operation.__typename) {
+    case "TamperOperationHeaderAdd":
+      return {
+        add: {
+          matcher: { name: operation.matcher.name },
+          replacer: transformReplacer(operation.replacer)
+        }
+      };
+    case "TamperOperationHeaderRaw":
+      return {
+        raw: {
+          matcher: transformMatcher(operation.matcher),
+          replacer: transformReplacer(operation.replacer)
+        }
+      };
+    case "TamperOperationHeaderRemove":
+      return {
+        remove: {
+          matcher: { name: operation.matcher.name }
+        }
+      };
+    case "TamperOperationHeaderUpdate":
+      return {
+        update: {
+          matcher: { name: operation.matcher.name },
+          replacer: transformReplacer(operation.replacer)
+        }
+      };
+    default:
+      return operation;
+  }
+};
+
+const transformQueryOperation = (operation: any): any => {
+  if (!operation || !operation.__typename) return operation;
+
+  switch (operation.__typename) {
+    case "TamperOperationQueryAdd":
+      return {
+        add: {
+          matcher: { name: operation.matcher.name },
+          replacer: transformReplacer(operation.replacer)
+        }
+      };
+    case "TamperOperationQueryRaw":
+      return {
+        raw: {
+          matcher: transformMatcher(operation.matcher),
+          replacer: transformReplacer(operation.replacer)
+        }
+      };
+    case "TamperOperationQueryRemove":
+      return {
+        remove: {
+          matcher: { name: operation.matcher.name }
+        }
+      };
+    case "TamperOperationQueryUpdate":
+      return {
+        update: {
+          matcher: { name: operation.matcher.name },
+          replacer: transformReplacer(operation.replacer)
+        }
+      };
+    default:
+      return operation;
+  }
+};
+
+const getFirstCollectionID = (sdk: CaidoSDK) => {
   return sdk.graphql.tamperRuleCollections().then((data) => {
-    return data.tamperRuleCollections?.nodes[0]?.id;
+    if (
+      data.tamperRuleCollections &&
+      Array.isArray(data.tamperRuleCollections)
+    ) {
+      return data.tamperRuleCollections[0]?.id;
+    }
+    return null;
   });
 };
 
 let marTabObserver: MutationObserver | null = null;
 const observeMARTab = (sdk: CaidoSDK) => {
-  const cTamper = document.querySelector(".c-tamper");
+  const cTamper = document.querySelector("[data-page='#/tamper']");
   if (!cTamper) return;
 
-  if (marTabObserver) {
-    marTabObserver.disconnect();
-    marTabObserver = null;
-  }
+  cleanupObserver();
 
-  marTabObserver = new MutationObserver((m) => {
-    if (
-      m.some((m) => {
-        const target = m.target as HTMLElement;
-
-        for (let i = 0; i < m.addedNodes.length; i++) {
-          const node = m.addedNodes[i] as HTMLElement;
-          if (node.id == "rules-download") return true;
-        }
-
-        if (target.classList.contains("c-grid-item")) return true;
-
-        return false;
-      })
-    )
-      return;
-
+  marTabObserver = new MutationObserver((mutations) => {
+    if (shouldSkipMutation(mutations)) return;
     attachDownloadButton(sdk);
   });
 
@@ -194,13 +389,35 @@ const observeMARTab = (sdk: CaidoSDK) => {
   });
 };
 
+const shouldSkipMutation = (mutations: MutationRecord[]) => {
+  return mutations.some((mutation) => {
+    const target = mutation.target as HTMLElement;
+
+    for (let i = 0; i < mutation.addedNodes.length; i++) {
+      const node = mutation.addedNodes[i] as HTMLElement;
+      if (node.id === "rules-download") return true;
+    }
+
+    if (target.classList.contains("c-grid-item")) return true;
+
+    return false;
+  });
+};
+
 const attachDownloadButton = (sdk: CaidoSDK) => {
   document.querySelector("#rules-download")?.remove();
 
-  const formUpdateHeader = document.querySelector(
-    ".c-rule-form-update__header"
-  );
-  if (!formUpdateHeader) return;
+  const cardFooter = document.querySelector(
+    "[data-page='#/tamper'] .c-card__footer"
+  ) as HTMLElement;
+  if (!cardFooter) {
+    return;
+  }
+
+  cardFooter.style.paddingRight = "1em";
+  cardFooter.style.display = "flex";
+  cardFooter.style.justifyContent = "space-between";
+  cardFooter.style.alignItems = "center";
 
   const downloadButton = sdk.ui.button({
     label: "Download",
@@ -212,29 +429,39 @@ const attachDownloadButton = (sdk: CaidoSDK) => {
 
   downloadButton.id = "rules-download";
   downloadButton.addEventListener("click", () => {
-    const ruleID = getActiveRuleID();
-    if (!ruleID) return;
+    handleDownloadButtonClick(sdk);
+  });
 
-    sdk.graphql.tamperRuleCollections().then((data) => {
-      const collections = data.tamperRuleCollections.nodes;
-      collections.forEach((collection: any) => {
-        const rules = collection.rules;
-        rules.forEach((rule: any) => {
-          if (rule.id == ruleID) {
-            const ruleName = rule.name.replace(/[^a-zA-Z0-9]/g, "-");
-            downloadFile("rule-" + ruleName + ".json", JSON.stringify(rule));
-          }
-        });
+  cardFooter.appendChild(downloadButton);
+};
+
+const handleDownloadButtonClick = (sdk: CaidoSDK) => {
+  const ruleID = getActiveRuleID();
+  if (!ruleID) {
+    return;
+  }
+
+  sdk.graphql.tamperRuleCollections().then((data) => {
+    if (!data.tamperRuleCollections) return;
+
+    const collections = Array.isArray(data.tamperRuleCollections)
+      ? data.tamperRuleCollections
+      : data.tamperRuleCollections;
+
+    collections.forEach((collection: any) => {
+      const rules = collection.rules || [];
+      rules.forEach((rule: any) => {
+        if (rule.id === ruleID) {
+          const ruleName = rule.name.replace(/[^a-zA-Z0-9]/g, "-");
+          downloadFile(`rule-${ruleName}.json`, JSON.stringify(rule));
+        }
       });
     });
   });
-
-  formUpdateHeader.appendChild(downloadButton);
 };
 
 const getActiveRuleID = () => {
-  const ruleID = document
+  return document
     .querySelector('.c-tree-item__subtree [data-is-active="true"]')
     ?.getAttribute("data-rule-id");
-  return ruleID;
 };
