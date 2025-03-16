@@ -94,6 +94,12 @@ export class FeatureFlagsStore {
           "It's a bit unstable, so it's disabled by default. Working on a fix. If you want to try it, you can enable it by setting the flag to true.",
         ],
       },
+      {
+        tag: "share-filters",
+        description: "Export & import filter presets",
+        enabled: true,
+        kind: "frontend",
+      },
     ];
   }
 
