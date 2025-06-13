@@ -2,14 +2,21 @@ import { createFeature } from "@/features/manager";
 import { CaidoSDK } from "@/types";
 import { EvenBetterAPI } from "@bebiks/evenbetter-api";
 
-const excludeHostPathFunctionality = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const excludeHostPathFunctionality = (
+  sdk: CaidoSDK,
+  evenBetterAPI: EvenBetterAPI
+) => {
   sdk.commands.register("eb:excludehost", {
     name: "Exclude Host",
     run: async () => {
       const selectedRequest = await getSelectedRequest(sdk);
       if (!selectedRequest) return;
 
-      addQuery(`req.host.ne:"${selectedRequest.host}"`)
+      const currentQuery = sdk.httpHistory.getQuery();
+      const newQuery = currentQuery
+        ? `${currentQuery} AND req.host.ne:"${selectedRequest.host}"`
+        : `req.host.ne:"${selectedRequest.host}"`;
+      sdk.httpHistory.setQuery(newQuery);
     },
   });
 
@@ -25,7 +32,11 @@ const excludeHostPathFunctionality = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAP
       const selectedRequest = await getSelectedRequest(sdk);
       if (!selectedRequest) return;
 
-      addQuery(`req.path.ne:"${selectedRequest.path}"`);
+      const currentQuery = sdk.httpHistory.getQuery();
+      const newQuery = currentQuery
+        ? `${currentQuery} AND req.path.ne:"${selectedRequest.path}"`
+        : `req.path.ne:"${selectedRequest.path}"`;
+      sdk.httpHistory.setQuery(newQuery);
     },
   });
 
@@ -36,39 +47,11 @@ const excludeHostPathFunctionality = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAP
   });
 };
 
-const addQuery = async (query: string) => {
-  const httpQL = document.querySelector(
-    ".c-search-query-editor__editor .cm-line"
-  ) as HTMLElement;
-  if (!httpQL) return;
-
-  if (!httpQL.querySelector(".cm-placeholder")) {
-    httpQL.textContent += ` AND ${query}`;
-  } else {
-    httpQL.textContent = query;
-  }
-
-  const previousFocus = document.activeElement as HTMLElement;
-
-  httpQL.focus();
-
-  const enterEvent = new KeyboardEvent("keydown", {
-    bubbles: true,
-    cancelable: true,
-    key: "Enter",
-    code: "Enter",
-    keyCode: 13,
-    charCode: 13,
-  });
-
-  httpQL.dispatchEvent(enterEvent);
-
-  previousFocus?.focus();
-}
-
 const getSelectedRequestID = () => {
-  return document.querySelector(".c-read-only-request")?.getAttribute("data-request-id");
-}
+  return document
+    .querySelector("[data-request-id]")
+    ?.getAttribute("data-request-id");
+};
 
 const getSelectedRequest = async (sdk: CaidoSDK) => {
   const selectedRequestID = getSelectedRequestID();
@@ -89,4 +72,3 @@ export const excludeHostPath = createFeature("exclude-host-path", {
     location.reload();
   },
 });
-
