@@ -432,7 +432,10 @@ class QuickDecodeManager {
   private attachQuickDecode(): void {
     if (document.getElementById("evenbetter__qd-body")) return;
 
-    const sessionListBody = document.querySelector(".c-session-list-body");
+    const sessionListBody = document
+      .querySelector(".c-tree")
+      ?.closest('[data-pc-section="content"]')
+      ?.querySelector("div");
     if (!sessionListBody) return;
 
     this.quickDecode = new QuickDecode();
