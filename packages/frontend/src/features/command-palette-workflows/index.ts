@@ -66,7 +66,7 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
             if (activeEditor.isReadOnly()) {
               // Copy output to clipboard
               navigator.clipboard.writeText(output).then(() => {
-                sdk.window.showToast("Copied: " + output.substring(0, 40) + "...", {
+                sdk.window.showToast("Copied: " + output.substring(0, 30) + "...", {
                     variant: "info",
                     duration: 7000,
                 });
