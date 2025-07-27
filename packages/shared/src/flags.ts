@@ -9,7 +9,9 @@ export type FeatureFlagTag =
   | "hide-sidebar-groups"
   | "colorize-by-method"
   | "share-filters"
-  | "quick-mar";
+  | "quick-mar"
+  | "common-filters"
+  | "command-palette-workflows";
 
 export type FeatureFlagKind = "backend" | "frontend";
 

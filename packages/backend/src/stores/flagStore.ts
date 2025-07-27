@@ -100,6 +100,23 @@ export class FeatureFlagsStore {
         enabled: true,
         kind: "frontend",
       },
+      {
+        tag: "common-filters",
+        description: "Creates and automatically updates common filters you may want to use. 1hr, recent, 24hr, 6hr, 12hr",
+        enabled: false,
+        kind: "frontend",
+        knownIssues: [
+          "Disabled by default because of Caido issue #1707 - causes HTTP History to flicker.",
+        ],
+        requiresReload: false,
+      },
+      {
+        tag: "command-palette-workflows",
+        description: "Adds all your convert workflows to the command palette",
+        enabled: true,
+        kind: "frontend",
+        requiresReload: false,
+      },
     ];
   }
 
