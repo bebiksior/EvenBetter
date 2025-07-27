@@ -29,6 +29,9 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 2. In your Caido instance, navigate to the `Plugins` page, click `Install` and select the downloaded `plugin_package.zip` file
 3. Done! 🎉
 
+## Changelog v3.0.6
+- Added `command-palette-workflows` and `common-filters` features
+
 ## Changelog v3.0.3
 - Fixed issues with latest Caido versions (v0.47.1)
 - Added `share-filters` feature
