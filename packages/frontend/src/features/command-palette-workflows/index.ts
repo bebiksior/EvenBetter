@@ -17,21 +17,20 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
   }
 
   const commandId = `evenbetter:workflow:${workflow.id}`;
-  
+
   // Check if command is already registered to avoid duplicates
   if (registeredCommandIds.includes(commandId)) {
     return;
   }
 
   try {
-    console.log(`Command palette workflows enabled - registerWorkflowCommand c ${workflow.name}`);
     sdk.commands.register(commandId, {
       name: `c ${workflow.name}`,
       run: async () => {
         try {
           // Get the selected text from the active editor
           const selectedText = sdk.window.getActiveEditor()?.getSelectedText();
-          
+
           if (!selectedText) {
             sdk.window.showToast("No text selected", {
               variant: "warning",
@@ -72,7 +71,7 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
                 });
               }).catch(() => {
                 sdk.window.showToast("Failed to copy output", {
-                  variant: "error", 
+                  variant: "error",
                 });
               });
             } else {
@@ -99,40 +98,40 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
 
 const loadExistingWorkflows = async (sdk: CaidoSDK) => {
   try {
-    const workflows = await sdk.workflows.getWorkflows();
-    
+    const workflows = sdk.workflows.getWorkflows();
+
     // Register commands for each existing convert workflow
     workflows.forEach(workflow => {
       registerWorkflowCommand(workflow, sdk);
     });
-    
+
   } catch (error) {
     console.error("Failed to load existing workflows:", error);
+    sdk.window.showToast("[EvenBetter] Failed to load existing workflows", {
+      variant: "error",
+    });
   }
 };
 
 const setupWorkflowListener = (sdk: CaidoSDK) => {
   // Listen for new workflows being created
   sdk.workflows.onCreatedWorkflow((workflow) => {
-    console.log(`Command palette workflows enabled - setupWorkflowListener ${workflow.workflow.name}`);
     registerWorkflowCommand(workflow.workflow, sdk);
   });
 };
 
 const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-  console.log("Command palette workflows enabled - evenBetter Workflow");
   // Load existing workflows and register their commands
   loadExistingWorkflows(sdk);
-  
+
   // Set up listener for new workflows
-  console.log("Command palette workflows enabled - setupWorkflowListener");
   setupWorkflowListener(sdk);
 };
 
 const cleanup = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   // Clear registered command IDs when feature is disabled
   registeredCommandIds = [];
-  window.location.reload();//This will reload the page and it wont trigger the onFlagEnabled again
+  window.location.reload(); //This will reload the page and it wont trigger the onFlagEnabled again
 };
 
 export const commandPaletteWorkflows = createFeature(

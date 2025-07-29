@@ -19,11 +19,11 @@ const TIME_FILTERS: TimeFilter[] = [
 const createTimeBasedFilterQuery = (minutes: number): string => {
   const now = new Date();
   const pastTime = new Date(now.getTime() - (minutes * 60 * 1000));
-  const formattedDate = pastTime.getFullYear() + '-' + 
+  const formattedDate = pastTime.getFullYear() + '-' +
     String(pastTime.getMonth() + 1).padStart(2, '0') + '-' +
-    String(pastTime.getDate()).padStart(2, '0') + ' ' + 
+    String(pastTime.getDate()).padStart(2, '0') + ' ' +
     String(pastTime.getHours()).padStart(2, '0') + ':' +
-    String(pastTime.getMinutes()).padStart(2, '0') + ':' + 
+    String(pastTime.getMinutes()).padStart(2, '0') + ':' +
     String(pastTime.getSeconds()).padStart(2, '0');
   return `req.created_at.gt:"${formattedDate}"`;
 };
@@ -31,16 +31,16 @@ const createTimeBasedFilterQuery = (minutes: number): string => {
 const maintainTimeFilters = async (sdk: CaidoSDK) => {
   try {
     // Get all existing filters
-    const existingFilters = await sdk.filters.getAll();
-    
+    const existingFilters = sdk.filters.getAll();
+
     for (const timeFilter of TIME_FILTERS) {
       const filterQuery = createTimeBasedFilterQuery(timeFilter.minutes);
-      
+
       // Check if filter already exists
       const existingFilter = existingFilters.find(
         (filter: any) => filter.name === timeFilter.name
       );
-      
+
       if (existingFilter) {
         // Update existing filter if the query has changed
         if (existingFilter.query !== filterQuery) {
@@ -49,7 +49,6 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
             alias: timeFilter.name,
             query: filterQuery
           });
-          console.log(`Updated filter: ${timeFilter.name}`);
         }
       } else {
         // Create new filter
@@ -58,7 +57,6 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
           alias: timeFilter.name,
           query: filterQuery
         });
-        console.log(`Created filter: ${timeFilter.name}`);
       }
     }
   } catch (error) {
@@ -69,39 +67,38 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
 const startFilterMaintenance = (sdk: CaidoSDK) => {
   // Run immediately
   maintainTimeFilters(sdk);
-  
+
   // Then run every minute
   intervalId = setInterval(() => {
     maintainTimeFilters(sdk);
   }, 60000); // 60,000ms = 1 minute
-  
-  console.log("Common filters maintenance started");
 };
 
 const stopFilterMaintenance = async (sdk: CaidoSDK) => {
   if (intervalId) {
     clearInterval(intervalId);
     intervalId = undefined;
-    console.log("Common filters maintenance stopped");
   }
 
   try {
     // Get all existing filters
-    const existingFilters = await sdk.filters.getAll();
-    
+    const existingFilters = sdk.filters.getAll();
+
     // Remove any filters that match our time filter names
     for (const timeFilter of TIME_FILTERS) {
       const existingFilter = existingFilters.find(
         (filter: any) => filter.name === timeFilter.name
       );
-      
+
       if (existingFilter) {
         await sdk.filters.delete(existingFilter.id);
-        console.log(`Deleted filter: ${timeFilter.name}`);
       }
     }
   } catch (error) {
     console.error("Error cleaning up time filters:", error);
+    sdk.window.showToast("[EvenBetter] Error cleaning up time filters", {
+        variant: "error"
+    });
   }
 };
 

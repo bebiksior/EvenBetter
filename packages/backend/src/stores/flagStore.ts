@@ -1,12 +1,12 @@
+import {
+    backendHandleFlagToggle,
+    initializeFeatures as initializeBackendFeatures,
+} from "@/features/manager";
+import { exists, getFlagsPath } from "@/utils/files";
+import { readFile, writeFile } from "fs/promises";
+import * as path from "path";
 import { FeatureFlag, FeatureFlagTag } from "shared";
 import { CaidoBackendSDK } from "../types";
-import {
-  backendHandleFlagToggle,
-  initializeFeatures as initializeBackendFeatures,
-} from "@/features/manager";
-import * as path from "path";
-import { readFile, writeFile } from "fs/promises";
-import { exists, getFlagsPath } from "@/utils/files";
 
 interface StoredFlag {
   tag: FeatureFlagTag;
@@ -115,7 +115,7 @@ export class FeatureFlagsStore {
         description: "Adds all your convert workflows to the command palette",
         enabled: true,
         kind: "frontend",
-        requiresReload: false,
+        requiresReload: true,
       },
     ];
   }
