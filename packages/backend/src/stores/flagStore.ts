@@ -1,12 +1,12 @@
+import {
+    backendHandleFlagToggle,
+    initializeFeatures as initializeBackendFeatures,
+} from "@/features/manager";
+import { exists, getFlagsPath } from "@/utils/files";
+import { readFile, writeFile } from "fs/promises";
+import * as path from "path";
 import { FeatureFlag, FeatureFlagTag } from "shared";
 import { CaidoBackendSDK } from "../types";
-import {
-  backendHandleFlagToggle,
-  initializeFeatures as initializeBackendFeatures,
-} from "@/features/manager";
-import * as path from "path";
-import { readFile, writeFile } from "fs/promises";
-import { exists, getFlagsPath } from "@/utils/files";
 
 interface StoredFlag {
   tag: FeatureFlagTag;
@@ -99,6 +99,23 @@ export class FeatureFlagsStore {
         description: "Export & import filter presets",
         enabled: true,
         kind: "frontend",
+      },
+      {
+        tag: "common-filters",
+        description: "Creates and automatically updates common filters you may want to use. 1hr, recent, 24hr, 6hr, 12hr",
+        enabled: false,
+        kind: "frontend",
+        knownIssues: [
+          "Disabled by default because of Caido issue #1707 - causes HTTP History to flicker.",
+        ],
+        requiresReload: false,
+      },
+      {
+        tag: "command-palette-workflows",
+        description: "Adds all your convert workflows to the command palette",
+        enabled: true,
+        kind: "frontend",
+        requiresReload: true,
       },
     ];
   }
