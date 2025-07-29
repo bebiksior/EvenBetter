@@ -26,6 +26,7 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
   try {
     sdk.commands.register(commandId, {
       name: `c ${workflow.name}`,
+      group: "Convert Workflows",
       run: async () => {
         try {
           // Get the selected text from the active editor
