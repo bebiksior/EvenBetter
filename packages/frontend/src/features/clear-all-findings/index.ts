@@ -6,10 +6,7 @@ import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
 let eventCancelFunction: (() => void) | undefined;
 let clearAllButton: HTMLElement | undefined;
 
-const deleteAllFindings = (
-  sdk: CaidoSDK,
-  evenBetterAPI: EvenBetterAPI
-) => {
+const deleteAllFindings = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   eventCancelFunction = evenBetterAPI.eventManager.on(
     "onPageOpen",
     (data: PageOpenEvent) => {
@@ -31,19 +28,55 @@ const attachClearAllButton = (sdk: CaidoSDK) => {
   });
 
   clearAllButton.id = "clear-all-findings";
-  clearAllButton.addEventListener("click", () => {
-    sdk.graphql
-      .getFindingsByOffset({
-        limit: 100000,
-        offset: 0,
-        filter: {},
-        order: { by: "ID", ordering: "DESC" },
-      })
-      .then((res) => {
-        sdk.graphql.deleteFindings({
-          ids: res.findingsByOffset.edges.map((finding) => finding.node.id),
+  clearAllButton.addEventListener("click", async () => {
+    try {
+      const allFindingIds: string[] = [];
+      let hasNextPage = true;
+      let cursor: string | undefined = undefined;
+      const batchSize = 1000;
+
+      while (hasNextPage) {
+        let response;
+
+        if (cursor) {
+          response = await sdk.graphql.getFindingsAfter({
+            after: cursor,
+            first: batchSize,
+            filter: {},
+            order: { by: "ID", ordering: "DESC" },
+          });
+
+          const findings = response.findings.edges;
+          allFindingIds.push(...findings.map((finding) => finding.node.id));
+
+          hasNextPage = response.findings.pageInfo.hasNextPage;
+          cursor = response.findings.pageInfo.endCursor ?? undefined;
+        } else {
+          response = await sdk.graphql.getFindingsByOffset({
+            limit: batchSize,
+            offset: 0,
+            filter: {},
+            order: { by: "ID", ordering: "DESC" },
+          });
+
+          const findings = response.findingsByOffset.edges;
+          allFindingIds.push(...findings.map((finding) => finding.node.id));
+
+          hasNextPage = response.findingsByOffset.pageInfo.hasNextPage;
+          cursor = response.findingsByOffset.pageInfo.endCursor ?? undefined;
+        }
+      }
+
+      if (allFindingIds.length > 0) {
+        await sdk.graphql.deleteFindings({
+          input: {
+            ids: allFindingIds,
+          },
         });
-      });
+      }
+    } catch (error) {
+      console.error("Error clearing all findings:", error);
+    }
   });
 
   const cardHeader = document.querySelector(
