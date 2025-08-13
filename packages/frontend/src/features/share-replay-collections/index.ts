@@ -89,6 +89,10 @@ const createSession = async (
   request: RequestRawInput,
   sdk: CaidoSDK
 ) => {
+  if (!request.connectionInfo || !request.raw) {
+    throw new Error('Invalid request: missing connectionInfo or raw data');
+  }
+
   return await sdk.graphql.createReplaySession({
     input: {
       collectionId: collectionID,
@@ -166,26 +170,51 @@ const importCollection = async (
     for (const replayEntry of replayEntries) {
       const requestRawInput: RequestRawInput = {
         connectionInfo: {
-          host: replayEntry.connection.host,
-          port: replayEntry.connection.port,
-          isTLS: replayEntry.connection.isTls,
+          host: replayEntry.connection?.host,
+          port: replayEntry.connection?.port,
+          isTLS: replayEntry.connection?.isTls ?? false, // Use nullish coalescing
         },
         raw: replayEntry.raw,
       };
 
-      const newSession = await createSession(
-        newCollectionID,
-        requestRawInput,
-        sdk
-      );
+      // Validate requestRawInput before creating session
+      if (!requestRawInput.connectionInfo?.host) {
+        console.error('Invalid connection info:', requestRawInput.connectionInfo);
+        continue;
+      }
 
-      const sesionID = newSession.createReplaySession.session?.id;
-      if (!sesionID) return;
+      if (!requestRawInput.raw) {
+        console.error('Missing raw data for entry');
+        continue;
+      }
 
-      await sdk.graphql.renameReplaySession({
-        id: sesionID,
-        name: replayEntry.name,
-      });
+      try {
+        const newSession = await createSession(
+          newCollectionID,
+          requestRawInput,
+          sdk
+        );
+
+        const sessionID = newSession?.createReplaySession?.session?.id;
+        if (!sessionID) {
+          console.error('Failed to create session', { newSession });
+          continue;
+        }
+
+        await sdk.graphql.renameReplaySession({
+          id: sessionID,
+          name: replayEntry.name,
+        });
+      } catch (error) {
+        console.error('Error creating session:', error);
+
+        evenBetterAPI.toast.showToast({
+          message: `Failed to import session: ${error}`,
+          duration: 3000,
+          position: "bottom",
+          type: "error",
+        });
+      }
     }
   }
 
