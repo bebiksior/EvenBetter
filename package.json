@@ -1,18 +1,21 @@
 {
   "name": "evenbetter",
-  "version": "3.0.4",
-  "description": "EvenBetter",
-  "author": "bebiks <bebiks@cvssadvisor.com>",
-  "license": "CC0-1.0",
-  "type": "module",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "build": "node scripts/clean.js && pnpm -r build && node scripts/pack.js",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint ./packages/**/src --fix",
+    "build": "caido-dev build",
+    "watch": "caido-dev watch"
   },
   "devDependencies": {
-    "@caido/plugin-manifest": "0.2.0",
-    "jszip": "3.10.1",
-    "typescript": "5.6.3",
-    "vite": "5.4.11"
+    "@caido-community/dev": "^0.1.3",
+    "@caido/eslint-config": "^0.6.0",
+    "@caido/tailwindcss": "0.0.1",
+    "@vitejs/plugin-vue": "5.2.1",
+    "postcss-prefixwrap": "1.51.0",
+    "tailwindcss": "3.4.13",
+    "tailwindcss-primeui": "0.6.1",
+    "typescript": "5.5.4"
   }
 }

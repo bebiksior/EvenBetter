@@ -1,22 +1,13 @@
 {
   "name": "backend",
-  "version": "3.0.4",
-  "description": "EvenBetter",
-  "author": "bebiks <bebiks@cvssadvisor.com>",
-  "license": "CC0-1.0",
+  "version": "0.0.0",
   "type": "module",
   "types": "src/index.ts",
   "scripts": {
-    "build": "vite build",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@caido/quickjs-types": "^0.16.1",
-    "shared": "workspace:*"
-  },
   "devDependencies": {
-    "@caido/sdk-backend": "0.45.1",
-    "@types/node": "^22.10.10",
+    "@caido/sdk-backend": "^0.50.2",
     "shared": "workspace:*"
   }
 }

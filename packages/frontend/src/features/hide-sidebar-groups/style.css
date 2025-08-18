@@ -1,8 +1,0 @@
-.c-sidebar-group__title {
-    cursor: pointer;
-    transition: 0.2s ease-in-out opacity;
-}
-
-.c-sidebar-group__title:hover {
-    opacity: 0.8;
-}

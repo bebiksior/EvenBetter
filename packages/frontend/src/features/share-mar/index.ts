@@ -1,35 +1,35 @@
-import { CaidoSDK } from "@/types";
+import { onLocationChange } from "@/dom";
 import { createFeature } from "@/features/manager";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
+import { type FrontendSDK } from "@/types";
 import { downloadFile, importFile } from "@/utils/file-utils";
 
 let shareMARElements: HTMLElement[] = [];
 let cancelFunction: () => void;
 
 export const shareMAR = createFeature("share-mar", {
-  onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-    cancelFunction = evenBetterAPI.eventManager.on(
-      "onPageOpen",
-      (data: { newUrl: string }) => {
-        if (data.newUrl === "#/tamper") {
-          addImportButton(sdk);
-          observeMARTab(sdk);
-        } else {
-          cleanupObserver();
-        }
+  onFlagEnabled: (sdk: FrontendSDK) => {
+    cancelFunction = onLocationChange((data) => {
+      if (data.newHash === "#/tamper") {
+        addImportButton(sdk);
+        observeMARTab(sdk);
+      } else {
+        cleanup();
       }
-    );
+    });
   },
   onFlagDisabled: () => {
     cleanupMARElements();
   },
 });
 
-const cleanupObserver = () => {
+const cleanup = () => {
   if (marTabObserver) {
     marTabObserver.disconnect();
     marTabObserver = null;
   }
+
+  document.querySelector("#scope-presents-import")?.remove();
+  document.querySelector("#rules-download")?.remove();
 };
 
 const cleanupMARElements = () => {
@@ -37,7 +37,7 @@ const cleanupMARElements = () => {
     cancelFunction();
   }
 
-  cleanupObserver();
+  cleanup();
 
   shareMARElements.forEach((element) => {
     element.remove();
@@ -45,7 +45,7 @@ const cleanupMARElements = () => {
   shareMARElements = [];
 
   const ruleListHeader = document.querySelector(
-    ".c-rule-list-header__new"
+    ".c-rule-list-header__new",
   ) as HTMLElement;
   if (ruleListHeader) {
     ruleListHeader.style.removeProperty("display");
@@ -64,67 +64,50 @@ const cleanupMARElements = () => {
   document.querySelector("#rules-download")?.remove();
 };
 
-const addImportButton = (sdk: CaidoSDK) => {
-  const ruleListHeader = document.querySelector(
-    ".c-rule-list-header__new"
+const addImportButton = (sdk: FrontendSDK) => {
+  const topbarLeft = document.querySelector(
+    ".c-topbar .c-topbar__left",
   ) as HTMLElement;
-  if (!ruleListHeader || document.querySelector("#scope-presents-import"))
-    return;
-
-  ruleListHeader.style.display = "flex";
-  ruleListHeader.style.gap = "0.5em";
-
-  const parent = ruleListHeader.parentElement as HTMLElement;
-  if (!parent) return;
-
-  parent.style.display = "flex";
-  parent.style.justifyContent = "space-between";
-  parent.style.alignItems = "center";
-  parent.style.padding = "var(--c-space-3)";
-
-  const rulesLabel = document.createElement("div");
-  shareMARElements.push(rulesLabel);
-
-  rulesLabel.textContent = "Rules";
-  rulesLabel.classList.add("c-header__title");
-
-  parent.prepend(rulesLabel);
+  if (!topbarLeft || document.querySelector("#scope-presents-import")) return;
 
   const importButton = sdk.ui.button({
     label: "Import",
     leadingIcon: "fas fa-file-upload",
-    variant: "primary",
+    variant: "tertiary",
+    size: "small",
   });
-  shareMARElements.push(importButton);
-
   importButton.id = "scope-presents-import";
   importButton.addEventListener("click", () => {
     handleImportButtonClick(sdk);
   });
 
-  ruleListHeader.appendChild(importButton);
+  shareMARElements.push(importButton);
+
+  topbarLeft.appendChild(importButton);
 };
 
-const handleImportButtonClick = (sdk: CaidoSDK) => {
+const handleImportButtonClick = (sdk: FrontendSDK) => {
   importFile(".json", (content: string) => {
     try {
       const data = JSON.parse(content);
 
-      getFirstCollectionID(sdk).then(firstCollectionID => {
+      getFirstCollectionID(sdk).then((firstCollectionID) => {
         if (!firstCollectionID) return;
 
         const transformedSection = transformSection(data.section);
 
-        sdk.graphql.createTamperRule({
-          input: {
-            collectionId: firstCollectionID,
-            name: data.name,
-            condition: data.condition,
-            section: transformedSection,
-          },
-        }).then(() => {
-          location.reload();
-        });
+        sdk.graphql
+          .createTamperRule({
+            input: {
+              collectionId: firstCollectionID,
+              name: data.name,
+              condition: data.condition,
+              section: transformedSection,
+            },
+          })
+          .then(() => {
+            location.reload();
+          });
       });
     } catch (error) {
       console.error("Failed to import rule:", error);
@@ -142,10 +125,10 @@ const transformSection = (section: any): any => {
           operation: {
             raw: {
               matcher: transformMatcher(section.operation.matcher),
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     case "TamperSectionRequestFirstLine":
       return {
@@ -153,26 +136,26 @@ const transformSection = (section: any): any => {
           operation: {
             raw: {
               matcher: transformMatcher(section.operation.matcher),
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     case "TamperSectionRequestHeader":
       return {
         requestHeader: {
-          operation: transformHeaderOperation(section.operation)
-        }
+          operation: transformHeaderOperation(section.operation),
+        },
       };
     case "TamperSectionRequestMethod":
       return {
         requestMethod: {
           operation: {
             update: {
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     case "TamperSectionRequestPath":
       return {
@@ -180,16 +163,16 @@ const transformSection = (section: any): any => {
           operation: {
             raw: {
               matcher: transformMatcher(section.operation.matcher),
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     case "TamperSectionRequestQuery":
       return {
         requestQuery: {
-          operation: transformQueryOperation(section.operation)
-        }
+          operation: transformQueryOperation(section.operation),
+        },
       };
     case "TamperSectionResponseBody":
       return {
@@ -197,10 +180,10 @@ const transformSection = (section: any): any => {
           operation: {
             raw: {
               matcher: transformMatcher(section.operation.matcher),
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     case "TamperSectionResponseFirstLine":
       return {
@@ -208,26 +191,26 @@ const transformSection = (section: any): any => {
           operation: {
             raw: {
               matcher: transformMatcher(section.operation.matcher),
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     case "TamperSectionResponseHeader":
       return {
         responseHeader: {
-          operation: transformHeaderOperation(section.operation)
-        }
+          operation: transformHeaderOperation(section.operation),
+        },
       };
     case "TamperSectionResponseStatusCode":
       return {
         responseStatusCode: {
           operation: {
             update: {
-              replacer: transformReplacer(section.operation.replacer)
-            }
-          }
-        }
+              replacer: transformReplacer(section.operation.replacer),
+            },
+          },
+        },
       };
     default:
       return section;
@@ -270,28 +253,28 @@ const transformHeaderOperation = (operation: any): any => {
       return {
         add: {
           matcher: { name: operation.matcher.name },
-          replacer: transformReplacer(operation.replacer)
-        }
+          replacer: transformReplacer(operation.replacer),
+        },
       };
     case "TamperOperationHeaderRaw":
       return {
         raw: {
           matcher: transformMatcher(operation.matcher),
-          replacer: transformReplacer(operation.replacer)
-        }
+          replacer: transformReplacer(operation.replacer),
+        },
       };
     case "TamperOperationHeaderRemove":
       return {
         remove: {
-          matcher: { name: operation.matcher.name }
-        }
+          matcher: { name: operation.matcher.name },
+        },
       };
     case "TamperOperationHeaderUpdate":
       return {
         update: {
           matcher: { name: operation.matcher.name },
-          replacer: transformReplacer(operation.replacer)
-        }
+          replacer: transformReplacer(operation.replacer),
+        },
       };
     default:
       return operation;
@@ -306,35 +289,35 @@ const transformQueryOperation = (operation: any): any => {
       return {
         add: {
           matcher: { name: operation.matcher.name },
-          replacer: transformReplacer(operation.replacer)
-        }
+          replacer: transformReplacer(operation.replacer),
+        },
       };
     case "TamperOperationQueryRaw":
       return {
         raw: {
           matcher: transformMatcher(operation.matcher),
-          replacer: transformReplacer(operation.replacer)
-        }
+          replacer: transformReplacer(operation.replacer),
+        },
       };
     case "TamperOperationQueryRemove":
       return {
         remove: {
-          matcher: { name: operation.matcher.name }
-        }
+          matcher: { name: operation.matcher.name },
+        },
       };
     case "TamperOperationQueryUpdate":
       return {
         update: {
           matcher: { name: operation.matcher.name },
-          replacer: transformReplacer(operation.replacer)
-        }
+          replacer: transformReplacer(operation.replacer),
+        },
       };
     default:
       return operation;
   }
 };
 
-const getFirstCollectionID = (sdk: CaidoSDK) => {
+const getFirstCollectionID = (sdk: FrontendSDK) => {
   return sdk.graphql.tamperRuleCollections().then((data) => {
     if (
       data.tamperRuleCollections &&
@@ -347,11 +330,9 @@ const getFirstCollectionID = (sdk: CaidoSDK) => {
 };
 
 let marTabObserver: MutationObserver | null = null;
-const observeMARTab = (sdk: CaidoSDK) => {
-  const cTamper = document.querySelector("[data-page='#/tamper']");
+const observeMARTab = (sdk: FrontendSDK) => {
+  const cTamper = document.querySelector(".c-authenticated");
   if (!cTamper) return;
-
-  cleanupObserver();
 
   marTabObserver = new MutationObserver((mutations) => {
     if (shouldSkipMutation(mutations)) return;
@@ -380,11 +361,11 @@ const shouldSkipMutation = (mutations: MutationRecord[]) => {
   });
 };
 
-const attachDownloadButton = (sdk: CaidoSDK) => {
+const attachDownloadButton = (sdk: FrontendSDK) => {
   document.querySelector("#rules-download")?.remove();
 
   const cardFooter = document.querySelector(
-    "[data-page='#/tamper'] .c-card__footer"
+    ".c-authenticated .c-card__footer",
   ) as HTMLElement;
   if (!cardFooter) {
     return;
@@ -411,7 +392,7 @@ const attachDownloadButton = (sdk: CaidoSDK) => {
   cardFooter.appendChild(downloadButton);
 };
 
-const handleDownloadButtonClick = (sdk: CaidoSDK) => {
+const handleDownloadButtonClick = (sdk: FrontendSDK) => {
   const ruleID = getActiveRuleID();
   if (!ruleID) {
     return;

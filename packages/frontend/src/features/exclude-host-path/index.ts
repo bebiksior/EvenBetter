@@ -1,11 +1,7 @@
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
+import { type FrontendSDK } from "@/types";
 
-const excludeHostPathFunctionality = (
-  sdk: CaidoSDK,
-  evenBetterAPI: EvenBetterAPI
-) => {
+const excludeHostPathFunctionality = (sdk: FrontendSDK) => {
   sdk.commands.register("eb:excludehost", {
     name: "Exclude Host",
     run: async () => {
@@ -53,9 +49,9 @@ const getSelectedRequestID = () => {
     ?.getAttribute("data-request-id");
 };
 
-const getSelectedRequest = async (sdk: CaidoSDK) => {
+const getSelectedRequest = async (sdk: FrontendSDK) => {
   const selectedRequestID = getSelectedRequestID();
-  if (!selectedRequestID) return;
+  if (selectedRequestID === null || selectedRequestID === undefined) return;
 
   const request = await sdk.graphql.request({
     id: selectedRequestID,
@@ -65,10 +61,10 @@ const getSelectedRequest = async (sdk: CaidoSDK) => {
 };
 
 export const excludeHostPath = createFeature("exclude-host-path", {
-  onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-    excludeHostPathFunctionality(sdk, evenBetterAPI);
+  onFlagEnabled: (sdk: FrontendSDK) => {
+    excludeHostPathFunctionality(sdk);
   },
-  onFlagDisabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+  onFlagDisabled: (sdk: FrontendSDK) => {
     location.reload();
   },
 });

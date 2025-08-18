@@ -1,0 +1,119 @@
+---
+globs:
+  - "**/packages/backend/**"
+alwaysApply: true
+description: Caido Backend SDK Rules and Patterns
+---
+
+## Caido Backend SDK
+
+### Overview
+
+The Caido Backend SDK is used for server-side logic, data processing, and creating API endpoints that can be called from frontend plugins.
+
+### Entry Point
+
+Backend plugins are initialized via `packages/backend/src/index.ts`:
+
+```typescript
+import { SDK, DefineAPI } from "caido:plugin";
+
+// Define your API functions
+function myCustomFunction(sdk: SDK, param: string) {
+  sdk.console.log(`Called with: ${param}`);
+  return `Processed: ${param}`;
+}
+
+// Export the API type definition
+export type API = DefineAPI<{
+  myCustomFunction: typeof myCustomFunction;
+}>;
+
+// Plugin initialization
+export function init(sdk: SDK<API>) {
+  // Register API endpoints
+  sdk.api.register("myCustomFunction", myCustomFunction);
+}
+```
+
+### SDK Type Definitions
+
+#### Backend SDK with events:
+```typescript
+import { DefineEvents, SDK } from "caido:plugin";
+
+export type BackendEvents = DefineEvents<{
+  "data-updated": { message: string };
+  "status-changed": { status: "active" | "inactive" };
+}>;
+
+export type CaidoBackendSDK = SDK<never, BackendEvents>;
+```
+
+### Best Practices
+
+When building API endpoints in the backend and calling them from the frontend, use Result types to handle errors gracefully without throwing exceptions:
+
+```typescript
+// Define the Result type
+export type Result<T> =
+  | { kind: "Error"; error: string }
+  | { kind: "Ok"; value: T };
+
+// Backend API function returning Result
+function processData(sdk: SDK, input: string): Result<ProcessedData> {
+  try {
+    // Your processing logic here
+    const processed = doSomeProcessing(input);
+    return { kind: "Ok", value: processed };
+  } catch (error) {
+    return { kind: "Error", error: error.message };
+  }
+}
+
+// Frontend usage - no try/catch needed
+const handleProcess = async () => {
+  const result = await sdk.backend.processData(inputValue);
+
+  if (result.kind === "Error") {
+    sdk.window.showToast(result.error, { variant: "error" });
+    return;
+  }
+
+  // Handle successful result
+  const data = result.value;
+  sdk.window.showToast("Processing completed!", { variant: "success" });
+};
+```
+
+
+#### Registering Multiple API Endpoints
+
+```typescript
+// Define multiple API functions
+function getData(sdk: SDK, id: string): Result<Data> {
+  // Implementation
+}
+
+function saveData(sdk: SDK, data: Data): Result<void> {
+  // Implementation
+}
+
+function deleteData(sdk: SDK, id: string): Result<boolean> {
+  // Implementation
+}
+
+// Export Caido Backend API
+export type API = DefineAPI<{
+  getData: typeof getData;
+  saveData: typeof saveData;
+  deleteData: typeof deleteData;
+}>;
+
+// Register all endpoints
+export function init(sdk: SDK<API>) {
+  sdk.api.register("getData", getData);
+  sdk.api.register("saveData", saveData);
+  sdk.api.register("deleteData", deleteData);
+}
+```

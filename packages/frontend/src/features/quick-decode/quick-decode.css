@@ -4,7 +4,6 @@
 
   background-color: var(--c-bg-default);
   word-wrap: break-word;
-  border: 1px solid rgba(0, 0, 0, 0.24);
   flex-direction: column;
   overflow: hidden;
   position: relative;
@@ -12,9 +11,9 @@
 
 #evenbetter__qd-resizer {
   cursor: ns-resize;
+  position: absolute;
   height: 10px;
   width: 100%;
-  position: absolute;
 }
 
 .evenbetter__qd-selected-text-box {
@@ -48,7 +47,6 @@
 
 .evenbetter__qd-selected-text {
   padding: 0.6em;
-  margin: 0.5em;
   background: var(--c-bg-subtle);
   height: 100%;
   flex: 1;

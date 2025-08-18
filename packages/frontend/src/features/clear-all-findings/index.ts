@@ -1,23 +1,19 @@
+import { onLocationChange } from "@/dom";
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
-import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+import { type FrontendSDK } from "@/types";
 
 let eventCancelFunction: (() => void) | undefined;
 let clearAllButton: HTMLElement | undefined;
 
-const deleteAllFindings = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-  eventCancelFunction = evenBetterAPI.eventManager.on(
-    "onPageOpen",
-    (data: PageOpenEvent) => {
-      if (data.newUrl !== "#/findings") return;
+const deleteAllFindings = (sdk: FrontendSDK) => {
+  eventCancelFunction = onLocationChange((data) => {
+    if (data.newHash !== "#/findings") return;
 
-      attachClearAllButton(sdk);
-    }
-  );
+    attachClearAllButton(sdk);
+  });
 };
 
-const attachClearAllButton = (sdk: CaidoSDK) => {
+const attachClearAllButton = (sdk: FrontendSDK) => {
   if (document.querySelector("#clear-all-findings")) return;
 
   clearAllButton = sdk.ui.button({
@@ -38,7 +34,7 @@ const attachClearAllButton = (sdk: CaidoSDK) => {
       while (hasNextPage) {
         let response;
 
-        if (cursor) {
+        if (cursor !== undefined) {
           response = await sdk.graphql.getFindingsAfter({
             after: cursor,
             first: batchSize,
@@ -80,9 +76,9 @@ const attachClearAllButton = (sdk: CaidoSDK) => {
   });
 
   const cardHeader = document.querySelector(
-    ".c-finding-table .c-card__header"
+    ".c-finding-table .c-card__header",
   ) as HTMLElement;
-  if (cardHeader) {
+  if (cardHeader !== null) {
     cardHeader.appendChild(clearAllButton);
     cardHeader.style.display = "flex";
     cardHeader.style.justifyContent = "space-between";
@@ -102,10 +98,10 @@ function cleanup() {
 }
 
 export const clearAllFindings = createFeature("clear-all-findings", {
-  onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-    deleteAllFindings(sdk, evenBetterAPI);
+  onFlagEnabled: (sdk: FrontendSDK) => {
+    deleteAllFindings(sdk);
   },
-  onFlagDisabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+  onFlagDisabled: (sdk: FrontendSDK) => {
     cleanup();
   },
 });

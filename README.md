@@ -29,25 +29,12 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 2. In your Caido instance, navigate to the `Plugins` page, click `Install` and select the downloaded `plugin_package.zip` file
 3. Done! 🎉
 
-## Changelog v3.0.6
-- Added `command-palette-workflows` and `common-filters` features
+## Changelog v4.0.0
 
-## Changelog v3.0.3
-- Fixed issues with latest Caido versions (v0.47.1)
-- Added `share-filters` feature
-
-## Changelog v3.0.2
-- Fixed issues with latest Caido versions (v0.45.1)
-- Added `colorize-by-method` feature
-
-## Changelog v3.0.1
-- Fixed issues with latest Caido versions (v0.43.1, v0.43.0)
-
-## Changelog v3.0.0
-- Refactored the entire plugin
-- Fully migrated to new SDK
-- Every EvenBetter feature can be now toggled in the new EvenBetter settings page
-- Decided to separate Quick SSRF, Custom Themes and Workflows Library features into two different plugins. These will be released in the next few months.
+- Migrated frontend from React to Vue
+- Made some features more stable and reliable
+- Removed `hide-sidebar-groups` feature (might return at some point)
+- Fixed bugs affecting latest Caido version
 
 ## Contribution
 

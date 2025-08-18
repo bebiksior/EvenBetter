@@ -1,12 +1,14 @@
-import {
-    backendHandleFlagToggle,
-    initializeFeatures as initializeBackendFeatures,
-} from "@/features/manager";
-import { exists, getFlagsPath } from "@/utils/files";
 import { readFile, writeFile } from "fs/promises";
 import * as path from "path";
-import { FeatureFlag, FeatureFlagTag } from "shared";
-import { CaidoBackendSDK } from "../types";
+
+import { type FeatureFlag, type FeatureFlagTag } from "shared";
+
+import {
+  backendHandleFlagToggle,
+  initializeFeatures as initializeBackendFeatures,
+} from "../features/manager";
+import { type BackendSDK } from "../types";
+import { exists, getFlagsPath } from "../utils/files";
 
 interface StoredFlag {
   tag: FeatureFlagTag;
@@ -16,9 +18,9 @@ interface StoredFlag {
 export class FeatureFlagsStore {
   private static instance: FeatureFlagsStore;
   private flags: FeatureFlag[];
-  private sdk: CaidoBackendSDK;
+  private sdk: BackendSDK;
 
-  private constructor(sdk: CaidoBackendSDK) {
+  private constructor(sdk: BackendSDK) {
     this.sdk = sdk;
     this.flags = [
       // {
@@ -74,16 +76,6 @@ export class FeatureFlagsStore {
         requiresReload: true,
       },
       {
-        tag: "hide-sidebar-groups",
-        description: "Hide sidebar groups",
-        enabled: true,
-        kind: "frontend",
-        requiresReload: true,
-        knownIssues: [
-          'If your sidebar is collapsed, and you reload a page, the groups will be expanded. It fixes when you expand the sidebar. This is because hide-sidebar-groups relies on title of sidebar groups and when sidebar is collapsed, title is "..." and it\'s not possible to get the title of the group.',
-        ],
-      },
-      {
         tag: "colorize-by-method",
         description:
           "Colorize session tabs by their HTTP methods in the Replay page",
@@ -102,12 +94,10 @@ export class FeatureFlagsStore {
       },
       {
         tag: "common-filters",
-        description: "Creates and automatically updates common filters you may want to use. 1hr, recent, 24hr, 6hr, 12hr",
-        enabled: false,
+        description:
+          "Creates and automatically updates common filters you may want to use. 1hr, recent, 24hr, 6hr, 12hr",
+        enabled: true,
         kind: "frontend",
-        knownIssues: [
-          "Disabled by default because of Caido issue #1707 - causes HTTP History to flicker.",
-        ],
         requiresReload: false,
       },
       {
@@ -120,7 +110,7 @@ export class FeatureFlagsStore {
     ];
   }
 
-  static async initialize(sdk: CaidoBackendSDK): Promise<FeatureFlagsStore> {
+  static async initialize(sdk: BackendSDK): Promise<FeatureFlagsStore> {
     this.instance = new FeatureFlagsStore(sdk);
     await this.instance.readFlags();
     initializeBackendFeatures(this.instance.flags, sdk);
@@ -128,7 +118,7 @@ export class FeatureFlagsStore {
   }
 
   public async readFlags() {
-    const flagsPath = await getFlagsPath(this.sdk);
+    const flagsPath = getFlagsPath(this.sdk);
     const fileExists = await exists(flagsPath);
 
     if (!fileExists) {
@@ -147,13 +137,15 @@ export class FeatureFlagsStore {
           flag.enabled = storedFlag.enabled;
         }
       });
-    } catch (error: any) {
-      this.sdk.console.error("Unexpected error reading flags:" + error);
+    } catch (error) {
+      this.sdk.console.error(
+        "Unexpected error reading flags: " + String(error),
+      );
     }
   }
 
   private async saveFlagsToFile(flags: FeatureFlag[]): Promise<string> {
-    const flagsPath = await getFlagsPath(this.sdk);
+    const flagsPath = getFlagsPath(this.sdk);
     const storedFlags: StoredFlag[] = flags.map((flag) => ({
       tag: flag.tag,
       enabled: flag.enabled,
@@ -163,7 +155,7 @@ export class FeatureFlagsStore {
   }
 
   static get(): FeatureFlagsStore {
-    if (!FeatureFlagsStore.instance) {
+    if (FeatureFlagsStore.instance === undefined) {
       throw new Error("FeatureFlagsStore not initialized");
     }
 

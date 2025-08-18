@@ -1,6 +1,5 @@
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
+import { type FrontendSDK } from "@/types";
 
 interface Workflow {
   id: string;
@@ -10,7 +9,7 @@ interface Workflow {
 
 let registeredCommandIds: string[] = [];
 
-const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
+const registerWorkflowCommand = (workflow: Workflow, sdk: FrontendSDK) => {
   // Skip if not a convert workflow
   if (workflow.kind !== "Convert") {
     return;
@@ -32,7 +31,7 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
           // Get the selected text from the active editor
           const selectedText = sdk.window.getActiveEditor()?.getSelectedText();
 
-          if (!selectedText) {
+          if (selectedText === undefined) {
             sdk.window.showToast("No text selected", {
               variant: "warning",
             });
@@ -42,11 +41,16 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
           // Run the convert workflow with the selected text
           const result = await sdk.graphql.runConvertWorkflow({
             id: workflow.id,
-            input: selectedText
+            input: selectedText,
           });
 
           if (result.runConvertWorkflow.error) {
-            sdk.window.showToast(`Workflow error: ${result.runConvertWorkflow.error}`, {
+            const errorMessage =
+              typeof result.runConvertWorkflow.error === "string"
+                ? result.runConvertWorkflow.error
+                : JSON.stringify(result.runConvertWorkflow.error);
+
+            sdk.window.showToast(`Workflow error: ${errorMessage}`, {
               variant: "error",
             });
             return;
@@ -65,22 +69,27 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
             }
             if (activeEditor.isReadOnly()) {
               // Copy output to clipboard
-              navigator.clipboard.writeText(output).then(() => {
-                sdk.window.showToast("Copied: " + output.substring(0, 30) + "...", {
-                    variant: "info",
-                    duration: 7000,
+              navigator.clipboard
+                .writeText(output)
+                .then(() => {
+                  sdk.window.showToast(
+                    "Copied: " + output.substring(0, 30) + "...",
+                    {
+                      variant: "info",
+                      duration: 7000,
+                    },
+                  );
+                })
+                .catch(() => {
+                  sdk.window.showToast("Failed to copy output", {
+                    variant: "error",
+                  });
                 });
-              }).catch(() => {
-                sdk.window.showToast("Failed to copy output", {
-                  variant: "error",
-                });
-              });
             } else {
               // Replace the selected text with the workflow output for editable editors
               activeEditor.replaceSelectedText(output);
             }
           }
-
         } catch (error) {
           console.error("Error running workflow:", error);
           sdk.window.showToast("Failed to run workflow", {
@@ -93,19 +102,21 @@ const registerWorkflowCommand = (workflow: Workflow, sdk: CaidoSDK) => {
     registeredCommandIds.push(commandId);
     sdk.commandPalette.register(commandId);
   } catch (error) {
-    console.error(`Failed to register command for workflow ${workflow.name}:`, error);
+    console.error(
+      `Failed to register command for workflow ${workflow.name}:`,
+      error,
+    );
   }
 };
 
-const loadExistingWorkflows = async (sdk: CaidoSDK) => {
+const loadExistingWorkflows = (sdk: FrontendSDK) => {
   try {
     const workflows = sdk.workflows.getWorkflows();
 
     // Register commands for each existing convert workflow
-    workflows.forEach(workflow => {
+    workflows.forEach((workflow) => {
       registerWorkflowCommand(workflow, sdk);
     });
-
   } catch (error) {
     console.error("Failed to load existing workflows:", error);
     sdk.window.showToast("[EvenBetter] Failed to load existing workflows", {
@@ -114,14 +125,14 @@ const loadExistingWorkflows = async (sdk: CaidoSDK) => {
   }
 };
 
-const setupWorkflowListener = (sdk: CaidoSDK) => {
+const setupWorkflowListener = (sdk: FrontendSDK) => {
   // Listen for new workflows being created
   sdk.workflows.onCreatedWorkflow((workflow) => {
     registerWorkflowCommand(workflow.workflow, sdk);
   });
 };
 
-const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const init = (sdk: FrontendSDK) => {
   // Load existing workflows and register their commands
   loadExistingWorkflows(sdk);
 
@@ -129,7 +140,7 @@ const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   setupWorkflowListener(sdk);
 };
 
-const cleanup = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const cleanup = (sdk: FrontendSDK) => {
   // Clear registered command IDs when feature is disabled
   registeredCommandIds = [];
   window.location.reload(); //This will reload the page and it wont trigger the onFlagEnabled again
@@ -140,5 +151,5 @@ export const commandPaletteWorkflows = createFeature(
   {
     onFlagEnabled: init,
     onFlagDisabled: cleanup,
-  }
+  },
 );

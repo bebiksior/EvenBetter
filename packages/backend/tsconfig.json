@@ -1,17 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": ["@caido/sdk-backend"],
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "disableSourceOfProjectReferenceRedirect": true,
-    "composite": true,
-    "importsNotUsedAsValues": "remove"
+    "types": ["@caido/sdk-backend"]
   },
-  "include": ["src/**/*.ts"],
-  "tsc-alias": {
-    "resolveFullPaths": true
-  }
+  "include": ["./src/**/*.ts"]
 }

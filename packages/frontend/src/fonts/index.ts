@@ -1,6 +1,6 @@
-import { CaidoSDK } from "@/types";
-import { handleApiResult } from "@/utils/api-utils";
 import { getFontUrl } from "shared";
+
+import { type FrontendSDK } from "@/types";
 
 function loadFont(font: string, fontUrl: string) {
   const customFontElement = document.getElementById("eb-custom-font");
@@ -9,7 +9,7 @@ function loadFont(font: string, fontUrl: string) {
   }
 
   const customFontStyleElement = document.getElementById(
-    "eb-custom-font-style"
+    "eb-custom-font-style",
   );
   if (customFontStyleElement) {
     document.head.removeChild(customFontStyleElement);
@@ -30,11 +30,13 @@ function loadFont(font: string, fontUrl: string) {
   document.head.appendChild(style);
 }
 
-export async function initFontLoader(sdk: CaidoSDK) {
+export async function initFontLoader(sdk: FrontendSDK) {
   sdk.backend.onEvent("font:load", loadFont);
 
-  const settingsStore = await handleApiResult(sdk.backend.getSettings());
-  const customFont = settingsStore.customFont;
+  const settings = await sdk.backend.getSettings();
+  if (settings.kind === "Error") return;
+
+  const customFont = settings.value.customFont;
   if (customFont) {
     loadFont(customFont, getFontUrl(customFont));
   }

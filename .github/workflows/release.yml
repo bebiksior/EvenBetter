@@ -5,7 +5,7 @@ on:
 
 env:
   NODE_VERSION: 20
-  PNPM_VERSION: 9.15.2
+  PNPM_VERSION: 9
 
 jobs:
   release:
@@ -17,12 +17,6 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
-
-      - name: Check version
-        id: meta
-        run: |
-          VERSION=$(jq -r .version manifest.json)
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -49,10 +43,17 @@ jobs:
             rm private_key.pem
           fi
 
+      - name: Check version
+        id: meta
+        working-directory: dist
+        run: |
+          VERSION=$(unzip -p plugin_package.zip manifest.json | jq -r .version)
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.meta.outputs.version }}
           commit: ${{ github.sha }}
-          body: "Release ${{ steps.meta.outputs.version }}"
-          artifacts: "dist/plugin_package.zip,dist/plugin_package.zip.sig"
+          body: 'Release ${{ steps.meta.outputs.version }}'
+          artifacts: 'dist/plugin_package.zip,dist/plugin_package.zip.sig'

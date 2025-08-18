@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "lib": ["ESNext", "es2015", "dom", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext"],
 
     "jsx": "preserve",
     "noImplicitAny": true,

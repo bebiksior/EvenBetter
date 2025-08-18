@@ -1,7 +1,3 @@
 node_modules
-test
-.vscode
-.DS_Store
-bun.lockb
 dist
-pnpm-lock.yaml
+.DS_Store

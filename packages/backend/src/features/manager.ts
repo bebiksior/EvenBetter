@@ -1,5 +1,6 @@
-import { FeatureFlag, FeatureFlagTag } from "shared";
-import { CaidoBackendSDK } from "../types";
+import { type FeatureFlag, type FeatureFlagTag } from "shared";
+
+import { type BackendSDK } from "../types";
 
 /**
  * Example flag:
@@ -11,16 +12,16 @@ import { CaidoBackendSDK } from "../types";
     console.log("Backend test flag disabled");
   },
 });
- * 
- * This FeatureManager is responsible for managing the feature flags on the backend.    
+ *
+ * This FeatureManager is responsible for managing the feature flags on the backend.
  * It handles only the flags with kind "backend".
  * It creates a map of feature tags and their functions for enable and disable.
  * FlagStore will call these functions when a flag is enabled or disabled.
  */
 
 type FeatureHandlers = {
-  onFlagEnabled: (sdk: CaidoBackendSDK) => void;
-  onFlagDisabled: (sdk: CaidoBackendSDK) => void;
+  onFlagEnabled: (sdk: BackendSDK) => void;
+  onFlagDisabled: (sdk: BackendSDK) => void;
 };
 
 const featureMap = new Map<FeatureFlagTag, FeatureHandlers>();
@@ -33,7 +34,7 @@ export function createFeature(tag: FeatureFlagTag, handlers: FeatureHandlers) {
 export function backendHandleFlagToggle(
   tag: FeatureFlagTag,
   enabled: boolean,
-  sdk: CaidoBackendSDK
+  sdk: BackendSDK,
 ) {
   const handlers = featureMap.get(tag);
   if (handlers) {
@@ -47,7 +48,7 @@ export function backendHandleFlagToggle(
   }
 }
 
-export function initializeFeatures(flags: FeatureFlag[], sdk: CaidoBackendSDK) {
+export function initializeFeatures(flags: FeatureFlag[], sdk: BackendSDK) {
   flags.forEach((flag) => {
     if (flag.kind === "backend" && flag.enabled) {
       const handlers = featureMap.get(flag.tag);

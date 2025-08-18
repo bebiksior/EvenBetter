@@ -1,14 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES2015", "ESNext", "DOM"],
-    "types": ["@caido/sdk-backend", "node"],
+    "lib": ["DOM", "ESNext"],
+    "types": ["@caido/sdk-backend"],
     "baseUrl": ".",
-    "noResolve": false,
-    "moduleResolution": "node",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
+  "include": ["./src/**/*.ts", "./src/**/*.vue"]
 }

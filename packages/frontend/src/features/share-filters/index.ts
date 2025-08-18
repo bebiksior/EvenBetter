@@ -1,26 +1,22 @@
+import { onLocationChange } from "@/dom";
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
+import { type FrontendSDK } from "@/types";
 import { downloadFile, importFile } from "@/utils/file-utils";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
-import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
 
-let filterTabObserver: MutationObserver | null = null;
+let filterTabObserver: MutationObserver | undefined = undefined;
 let cancelListener: () => void;
 let filterButtons: HTMLElement[] = [];
 
 export const shareFilters = createFeature("share-filters", {
-  onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-    cancelListener = evenBetterAPI.eventManager.on(
-      "onPageOpen",
-      (data: PageOpenEvent) => {
-        cleanupFilterElements();
+  onFlagEnabled: (sdk: FrontendSDK) => {
+    cancelListener = onLocationChange((data) => {
+      cleanupFilterElements();
 
-        if (data.newUrl == "#/filter") {
-          addImportButton(sdk);
-          observeFilterTab(sdk, evenBetterAPI);
-        }
+      if (data.newHash === "#/filter") {
+        addImportButton(sdk);
+        observeFilterTab(sdk);
       }
-    );
+    });
   },
   onFlagDisabled: () => {
     cleanupFilterElements();
@@ -33,44 +29,26 @@ export const shareFilters = createFeature("share-filters", {
 const cleanupFilterElements = () => {
   if (filterTabObserver) {
     filterTabObserver.disconnect();
-    filterTabObserver = null;
+    filterTabObserver = undefined;
   }
 
   filterButtons.forEach((b) => b.remove());
   filterButtons = [];
 };
-const addImportButton = (sdk: CaidoSDK) => {
-  const header = document.querySelector(".c-list-header") as HTMLElement;
-  const actions = document.querySelector(
-    ".c-list-header__actions"
+
+const addImportButton = (sdk: FrontendSDK) => {
+  const topbarLeft = document.querySelector(
+    ".c-topbar .c-topbar__left",
   ) as HTMLElement;
-  if (!actions || !header) return;
-
-  if (document.querySelector("#filter-presets-import")) {
+  if (topbarLeft === null || document.querySelector("#filter-presets-import"))
     return;
-  }
-
-  // Move title to header
-  const title = document.querySelector(".c-list-header__title");
-  if (title && title.parentElement === actions) {
-    actions.removeChild(title);
-    header.prepend(title);
-  }
-
-  // Style the header and actions
-  header.style.alignItems = "center";
-  header.style.flexDirection = "row";
-  actions.style.width = "fit-content";
-  actions.style.gap = "0.8rem";
-  actions.style.display = "flex";
 
   const importButton = sdk.ui.button({
     label: "Import",
     leadingIcon: "fas fa-file-upload",
-    variant: "primary",
+    variant: "tertiary",
+    size: "small",
   });
-  filterButtons.push(importButton);
-
   importButton.id = "filter-presets-import";
   importButton.addEventListener("click", () => {
     importFile(".json", (content: string) => {
@@ -97,42 +75,47 @@ const addImportButton = (sdk: CaidoSDK) => {
               {
                 duration: 3000,
                 variant: "error",
-              }
+              },
             );
           });
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
         sdk.window.showToast(
-          `Failed to import filter preset: ${error.message}`,
+          `Failed to import filter preset: ${errorMessage}`,
           {
             duration: 3000,
             variant: "error",
-          }
+          },
         );
       }
     });
   });
 
-  actions.appendChild(importButton);
+  filterButtons.push(importButton);
+
+  topbarLeft.appendChild(importButton);
 };
 
-const observeFilterTab = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const observeFilterTab = (sdk: FrontendSDK) => {
   const formBody = document.querySelector(".c-form-body__actions");
-  if (formBody) {
-    attachDownloadButton(sdk, evenBetterAPI);
+  if (formBody !== null) {
+    attachDownloadButton(sdk);
   }
 
   const filterContainer = document.querySelector(".c-filter");
 
   if (filterTabObserver) {
     filterTabObserver.disconnect();
-    filterTabObserver = null;
+    filterTabObserver = undefined;
   }
 
   filterTabObserver = new MutationObserver((mutations) => {
     if (mutations.every((m) => m.attributeName === "style")) return;
 
     if (!document.querySelector("#filter-presets-download")) {
-      attachDownloadButton(sdk, evenBetterAPI);
+      attachDownloadButton(sdk);
     }
   });
 
@@ -153,7 +136,7 @@ const observeFilterTab = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   }
 };
 
-const attachDownloadButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const attachDownloadButton = (sdk: FrontendSDK) => {
   if (document.querySelector("#filter-presets-download")) return;
 
   const formActions = document.querySelector(".c-form-body__actions");
@@ -174,7 +157,7 @@ const attachDownloadButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
 
   button.addEventListener("click", () => {
     const id = getActiveFilterPreset();
-    if (!id) {
+    if (id === null || id === undefined) {
       sdk.window.showToast("No filter preset selected", {
         duration: 3000,
         variant: "error",
@@ -186,9 +169,9 @@ const attachDownloadButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
       .filterPresets()
       .then((response) => {
         const presets = response.filterPresets;
-        const preset = presets.find((p: any) => p.id === id);
+        const preset = presets.find((p) => p.id === id);
 
-        if (!preset) {
+        if (preset === undefined) {
           sdk.window.showToast("Filter preset not found", {
             duration: 3000,
             variant: "error",
@@ -215,7 +198,7 @@ const attachDownloadButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
           {
             duration: 3000,
             variant: "error",
-          }
+          },
         );
       });
   });

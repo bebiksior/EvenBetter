@@ -1,34 +1,27 @@
-import { CaidoBackendSDK } from "@/types";
-import * as path from "path";
 import { mkdir, stat } from "fs/promises";
+import path from "path";
+
+import { type BackendSDK } from "../types";
 
 export async function ensureDir(
-  sdk: CaidoBackendSDK,
-  directory: string
+  sdk: BackendSDK,
+  directory: string,
 ): Promise<boolean> {
   try {
-    const dir = pathJoin(sdk.meta.path(), directory);
+    const dir = path.join(sdk.meta.path(), directory);
     await mkdir(dir, { recursive: true });
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }
-// This is a temporary fix. In Caido v0.41.0 there's issue with path.join
-export function pathJoin(dir: string, file: string): string {
-  const isWindowsPath = /^[a-zA-Z]:\\/.test(dir);
-  const separator = isWindowsPath ? "\\" : "/";
-  dir = dir.replace(/[\\/]+$/, "");
-  file = file.replace(/^[\\/]+/, "");
-  return `${dir}${separator}${file}`;
+
+export function getSettingsPath(sdk: BackendSDK): string {
+  return path.join(sdk.meta.path(), "settings.json");
 }
 
-export async function getSettingsPath(sdk: CaidoBackendSDK): Promise<string> {
-  return pathJoin(sdk.meta.path(), "settings.json");
-}
-
-export async function getFlagsPath(sdk: CaidoBackendSDK): Promise<string> {
-  return pathJoin(sdk.meta.path(), "flags.json");
+export function getFlagsPath(sdk: BackendSDK): string {
+  return path.join(sdk.meta.path(), "flags.json");
 }
 
 export async function exists(f: string): Promise<boolean> {

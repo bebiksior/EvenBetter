@@ -7,7 +7,6 @@ import "./quick-mar";
 import "./share-scope";
 import "./share-mar";
 import "./share-replay-collections";
-import "./hide-sidebar-groups";
 import "./colorize-by-method";
 import "./share-filters";
 import "./common-filters";

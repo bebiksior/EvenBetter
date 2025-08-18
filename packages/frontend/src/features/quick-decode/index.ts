@@ -1,8 +1,9 @@
-import { CaidoSDK } from "@/types";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
+import { type FrontendSDK } from "@/types";
 import { createFeature } from "@/features/manager";
-import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+
 import "./quick-decode.css";
+
+import { onLocationChange } from "@/dom";
 
 interface CodeMirrorEditor {
   state: {
@@ -45,11 +46,12 @@ function unicodeEncode(str: string): string {
 
 class QuickDecode {
   private HTMLElement!: HTMLDivElement;
+  private quickDecode!: HTMLDivElement;
   private textArea!: HTMLTextAreaElement;
   private encodeMethodSelect!: HTMLSelectElement;
   private encodeMethod: string;
   private activeEditor: CodeMirrorEditor | undefined = undefined;
-  private selectionInterval: NodeJS.Timeout | undefined;
+  private selectionInterval: Timeout | undefined;
   private copyIconElement: HTMLElement | undefined;
 
   constructor() {
@@ -66,9 +68,13 @@ class QuickDecode {
 
   private initializeHTMLElement(): void {
     this.HTMLElement = document.createElement("div");
-    this.HTMLElement.classList.add("evenbetter__qd-body");
-    this.HTMLElement.id = "evenbetter__qd-body";
-    this.HTMLElement.style.display = "none";
+    this.HTMLElement.id = "plugin--evenbetter";
+
+    this.quickDecode = document.createElement("div");
+    this.quickDecode.classList.add("evenbetter__qd-body");
+    this.quickDecode.style.display = "none";
+
+    this.HTMLElement.appendChild(this.quickDecode);
   }
 
   private initializeResizer(): void {
@@ -81,8 +87,8 @@ class QuickDecode {
     const resize = (e: MouseEvent) => {
       if (!isResizing) return;
       const diffY = startY - e.clientY;
-      const newHeight = Math.max(10, this.HTMLElement.offsetHeight + diffY);
-      this.HTMLElement.style.height = `${newHeight}px`;
+      const newHeight = Math.max(10, this.quickDecode.offsetHeight + diffY);
+      this.quickDecode.style.height = `${newHeight}px`;
       startY = e.clientY;
     };
 
@@ -100,7 +106,7 @@ class QuickDecode {
       document.addEventListener("mouseup", stopResize);
     });
 
-    this.HTMLElement.appendChild(resizer);
+    this.quickDecode.appendChild(resizer);
   }
 
   private initializeSelectedTextDiv(): void {
@@ -111,7 +117,7 @@ class QuickDecode {
     selectedTextTopDiv.classList.add("evenbetter__qd-selected-text-top");
 
     selectedTextDiv.appendChild(selectedTextTopDiv);
-    this.HTMLElement.appendChild(selectedTextDiv);
+    this.quickDecode.appendChild(selectedTextDiv);
   }
 
   private initializeTextArea(): void {
@@ -124,8 +130,8 @@ class QuickDecode {
 
     this.textArea.addEventListener("input", this.handleInput.bind(this));
 
-    const selectedTextDiv = this.HTMLElement.querySelector(
-      ".evenbetter__qd-selected-text"
+    const selectedTextDiv = this.quickDecode.querySelector(
+      ".evenbetter__qd-selected-text",
     );
     if (selectedTextDiv) {
       selectedTextDiv.appendChild(this.textArea);
@@ -135,7 +141,7 @@ class QuickDecode {
   private initializeEncodingMethodSelect(): void {
     this.encodeMethodSelect = document.createElement("select");
     this.encodeMethodSelect.classList.add(
-      "evenbetter__qd-selected-text-top-select"
+      "evenbetter__qd-selected-text-top-select",
     );
 
     const options = [
@@ -160,8 +166,8 @@ class QuickDecode {
       this.handleInput();
     });
 
-    const selectedTextTopDiv = this.HTMLElement.querySelector(
-      ".evenbetter__qd-selected-text-top"
+    const selectedTextTopDiv = this.quickDecode.querySelector(
+      ".evenbetter__qd-selected-text-top",
     );
     if (selectedTextTopDiv) {
       selectedTextTopDiv.appendChild(this.encodeMethodSelect);
@@ -173,11 +179,11 @@ class QuickDecode {
     this.copyIconElement.classList.add("c-icon", "fas", "fa-copy");
     this.copyIconElement.addEventListener(
       "click",
-      this.copyToClipboard.bind(this)
+      this.copyToClipboard.bind(this),
     );
 
-    const selectedTextTopDiv = this.HTMLElement.querySelector(
-      ".evenbetter__qd-selected-text-top"
+    const selectedTextTopDiv = this.quickDecode.querySelector(
+      ".evenbetter__qd-selected-text-top",
     );
     if (selectedTextTopDiv) {
       selectedTextTopDiv.appendChild(this.copyIconElement);
@@ -240,11 +246,11 @@ class QuickDecode {
   }
 
   public show(): void {
-    this.HTMLElement.style.display = "flex";
+    this.quickDecode.style.display = "flex";
   }
 
   public hide(): void {
-    this.HTMLElement.style.display = "none";
+    this.quickDecode.style.display = "none";
   }
 
   public getElement(): HTMLDivElement {
@@ -381,7 +387,7 @@ class QuickDecode {
     if (unicodeRegex.test(input)) {
       try {
         const decodedUnicode = input.replace(unicodeRegex, (_, code) =>
-          String.fromCharCode(parseInt(code, 16))
+          String.fromCharCode(parseInt(code, 16)),
         );
         return { encodeMethod: "unicode", decodedContent: decodedUnicode };
       } catch (error) {
@@ -420,17 +426,28 @@ class QuickDecode {
 }
 
 class QuickDecodeManager {
-  private evenBetterAPI: EvenBetterAPI;
-  private quickDecode: QuickDecode | null = null;
-  private pageOpenListener: ((data: PageOpenEvent) => void) | null = null;
-  private projectChangeListener: (() => Promise<void>) | null = null;
+  private sdk: FrontendSDK;
+  private quickDecode: QuickDecode | undefined = undefined;
+  private cleanupListener: (() => void) | undefined = undefined;
+  private projectChangeListener: (() => Promise<void>) | undefined = undefined;
+  private pageOpenListener: ((newHash: string) => void) | undefined = undefined;
+  private isCleaned: boolean = false;
 
-  constructor(evenBetterAPI: EvenBetterAPI) {
-    this.evenBetterAPI = evenBetterAPI;
+  constructor(sdk: FrontendSDK) {
+    this.sdk = sdk;
+  }
+
+  private removeExistingQuickDecode(): void {
+    const existingElements = document.getElementsByClassName(
+      "evenbetter__qd-body",
+    );
+    Array.from(existingElements).forEach((element) => {
+      element.remove();
+    });
   }
 
   private attachQuickDecode(): void {
-    if (document.getElementById("evenbetter__qd-body")) return;
+    this.removeExistingQuickDecode();
 
     const sessionListBody = document
       .querySelector(".c-tree")
@@ -447,11 +464,18 @@ class QuickDecodeManager {
     const INTERVAL_DELAY = 25;
 
     const attach = (): void => {
+      if (this.isCleaned) return;
+
       let attemptCount = 0;
       const interval = setInterval(() => {
+        if (this.isCleaned) {
+          clearInterval(interval);
+          return;
+        }
+
         attemptCount++;
         if (attemptCount > MAX_ATTEMPTS) {
-          console.error("Could not find editors");
+          console.error("[EvenBetter QuickDecode] Could not find editors");
           clearInterval(interval);
           return;
         }
@@ -464,61 +488,72 @@ class QuickDecodeManager {
       }, INTERVAL_DELAY);
     };
 
-    this.pageOpenListener = (data: PageOpenEvent) => {
+    this.pageOpenListener = (newHash: string) => {
       if (this.isCleaned) return;
 
-      if (data.newUrl === "#/replay") attach();
+      if (newHash === "#/replay") {
+        this.cleanup(false);
+        attach();
+      }
     };
 
     this.projectChangeListener = async () => {
       if (this.isCleaned) return;
 
+      this.cleanup(false);
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (window.location.hash === "#/replay") attach();
     };
 
-    this.evenBetterAPI.eventManager.on("onPageOpen", this.pageOpenListener);
-    this.evenBetterAPI.eventManager.on(
-      "onProjectChange",
-      this.projectChangeListener
+    this.sdk.backend.onEvent(
+      "caido:project-change",
+      this.projectChangeListener,
     );
+    this.cleanupListener = onLocationChange((data) => {
+      this.pageOpenListener?.(data.newHash);
+    });
   }
 
-  private isCleaned: boolean = false;
-
-  public cleanup(): void {
-    if (this.isCleaned) return;
-
+  public cleanup(fullCleanup: boolean = true): void {
     if (this.quickDecode) {
       this.quickDecode.cleanup();
-      this.quickDecode = null;
+      this.quickDecode = undefined;
     }
 
-    if (this.pageOpenListener) {
-      this.pageOpenListener = null;
-    }
+    this.removeExistingQuickDecode();
 
-    if (this.projectChangeListener) {
-      this.projectChangeListener = null;
-    }
+    if (fullCleanup) {
+      if (this.cleanupListener) {
+        this.cleanupListener();
+        this.cleanupListener = undefined;
+      }
 
-    this.isCleaned = true;
+      if (this.projectChangeListener) {
+        this.projectChangeListener = undefined;
+      }
+
+      if (this.pageOpenListener) {
+        this.pageOpenListener = undefined;
+      }
+
+      this.isCleaned = true;
+    }
   }
 }
 
-let manager: QuickDecodeManager | null = null;
+let manager: QuickDecodeManager | undefined = undefined;
 
 export const quickDecode = createFeature("quick-decode", {
-  onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+  onFlagEnabled: (sdk: FrontendSDK) => {
     if (!manager) {
-      manager = new QuickDecodeManager(evenBetterAPI);
+      manager = new QuickDecodeManager(sdk);
       manager.init();
     }
   },
-  onFlagDisabled: (sdk: CaidoSDK) => {
+  onFlagDisabled: (sdk: FrontendSDK) => {
     if (manager) {
       manager.cleanup();
-      manager = null;
+      manager = undefined;
     }
   },
 });

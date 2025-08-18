@@ -1,14 +1,13 @@
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
+import { type FrontendSDK } from "@/types";
 
-const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const init = (sdk: FrontendSDK) => {
   sdk.commands.register("evenbetter:quickmar", {
     name: "Send to Match & Replace",
-    run: async (context) => {
+    run: (context) => {
       if (
-        context.type == "RequestContext" ||
-        context.type == "ResponseContext"
+        context.type === "RequestContext" ||
+        context.type === "ResponseContext"
       ) {
         const selection = context.selection;
         if (selection === "") {
@@ -18,7 +17,7 @@ const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
           return;
         }
 
-        const type = context.type == "RequestContext" ? "request" : "response";
+        const type = context.type === "RequestContext" ? "request" : "response";
         sendToMatchAndReplace(selection, sdk, type);
       }
     },
@@ -39,7 +38,7 @@ const init = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
 
 const sendToMatchAndReplace = async (
   selection: string,
-  sdk: CaidoSDK,
+  sdk: FrontendSDK,
   type: "request" | "response",
 ) => {
   if (!selection) return;
@@ -77,13 +76,13 @@ const sendToMatchAndReplace = async (
           kind: "OperationBodyRaw",
           matcher: {
             kind: "MatcherRawValue",
-            value: selection
+            value: selection,
           },
           replacer: {
             kind: "ReplacerTerm",
-            term: ""
-          }
-        }
+            term: "",
+          },
+        },
       },
       collectionId: collectionID,
     })
@@ -96,10 +95,10 @@ const sendToMatchAndReplace = async (
 };
 
 export const quickMatchAndReplace = createFeature("quick-mar", {
-  onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-    init(sdk, evenBetterAPI);
+  onFlagEnabled: (sdk: FrontendSDK) => {
+    init(sdk);
   },
-  onFlagDisabled: (sdk: CaidoSDK) => {
+  onFlagDisabled: (sdk: FrontendSDK) => {
     location.reload();
   },
 });

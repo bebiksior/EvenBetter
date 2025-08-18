@@ -1,22 +1,21 @@
+import { type RequestRawInput } from "@caido/sdk-frontend/src/types/__generated__/graphql-sdk";
+
+import { onLocationChange } from "@/dom";
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
+import { type FrontendSDK } from "@/types";
 import { downloadFile, importFile } from "@/utils/file-utils";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
-import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
-import { RequestRawInput } from "@caido/sdk-frontend/src/types/__generated__/graphql-sdk";
 
-
-let shareReplayCollectionsElements: HTMLElement[] = [];
-let mutationObserver: MutationObserver | null = null;
-let cancelFunctions: (() => void)[] = [];
+const shareReplayCollectionsElements: HTMLElement[] = [];
+let mutationObserver: MutationObserver | undefined = undefined;
+const cancelFunctions: (() => void)[] = [];
 
 export const shareReplayCollections = createFeature(
   "share-replay-collections",
   {
-    onFlagEnabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-      collectionsShare(sdk, evenBetterAPI);
+    onFlagEnabled: (sdk: FrontendSDK) => {
+      collectionsShare(sdk);
     },
-    onFlagDisabled: (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+    onFlagDisabled: (sdk: FrontendSDK) => {
       shareReplayCollectionsElements.forEach((element) => {
         element.remove();
       });
@@ -25,61 +24,57 @@ export const shareReplayCollections = createFeature(
 
       if (mutationObserver) {
         mutationObserver.disconnect();
-        mutationObserver = null;
+        mutationObserver = undefined;
       }
     },
-  }
+  },
 );
 
-const collectionsShare = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
-  cancelFunctions.push(
-    evenBetterAPI.eventManager.on("onProjectChange", () => {
+const collectionsShare = (sdk: FrontendSDK) => {
+  const { stop: stopProjectChange } = sdk.backend.onEvent(
+    "caido:project-change",
+    () => {
       if (window.location.hash === "#/replay") {
-        attachImportButton(sdk, evenBetterAPI);
-
-        setTimeout(() => {
-          attachExportButton(sdk, evenBetterAPI);
-        }, 500);
+        attachImportButton(sdk);
+        attachExportButton(sdk);
       }
-    })
+    },
   );
 
-  cancelFunctions.push(
-    evenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
-      if (data.newUrl === "#/replay") {
-        attachImportButton(sdk, evenBetterAPI);
-        attachExportButton(sdk, evenBetterAPI);
+  const stopPageOpen = onLocationChange((data) => {
+    if (data.newHash === "#/replay") {
+      attachImportButton(sdk);
+      attachExportButton(sdk);
 
-        if (mutationObserver) mutationObserver.disconnect();
+      if (mutationObserver) mutationObserver.disconnect();
 
-        mutationObserver = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.addedNodes.length > 0) {
-              attachExportButton(sdk, evenBetterAPI);
-            }
-          });
+      mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.addedNodes.length > 0) {
+            attachExportButton(sdk);
+          }
         });
+      });
 
-        const tree = document.querySelector(
-          ".c-session-list-body__tree .c-tree"
-        );
-        if (!tree) return;
+      const tree = document.querySelector(".c-session-list-body__tree .c-tree");
+      if (!tree) return;
 
-        mutationObserver.observe(tree, {
-          childList: true,
-          subtree: true,
-        });
-      }
-    })
-  );
+      mutationObserver.observe(tree, {
+        childList: true,
+        subtree: true,
+      });
+    }
+  });
+
+  cancelFunctions.push(stopProjectChange, stopPageOpen);
 };
 
-const getCollectionByID = async (collectionID: string, sdk: CaidoSDK) => {
+const getCollectionByID = async (collectionID: string, sdk: FrontendSDK) => {
   return await sdk.graphql.replaySessionCollections().then((data) => {
     const collections = data.replaySessionCollections.edges;
 
     return collections.find(
-      (collection) => collection.node.id === collectionID
+      (collection) => collection.node.id === collectionID,
     );
   });
 };
@@ -87,12 +82,8 @@ const getCollectionByID = async (collectionID: string, sdk: CaidoSDK) => {
 const createSession = async (
   collectionID: string,
   request: RequestRawInput,
-  sdk: CaidoSDK
+  sdk: FrontendSDK,
 ) => {
-  if (!request.connectionInfo || !request.raw) {
-    throw new Error('Invalid request: missing connectionInfo or raw data');
-  }
-
   return await sdk.graphql.createReplaySession({
     input: {
       collectionId: collectionID,
@@ -103,7 +94,7 @@ const createSession = async (
   });
 };
 
-const createCollection = async (collectionName: string, sdk: CaidoSDK) => {
+const createCollection = async (collectionName: string, sdk: FrontendSDK) => {
   return await sdk.graphql.createReplaySessionCollection({
     input: {
       name: collectionName,
@@ -111,11 +102,7 @@ const createCollection = async (collectionName: string, sdk: CaidoSDK) => {
   });
 };
 
-const downloadCollection = async (
-  collectionID: string,
-  sdk: CaidoSDK,
-  evenBetterAPI: EvenBetterAPI
-) => {
+const downloadCollection = async (collectionID: string, sdk: FrontendSDK) => {
   const collection = await getCollectionByID(collectionID, sdk);
   if (!collection) return new Error("Collection not found");
 
@@ -144,7 +131,7 @@ const downloadCollection = async (
 
   downloadFile(
     "collection_" + collectionName + ".json",
-    JSON.stringify(collectionExport)
+    JSON.stringify(collectionExport),
   );
 
   sdk.window.showToast("Collection downloaded successfully!", {
@@ -153,11 +140,7 @@ const downloadCollection = async (
   });
 };
 
-const importCollection = async (
-  collection: any,
-  sdk: CaidoSDK,
-  evenBetterAPI: EvenBetterAPI
-) => {
+const importCollection = async (collection: any, sdk: FrontendSDK) => {
   const collectionName = collection.name;
   const newCollection = await createCollection(collectionName, sdk);
 
@@ -170,65 +153,38 @@ const importCollection = async (
     for (const replayEntry of replayEntries) {
       const requestRawInput: RequestRawInput = {
         connectionInfo: {
-          host: replayEntry.connection?.host,
-          port: replayEntry.connection?.port,
-          isTLS: replayEntry.connection?.isTls ?? false, // Use nullish coalescing
+          host: replayEntry.connection.host,
+          port: replayEntry.connection.port,
+          isTLS: replayEntry.connection.isTLS,
         },
         raw: replayEntry.raw,
       };
 
-      // Validate requestRawInput before creating session
-      if (!requestRawInput.connectionInfo?.host) {
-        console.error('Invalid connection info:', requestRawInput.connectionInfo);
-        continue;
-      }
+      const newSession = await createSession(
+        newCollectionID,
+        requestRawInput,
+        sdk,
+      );
 
-      if (!requestRawInput.raw) {
-        console.error('Missing raw data for entry');
-        continue;
-      }
+      const sesionID = newSession.createReplaySession.session?.id;
+      if (!sesionID) return;
 
-      try {
-        const newSession = await createSession(
-          newCollectionID,
-          requestRawInput,
-          sdk
-        );
-
-        const sessionID = newSession?.createReplaySession?.session?.id;
-        if (!sessionID) {
-          console.error('Failed to create session', { newSession });
-          continue;
-        }
-
-        await sdk.graphql.renameReplaySession({
-          id: sessionID,
-          name: replayEntry.name,
-        });
-      } catch (error) {
-        console.error('Error creating session:', error);
-
-        evenBetterAPI.toast.showToast({
-          message: `Failed to import session: ${error}`,
-          duration: 3000,
-          position: "bottom",
-          type: "error",
-        });
-      }
+      await sdk.graphql.renameReplaySession({
+        id: sesionID,
+        name: replayEntry.name,
+      });
     }
   }
 
-  evenBetterAPI.toast.showToast({
-    message: "Collection imported successfully!",
+  sdk.window.showToast("Collection imported successfully!", {
     duration: 3000,
-    position: "bottom",
-    type: "success",
+    variant: "success",
   });
 
   return newCollectionID;
 };
 
-const attachImportButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const attachImportButton = (sdk: FrontendSDK) => {
   if (document.querySelector("#import-collection")) return;
 
   const topbarLeft = document.querySelector(".c-topbar__left");
@@ -250,18 +206,12 @@ const attachImportButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
     importFile(".json", async (content: string) => {
       try {
         const collection = JSON.parse(content);
-        await importCollection(collection, sdk, evenBetterAPI);
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 25);
+        await importCollection(collection, sdk);
       } catch (error) {
         console.error("Failed to import collection:", error);
-        evenBetterAPI.toast.showToast({
-          message: "Failed to import collection",
+        sdk.window.showToast("Failed to import collection", {
           duration: 3000,
-          position: "bottom",
-          type: "error",
+          variant: "error",
         });
       }
     });
@@ -270,7 +220,7 @@ const attachImportButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
   topbarLeft.prepend(importButton);
 };
 
-const attachExportButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
+const attachExportButton = (sdk: FrontendSDK) => {
   const collections = document.querySelectorAll(".c-tree-collection");
   if (!collections || collections.length === 0) return;
 
@@ -294,13 +244,11 @@ const attachExportButton = (sdk: CaidoSDK, evenBetterAPI: EvenBetterAPI) => {
       const collectionID = collection.getAttribute("data-collection-id");
       if (!collectionID) return;
 
-      const err = await downloadCollection(collectionID, sdk, evenBetterAPI);
+      const err = await downloadCollection(collectionID, sdk);
       if (err) {
-        evenBetterAPI.toast.showToast({
-          message: "Failed to download collection: " + err,
+        sdk.window.showToast("Failed to download collection: " + err, {
           duration: 3000,
-          position: "bottom",
-          type: "error",
+          variant: "error",
         });
       }
     });

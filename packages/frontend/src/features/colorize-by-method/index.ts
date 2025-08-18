@@ -1,22 +1,23 @@
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
-import { EvenBetterAPI } from "@bebiks/evenbetter-api";
-import { PageOpenEvent } from "@bebiks/evenbetter-api/src/events/onPageOpen";
+import { type FrontendSDK } from "@/types";
+
 import "./style.css";
 
-let abortController: AbortController | null = null;
-let observer: MutationObserver | null = null;
+import { onLocationChange } from "@/dom";
 
-function setTabMethodAttributes(caidoSDK: CaidoSDK) {
+let abortController: AbortController | undefined = undefined;
+let observer: MutationObserver | undefined = undefined;
+
+function setTabMethodAttributes(sdk: FrontendSDK) {
   const tabs = document.querySelectorAll(
     ".c-tab-list__body .c-tab-list__tab [data-session-id]",
   );
 
   const promises = Array.from(tabs).map(async (tab) => {
     const sessionId = tab.getAttribute("data-session-id");
-    if (!sessionId) return;
+    if (sessionId === null) return;
 
-    const method = await getHTTPMethod(sessionId, caidoSDK);
+    const method = await getHTTPMethod(sessionId, sdk);
     tab.setAttribute("http-method", method);
   });
 
@@ -40,7 +41,7 @@ function updateSelectedTabColor() {
   const httpMethod = document.querySelector(
     ".c-lang-http-request__method",
   )?.textContent;
-  if (!httpMethod) return;
+  if (httpMethod === null || httpMethod === undefined) return;
 
   updateCurrentTabHTTPMethod(httpMethod);
 }
@@ -72,23 +73,20 @@ type HTTPMethod =
 
 async function getHTTPMethod(
   sessionId: string,
-  caidoSDK: CaidoSDK,
+  sdk: FrontendSDK,
 ): Promise<HTTPMethod> {
-  const data = await caidoSDK.graphql.replayEntry({ id: sessionId });
-  if (!data.replayEntry?.raw) return "UNKNOWN";
+  const data = await sdk.graphql.replayEntry({ id: sessionId });
+  if (data.replayEntry?.raw === undefined) return "UNKNOWN";
 
   const method = data.replayEntry.raw.split("\n")[0]?.split(" ")[0];
   return (method as HTTPMethod) || "UNKNOWN";
 }
 
-function handleTabListChanges(
-  evenBetterAPI: EvenBetterAPI,
-  caidoSDK: CaidoSDK,
-) {
-  setTabMethodAttributes(caidoSDK);
+function handleTabListChanges(sdk: FrontendSDK) {
+  setTabMethodAttributes(sdk);
 
   const observer = new MutationObserver(() => {
-    setTabMethodAttributes(caidoSDK);
+    setTabMethodAttributes(sdk);
   });
 
   const tabList = document.querySelector(".c-tab-list__body");
@@ -104,46 +102,46 @@ function handleTabListChanges(
 const cleanup = () => {
   if (observer) {
     observer.disconnect();
-    observer = null;
+    observer = undefined;
   }
 
   if (abortController) {
     abortController.abort();
-    abortController = null;
+    abortController = undefined;
   }
 };
 
-function setup(caidoSDK: CaidoSDK, evenBetterAPI: EvenBetterAPI) {
+function setup(sdk: FrontendSDK) {
   cleanup();
 
   if (window.location.hash === "#/replay") {
-    observer = handleTabListChanges(evenBetterAPI, caidoSDK);
+    observer = handleTabListChanges(sdk);
   }
 }
 
 export const colorizeByMethod = createFeature("colorize-by-method", {
-  onFlagEnabled: (caidoSDK, evenBetterAPI) => {
-    setup(caidoSDK, evenBetterAPI);
+  onFlagEnabled: (sdk) => {
+    setup(sdk);
 
     setTimeout(() => {
       abortController = liveUpdateHTTPMethod();
     }, 2000);
 
-    evenBetterAPI.eventManager.on("onPageOpen", (data: PageOpenEvent) => {
+    onLocationChange((data) => {
       cleanup();
 
-      if (data.newUrl === "#/replay") {
-        observer = handleTabListChanges(evenBetterAPI, caidoSDK);
+      if (data.newHash === "#/replay") {
+        observer = handleTabListChanges(sdk);
       }
     });
 
-    evenBetterAPI.eventManager.on("onProjectChange", () => {
+    sdk.backend.onEvent("caido:project-change", () => {
       let attempts = 0;
       const maxAttempts = 25;
       const interval = setInterval(() => {
         const tabList = document.querySelector(".c-tab-list__body");
         if (tabList) {
-          setup(caidoSDK, evenBetterAPI);
+          setup(sdk);
           clearInterval(interval);
         }
         attempts++;

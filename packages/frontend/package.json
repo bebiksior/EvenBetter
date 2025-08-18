@@ -1,37 +1,23 @@
 {
   "name": "frontend",
-  "version": "3.0.4",
-  "description": "EvenBetter",
-  "author": "bebiks <bebiks@cvssadvisor.com>",
-  "license": "CC0-1.0",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@bebiks/evenbetter-api": "^2.4.1",
-    "@caido/sdk-frontend": "0.50.1",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.2.0",
-    "@mui/material": "^7.2.0",
-    "@tanstack/react-query": "^5.83.0",
-    "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.7",
-    "allotment": "^1.20.4",
-    "caido-material-ui": "^1.0.4",
-    "postcss": "^8.5.6",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "@caido/primevue": "0.2.1",
+    "@pinia/colada": "^0.17.1",
+    "pinia": "3.0.3",
+    "primevue": "4.1.0",
+    "vue": "3.5.18"
   },
   "devDependencies": {
-    "@caido/sdk-backend": "0.50.1",
-    "@types/node": "^24.1.0",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@caido/sdk-backend": "^0.50.2",
+    "@caido/sdk-frontend": "^0.50.2",
+    "@codemirror/view": "6.38.1",
     "backend": "workspace:*",
     "shared": "workspace:*",
-    "tailwindcss": "^3.4.17",
-    "vite": "7.0.6"
+    "vue-tsc": "3.0.5"
   }
 }

@@ -6,7 +6,6 @@ export type FeatureFlagTag =
   | "share-scope"
   | "share-mar"
   | "share-replay-collections"
-  | "hide-sidebar-groups"
   | "colorize-by-method"
   | "share-filters"
   | "quick-mar"
@@ -20,6 +19,6 @@ export type FeatureFlag = {
   description: string;
   enabled: boolean;
   kind: FeatureFlagKind;
-  requiresReload?: boolean;
   knownIssues?: string[];
+  requiresReload?: boolean;
 };

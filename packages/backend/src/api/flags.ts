@@ -1,10 +1,17 @@
-import { FeatureFlagsStore } from "@/stores/flagStore";
-import { FeatureFlag, FeatureFlagTag, Result, ok, error } from "shared";
-import { CaidoBackendSDK } from "../types";
+import {
+  error,
+  type FeatureFlag,
+  type FeatureFlagTag,
+  ok,
+  type Result,
+} from "shared";
+
+import { FeatureFlagsStore } from "../stores/flags";
+import { type BackendSDK } from "../types";
 
 export const getFlags = (
-  sdk: CaidoBackendSDK,
-  filters?: Partial<FeatureFlag>
+  _: BackendSDK,
+  filters?: Partial<FeatureFlag>,
 ): Result<FeatureFlag[]> => {
   const flagsStore = FeatureFlagsStore.get();
   const flags = flagsStore.getFlags();
@@ -14,13 +21,13 @@ export const getFlags = (
         return false;
       }
       return true;
-    })
+    }),
   );
 };
 
 export const updateFlags = async (
-  sdk: CaidoBackendSDK,
-  flags: FeatureFlag[]
+  _: BackendSDK,
+  flags: FeatureFlag[],
 ): Promise<Result<void>> => {
   const flagsStore = FeatureFlagsStore.get();
   await flagsStore.setFlags(flags);
@@ -28,8 +35,8 @@ export const updateFlags = async (
 };
 
 export const getFlag = (
-  sdk: CaidoBackendSDK,
-  tag: FeatureFlagTag
+  _: BackendSDK,
+  tag: FeatureFlagTag,
 ): Result<boolean> => {
   const flagsStore = FeatureFlagsStore.get();
   const flags = flagsStore.getFlags();
@@ -43,9 +50,9 @@ export const getFlag = (
 };
 
 export const setFlag = async (
-  sdk: CaidoBackendSDK,
+  _: BackendSDK,
   tag: FeatureFlagTag,
-  value: boolean
+  value: boolean,
 ): Promise<Result<void>> => {
   const flagsStore = FeatureFlagsStore.get();
   await flagsStore.setFlag(tag, value);

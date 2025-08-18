@@ -1,7 +1,7 @@
 export const downloadFile = (name: string, content: string) => {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(
-    new Blob([content], { type: "application/json" })
+    new Blob([content], { type: "application/json" }),
   );
   a.download = name;
   document.body.appendChild(a);
@@ -11,7 +11,7 @@ export const downloadFile = (name: string, content: string) => {
 
 export const importFile = (
   accept: string,
-  onFileRead: (content: string) => void
+  onFileRead: (content: string) => void,
 ) => {
   const input = document.createElement("input");
   input.type = "file";

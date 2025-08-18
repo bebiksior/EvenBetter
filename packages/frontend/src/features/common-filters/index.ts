@@ -1,7 +1,7 @@
 import { createFeature } from "@/features/manager";
-import { CaidoSDK } from "@/types";
+import { type FrontendSDK } from "@/types";
 
-let intervalId: NodeJS.Timeout | undefined;
+let intervalId: Timeout | undefined;
 
 interface TimeFilter {
   name: string;
@@ -13,22 +13,28 @@ const TIME_FILTERS: TimeFilter[] = [
   { name: "1hr", minutes: 60 },
   { name: "6hr", minutes: 360 },
   { name: "12hr", minutes: 720 },
-  { name: "24hr", minutes: 1440 }
+  { name: "24hr", minutes: 1440 },
 ];
 
 const createTimeBasedFilterQuery = (minutes: number): string => {
   const now = new Date();
-  const pastTime = new Date(now.getTime() - (minutes * 60 * 1000));
-  const formattedDate = pastTime.getFullYear() + '-' +
-    String(pastTime.getMonth() + 1).padStart(2, '0') + '-' +
-    String(pastTime.getDate()).padStart(2, '0') + ' ' +
-    String(pastTime.getHours()).padStart(2, '0') + ':' +
-    String(pastTime.getMinutes()).padStart(2, '0') + ':' +
-    String(pastTime.getSeconds()).padStart(2, '0');
+  const pastTime = new Date(now.getTime() - minutes * 60 * 1000);
+  const formattedDate =
+    pastTime.getFullYear() +
+    "-" +
+    String(pastTime.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(pastTime.getDate()).padStart(2, "0") +
+    " " +
+    String(pastTime.getHours()).padStart(2, "0") +
+    ":" +
+    String(pastTime.getMinutes()).padStart(2, "0") +
+    ":" +
+    String(pastTime.getSeconds()).padStart(2, "0");
   return `req.created_at.gt:"${formattedDate}"`;
 };
 
-const maintainTimeFilters = async (sdk: CaidoSDK) => {
+const maintainTimeFilters = async (sdk: FrontendSDK) => {
   try {
     // Get all existing filters
     const existingFilters = sdk.filters.getAll();
@@ -38,7 +44,7 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
 
       // Check if filter already exists
       const existingFilter = existingFilters.find(
-        (filter: any) => filter.name === timeFilter.name
+        (filter) => filter.name === timeFilter.name,
       );
 
       if (existingFilter) {
@@ -47,7 +53,7 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
           await sdk.filters.update(existingFilter.id, {
             name: timeFilter.name,
             alias: timeFilter.name,
-            query: filterQuery
+            query: filterQuery,
           });
         }
       } else {
@@ -55,7 +61,7 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
         await sdk.filters.create({
           name: timeFilter.name,
           alias: timeFilter.name,
-          query: filterQuery
+          query: filterQuery,
         });
       }
     }
@@ -64,7 +70,7 @@ const maintainTimeFilters = async (sdk: CaidoSDK) => {
   }
 };
 
-const startFilterMaintenance = (sdk: CaidoSDK) => {
+const startFilterMaintenance = (sdk: FrontendSDK) => {
   // Run immediately
   maintainTimeFilters(sdk);
 
@@ -74,7 +80,7 @@ const startFilterMaintenance = (sdk: CaidoSDK) => {
   }, 60000); // 60,000ms = 1 minute
 };
 
-const stopFilterMaintenance = async (sdk: CaidoSDK) => {
+const stopFilterMaintenance = async (sdk: FrontendSDK) => {
   if (intervalId) {
     clearInterval(intervalId);
     intervalId = undefined;
@@ -84,10 +90,10 @@ const stopFilterMaintenance = async (sdk: CaidoSDK) => {
     // Get all existing filters
     const existingFilters = sdk.filters.getAll();
 
-    // Remove any filters that match our time filter names
+    // Remove filters that match our time filter names
     for (const timeFilter of TIME_FILTERS) {
       const existingFilter = existingFilters.find(
-        (filter: any) => filter.name === timeFilter.name
+        (filter) => filter.name === timeFilter.name,
       );
 
       if (existingFilter) {
@@ -97,16 +103,16 @@ const stopFilterMaintenance = async (sdk: CaidoSDK) => {
   } catch (error) {
     console.error("Error cleaning up time filters:", error);
     sdk.window.showToast("[EvenBetter] Error cleaning up time filters", {
-        variant: "error"
+      variant: "error",
     });
   }
 };
 
 export default createFeature("common-filters", {
-  onFlagEnabled: (sdk: CaidoSDK) => {
+  onFlagEnabled: (sdk: FrontendSDK) => {
     startFilterMaintenance(sdk);
   },
-  onFlagDisabled: (sdk: CaidoSDK) => {
+  onFlagDisabled: (sdk: FrontendSDK) => {
     stopFilterMaintenance(sdk);
-  }
+  },
 });
