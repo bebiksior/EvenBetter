@@ -44,6 +44,12 @@ function unicodeEncode(str: string): string {
     .join("");
 }
 
+interface HistoryEntry {
+  content: string;
+  selectionStart: number;
+  selectionEnd: number;
+}
+
 class QuickDecode {
   private HTMLElement!: HTMLDivElement;
   private quickDecode!: HTMLDivElement;
@@ -53,6 +59,10 @@ class QuickDecode {
   private activeEditor: CodeMirrorEditor | undefined = undefined;
   private selectionInterval: Timeout | undefined;
   private copyIconElement: HTMLElement | undefined;
+  private undoStack: HistoryEntry[] = [];
+  private redoStack: HistoryEntry[] = [];
+  private isUpdatingFromHistory: boolean = false;
+  private lastSavedContent: string = "";
 
   constructor() {
     this.initializeHTMLElement();
@@ -129,6 +139,7 @@ class QuickDecode {
     this.textArea.setAttribute("spellcheck", "false");
 
     this.textArea.addEventListener("input", this.handleInput.bind(this));
+    this.textArea.addEventListener("keydown", this.handleKeyDown.bind(this));
 
     const selectedTextDiv = this.quickDecode.querySelector(
       ".evenbetter__qd-selected-text",
@@ -197,7 +208,96 @@ class QuickDecode {
     }
   }
 
+  private handleKeyDown(e: KeyboardEvent): void {
+    const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    const isUndo =
+      (isMac ? e.metaKey : e.ctrlKey) && e.key === "z" && !e.shiftKey;
+    const isRedo =
+      (isMac ? e.metaKey : e.ctrlKey) &&
+      (e.key === "y" || (e.key === "z" && e.shiftKey));
+
+    if (isUndo) {
+      e.preventDefault();
+      this.undo();
+    } else if (isRedo) {
+      e.preventDefault();
+      this.redo();
+    }
+  }
+
+  private saveHistory(): void {
+    if (this.isUpdatingFromHistory) return;
+
+    const currentContent = this.textArea.value;
+    if (currentContent === this.lastSavedContent) return;
+
+    const historyEntry: HistoryEntry = {
+      content: this.lastSavedContent,
+      selectionStart: this.textArea.selectionStart,
+      selectionEnd: this.textArea.selectionEnd,
+    };
+
+    this.undoStack.push(historyEntry);
+    if (this.undoStack.length > 100) {
+      this.undoStack.shift();
+    }
+    this.redoStack = [];
+    this.lastSavedContent = currentContent;
+  }
+
+  private undo(): void {
+    if (this.undoStack.length === 0) return;
+
+    const currentEntry: HistoryEntry = {
+      content: this.textArea.value,
+      selectionStart: this.textArea.selectionStart,
+      selectionEnd: this.textArea.selectionEnd,
+    };
+    this.redoStack.push(currentEntry);
+
+    const previousEntry = this.undoStack.pop();
+    if (previousEntry) {
+      this.isUpdatingFromHistory = true;
+      this.textArea.value = previousEntry.content;
+      this.textArea.setSelectionRange(
+        previousEntry.selectionStart,
+        previousEntry.selectionEnd,
+      );
+      this.lastSavedContent = previousEntry.content;
+      this.isUpdatingFromHistory = false;
+      this.handleInput();
+    }
+  }
+
+  private redo(): void {
+    if (this.redoStack.length === 0) return;
+
+    const currentEntry: HistoryEntry = {
+      content: this.textArea.value,
+      selectionStart: this.textArea.selectionStart,
+      selectionEnd: this.textArea.selectionEnd,
+    };
+    this.undoStack.push(currentEntry);
+
+    const nextEntry = this.redoStack.pop();
+    if (nextEntry) {
+      this.isUpdatingFromHistory = true;
+      this.textArea.value = nextEntry.content;
+      this.textArea.setSelectionRange(
+        nextEntry.selectionStart,
+        nextEntry.selectionEnd,
+      );
+      this.lastSavedContent = nextEntry.content;
+      this.isUpdatingFromHistory = false;
+      this.handleInput();
+    }
+  }
+
   private handleInput(): void {
+    if (!this.isUpdatingFromHistory) {
+      this.saveHistory();
+    }
+
     let newContent = this.textArea.value;
     if (
       newContent.length <= 0 ||
@@ -238,6 +338,9 @@ class QuickDecode {
 
   public updateText(text: string): void {
     this.textArea.value = text;
+    this.lastSavedContent = text;
+    this.undoStack = [];
+    this.redoStack = [];
   }
 
   public updateEncodeMethod(encodeMethod?: string): void {
@@ -417,6 +520,7 @@ class QuickDecode {
   public cleanup(): void {
     this.stopMonitoringSelection();
     this.textArea.removeEventListener("input", this.handleInput);
+    this.textArea.removeEventListener("keydown", this.handleKeyDown);
     this.encodeMethodSelect.removeEventListener("change", this.handleInput);
     if (this.copyIconElement) {
       this.copyIconElement.removeEventListener("click", this.copyToClipboard);
