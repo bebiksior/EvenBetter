@@ -11,7 +11,7 @@ export default defineConfig({
   id,
   name: "EvenBetter",
   description: "Collection of tweaks and improvements for Caido",
-  version: "4.0.0",
+  version: "4.0.1",
   author: {
     name: "bebiks",
     email: "bebiks@cvssadvisor.com",

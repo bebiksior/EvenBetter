@@ -28,6 +28,11 @@ Maintenance of EvenBetter is possible thanks to the following sponsors:
 2. In your Caido instance, navigate to the `Plugins` page, click `Install` and select the downloaded `plugin_package.zip` file
 3. Done! 🎉
 
+
+## Changelog v4.0.1
+
+- Fixed Ctrl + Z issue in QuickDecode
+
 ## Changelog v4.0.0
 
 - Migrated frontend from React to Vue
